@@ -1,0 +1,16 @@
+id: interprovider-option-b-6n
+title: Inter-provider MPLS VPN Option B
+status: planned
+topology_family: interprovider-option-b-6n
+node_count: 6
+primary_format: containerlab
+technologies:
+  - MPLS
+  - Inter-provider
+  - Option B
+  - MP-BGP
+  - L3VPN
+verification:
+  last_run: pending
+  mode: planned archetype
+  assertions: not yet pinned

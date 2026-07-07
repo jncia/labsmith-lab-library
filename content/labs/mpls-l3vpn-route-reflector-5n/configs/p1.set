@@ -1,0 +1,14 @@
+set system host-name p1
+set interfaces lo0 unit 0 family inet address 10.255.0.2/32
+set interfaces ge-0/0/0 unit 0 family inet address 10.0.12.1/31
+set interfaces ge-0/0/1 unit 0 family inet address 10.0.23.0/31
+set protocols mpls interface ge-0/0/0.0
+set protocols mpls interface ge-0/0/1.0
+set protocols ldp interface ge-0/0/0.0
+set protocols ldp interface ge-0/0/1.0
+set protocols bgp group PEERS type internal
+set protocols bgp group PEERS local-address 10.255.0.2
+set protocols bgp group PEERS family inet-vpn unicast
+set protocols bgp group PEERS cluster 10.255.0.2
+set protocols bgp group PEERS neighbor 10.255.0.1
+set protocols bgp group PEERS neighbor 10.255.0.3

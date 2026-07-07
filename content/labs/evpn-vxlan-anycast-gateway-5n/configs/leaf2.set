@@ -1,0 +1,8 @@
+set system host-name leaf2
+set interfaces lo0 unit 0 family inet address 10.10.0.12/32
+set switch-options vtep-source-interface lo0.0
+set vlans BLUE vlan-id 100
+set vlans BLUE vxlan vni 10100
+set interfaces irb unit 100 family inet address 10.100.0.1/24
+set routing-instances EVPN protocols evpn encapsulation vxlan
+set routing-instances EVPN protocols evpn extended-vni-list 10100

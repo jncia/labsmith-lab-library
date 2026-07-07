@@ -1,0 +1,8 @@
+set system host-name asbr-a
+set interfaces lo0 unit 0 family inet address 10.1.0.3/32
+set interfaces ge-0/0/1 unit 0 family inet address 10.12.0.0/31
+set protocols bgp group ASBR-B type external
+set protocols bgp group ASBR-B family inet-vpn unicast
+set protocols bgp group ASBR-B peer-as 65200
+set protocols bgp group ASBR-B neighbor 10.12.0.1
+set routing-options autonomous-system 65100

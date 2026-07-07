@@ -1,0 +1,14 @@
+set system host-name pe2
+set interfaces lo0 unit 0 family inet address 10.255.0.3/32
+set interfaces ge-0/0/0 unit 0 family inet address 172.16.12.1/30
+set interfaces ge-0/0/1 unit 0 family inet address 10.0.23.1/31
+set protocols mpls interface ge-0/0/1.0
+set protocols ldp interface ge-0/0/1.0
+set protocols bgp group CORE type internal
+set protocols bgp group CORE local-address 10.255.0.3
+set protocols bgp group CORE family inet-vpn unicast
+set protocols bgp group CORE neighbor 10.255.0.2
+set routing-instances CUST-A instance-type vrf
+set routing-instances CUST-A route-distinguisher 10.255.0.3:100
+set routing-instances CUST-A vrf-target target:65000:100
+set routing-instances CUST-A interface ge-0/0/0.0

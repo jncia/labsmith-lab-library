@@ -1,0 +1,30 @@
+name: interprovider-option-b-6n
+topology:
+  kinds:
+    juniper_vjunosrouter:
+      image: ${VJUNOS_ROUTER_IMAGE:=vrnetlab/juniper_vjunos-router:26.2R1.7}
+  nodes:
+    ce-a:
+      kind: juniper_vjunosrouter
+      startup-config: configs/ce-a.set
+    pe-a:
+      kind: juniper_vjunosrouter
+      startup-config: configs/pe-a.set
+    asbr-a:
+      kind: juniper_vjunosrouter
+      startup-config: configs/asbr-a.set
+    asbr-b:
+      kind: juniper_vjunosrouter
+      startup-config: configs/asbr-b.set
+    pe-b:
+      kind: juniper_vjunosrouter
+      startup-config: configs/pe-b.set
+    ce-b:
+      kind: juniper_vjunosrouter
+      startup-config: configs/ce-b.set
+  links:
+    - endpoints: ["ce-a:eth1", "pe-a:eth1"]
+    - endpoints: ["pe-a:eth2", "asbr-a:eth1"]
+    - endpoints: ["asbr-a:eth2", "asbr-b:eth2"]
+    - endpoints: ["asbr-b:eth1", "pe-b:eth2"]
+    - endpoints: ["pe-b:eth1", "ce-b:eth1"]

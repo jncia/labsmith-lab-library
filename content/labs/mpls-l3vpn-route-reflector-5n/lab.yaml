@@ -1,0 +1,20 @@
+id: mpls-l3vpn-route-reflector-5n
+title: MPLS L3VPN with Route Reflector Core
+status: verified
+topology_family: sp-vpn-floor-5n
+node_count: 5
+primary_format: containerlab
+technologies:
+  - MPLS
+  - L3VPN
+  - MP-BGP
+  - Route Reflector
+  - LDP
+  - VRF
+verification:
+  last_run: 2026-07-07
+  mode: LabSmith live proof seed
+  assertions: 12 baseline assertions
+notes:
+  - Public files omit host details, credentials, image digests, and raw private logs.
+  - Set VJUNOS_ROUTER_IMAGE before deployment if your local image tag differs.

@@ -1,0 +1,28 @@
+name: mpls-l3vpn-rr-5n
+topology:
+  kinds:
+    juniper_vjunosrouter:
+      image: ${VJUNOS_ROUTER_IMAGE:=vrnetlab/juniper_vjunos-router:26.2R1.7}
+  nodes:
+    pe1:
+      kind: juniper_vjunosrouter
+      startup-config: configs/pe1.set
+    p1:
+      kind: juniper_vjunosrouter
+      startup-config: configs/p1.set
+    pe2:
+      kind: juniper_vjunosrouter
+      startup-config: configs/pe2.set
+    ce1:
+      kind: juniper_vjunosrouter
+      startup-config: configs/ce1.set
+    ce2:
+      kind: juniper_vjunosrouter
+      startup-config: configs/ce2.set
+  links:
+    - endpoints: ["ce1:eth1", "pe1:eth1"]
+    - endpoints: ["pe1:eth2", "p1:eth1"]
+    - endpoints: ["p1:eth2", "pe2:eth2"]
+    - endpoints: ["ce1:eth2", "pe2:eth1"]
+    - endpoints: ["ce2:eth1", "pe1:eth3"]
+    - endpoints: ["ce2:eth2", "pe2:eth3"]

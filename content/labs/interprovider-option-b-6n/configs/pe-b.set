@@ -1,0 +1,5 @@
+set system host-name pe-b
+set interfaces lo0 unit 0 family inet address 10.2.0.1/32
+set routing-instances CUST-A instance-type vrf
+set routing-instances CUST-A route-distinguisher 10.2.0.1:100
+set routing-instances CUST-A vrf-target target:65100:100

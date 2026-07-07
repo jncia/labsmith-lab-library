@@ -1,0 +1,7 @@
+set system host-name spine1
+set interfaces lo0 unit 0 family inet address 10.10.0.1/32
+set protocols bgp group LEAFS type internal
+set protocols bgp group LEAFS family evpn signaling
+set protocols bgp group LEAFS cluster 10.10.0.1
+set protocols bgp group LEAFS neighbor 10.10.0.11
+set protocols bgp group LEAFS neighbor 10.10.0.12

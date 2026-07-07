@@ -1,0 +1,15 @@
+---
+title: MPLS L3VPN with Route Reflector Core
+---
+
+## Goal
+
+Build intuition for how VPNv4 routes move through a route-reflector core and how a route-target mismatch breaks customer reachability while BGP sessions remain up.
+
+## Exercise
+
+1. Verify BGP sessions on p1 with `show bgp summary`.
+2. Inspect `bgp.l3vpn.0` and `CUST-A.inet.0`.
+3. Break one PE by replacing `target:65000:100` with `target:65000:999`.
+4. Confirm the remote customer route disappears.
+5. Restore the route target and verify reachability.

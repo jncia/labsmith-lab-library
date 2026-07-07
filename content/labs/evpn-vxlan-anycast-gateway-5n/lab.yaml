@@ -1,0 +1,16 @@
+id: evpn-vxlan-anycast-gateway-5n
+title: EVPN/VXLAN Anycast Gateway Fabric
+status: candidate
+topology_family: evpn-irb-5n
+node_count: 5
+primary_format: containerlab
+technologies:
+  - EVPN
+  - VXLAN
+  - Anycast Gateway
+  - MP-BGP
+  - IRB
+verification:
+  last_run: pending
+  mode: candidate spec
+  assertions: planned EVPN assertions

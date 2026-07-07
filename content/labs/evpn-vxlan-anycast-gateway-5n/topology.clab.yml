@@ -1,0 +1,26 @@
+name: evpn-vxlan-anycast-5n
+topology:
+  kinds:
+    juniper_vjunosswitch:
+      image: ${VJUNOS_SWITCH_IMAGE:=vrnetlab/juniper_vjunos-switch:26.2R1.7}
+  nodes:
+    spine1:
+      kind: juniper_vjunosswitch
+      startup-config: configs/spine1.set
+    leaf1:
+      kind: juniper_vjunosswitch
+      startup-config: configs/leaf1.set
+    leaf2:
+      kind: juniper_vjunosswitch
+      startup-config: configs/leaf2.set
+    host1:
+      kind: linux
+      image: alpine:latest
+    host2:
+      kind: linux
+      image: alpine:latest
+  links:
+    - endpoints: ["spine1:eth1", "leaf1:eth1"]
+    - endpoints: ["spine1:eth2", "leaf2:eth1"]
+    - endpoints: ["leaf1:eth2", "host1:eth1"]
+    - endpoints: ["leaf2:eth2", "host2:eth1"]

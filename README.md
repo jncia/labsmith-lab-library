@@ -1,36 +1,23 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LabSmith Lab Library
 
-## Getting Started
+Public draft website for a searchable library of LabSmith-generated network lab exercises.
 
-First, run the development server:
+The site is a Next.js App Router app deployed on Vercel. Lab examples are kept as repo files under `content/labs/` so engineers can inspect, clone, and run the same topology and configuration artifacts shown in the web UI.
+
+## Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Content Model
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Each lab should include:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `lab.yaml` for catalog metadata
+- `topology.clab.yml` for the primary Containerlab topology
+- `configs/*.set` for per-device startup configuration
+- `guide.mdx` for the guided exercise narrative
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The current site renders the first draft from `src/lib/labs.ts`; the next iteration should load `content/labs/**/lab.yaml` directly at build time and generate downloadable bundles.
