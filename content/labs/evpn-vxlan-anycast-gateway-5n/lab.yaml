@@ -1,16 +1,98 @@
 id: evpn-vxlan-anycast-gateway-5n
 title: EVPN/VXLAN Anycast Gateway Fabric
+summary: Five-node fabric exercise showing an EVPN route-reflector spine, two leaf gateways, two
+  hosts, symmetric IRB, and gateway MAC consistency checks.
 status: candidate
-topology_family: evpn-irb-5n
+difficulty: Advanced
+vendor: Juniper vJunos-switch
 node_count: 5
-primary_format: containerlab
+topology_family: evpn-irb-5n
 technologies:
   - EVPN
   - VXLAN
   - Anycast Gateway
   - MP-BGP
   - IRB
+scenarios:
+  - Type-2 MAC/IP advertisement
+  - Anycast default gateway
+  - Leaf-to-leaf host mobility
+  - Missing VNI repair
+devices:
+  - id: spine1
+    role: EVPN route reflector
+  - id: leaf1
+    role: VXLAN leaf gateway
+  - id: leaf2
+    role: VXLAN leaf gateway
 verification:
   last_run: pending
   mode: candidate spec
   assertions: planned EVPN assertions
+  notes:
+    - Included to exercise the catalog design for EVPN/VXLAN discovery.
+    - Needs LabSmith live verification before being marked verified.
+diagram:
+  nodes:
+    - id: host1
+      role: host
+      x: 120
+      y: 250
+    - id: leaf1
+      role: leaf
+      x: 240
+      y: 175
+    - id: spine1
+      role: RR
+      x: 360
+      y: 90
+    - id: leaf2
+      role: leaf
+      x: 480
+      y: 175
+    - id: host2
+      role: host
+      x: 600
+      y: 250
+  links:
+    - from: host1
+      to: leaf1
+      label: VLAN 100
+    - from: leaf1
+      to: spine1
+      label: EVPN
+    - from: spine1
+      to: leaf2
+      label: EVPN
+    - from: leaf2
+      to: host2
+      label: VLAN 100
+tasks:
+  - id: evpn-vxlan-anycast-gateway-5n-task-01
+    title: Verify EVPN control-plane reachability
+    why: Leafs should exchange MAC/IP routes through the spine route reflector before any host test
+      matters.
+    commands:
+      - show bgp summary
+      - show evpn database
+    expected: Both leafs have an established EVPN session and learn remote MAC/IP entries.
+  - id: evpn-vxlan-anycast-gateway-5n-task-02
+    title: Remove the VNI from one leaf
+    why: A missing VNI is a common fabric-side error that leaves BGP healthy while data-plane learning
+      fails.
+    commands:
+      - delete vlans BLUE vxlan vni 10100
+      - commit check
+      - commit
+      - show evpn database extensive
+    expected: Remote BLUE entries stop resolving through the affected leaf.
+  - id: evpn-vxlan-anycast-gateway-5n-task-03
+    title: Restore the VNI and prove host reachability
+    why: The repair demonstrates the relationship between VLAN, VNI, and EVPN route install.
+    commands:
+      - set vlans BLUE vxlan vni 10100
+      - commit
+      - show evpn database
+      - ping 10.100.0.20 count 3
+    expected: The VNI returns and host-to-host reachability is restored.
+notes: []
