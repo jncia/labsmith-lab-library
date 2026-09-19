@@ -251,6 +251,11 @@ This packet is derived mechanically from LabSmith's live-verified material for t
   only to carry the layer 2 circuit — the two `interfaces ge-0/0/2` statements and the
   `protocols l2circuit` statement — become stage 2's solution. Concatenating the three files
   reproduces the archetype baseline exactly.
+- **The second form of the start state.** `configs/*.cfg` is the same start state hierarchically,
+  and it is what the topology hands each router at boot. Every one of those files was read back
+  off a live router that had just been given the matching `.set` statements, by
+  `labpack export-start-configs`, for exactly the hierarchy the `.set` file owns. No file was
+  converted by hand, and no statement was written twice.
 - **Why stage 2 includes the interface statements.** "Restore the layer 2 circuit statements"
   could be read as the single `protocols l2circuit` line. It is taken here as every `pe1`
   statement whose only purpose is the circuit, which adds the CCC access-port encapsulation and

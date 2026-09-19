@@ -37,6 +37,12 @@ credentials. Do not start work until `p1` shows its provider sessions up — the
 checks in `checks/baseline.yaml` describe exactly that state, and they are the definition of "the
 lab is ready".
 
+The start state is in `configs/` twice, and both files say the same thing. `configs/<node>.cfg`
+is what the topology hands each router at boot, in the hierarchical format `show configuration`
+prints; leave those files alone. `configs/<node>.set` is the same start state written as `set`
+statements, so you can read what each router starts with, and paste any part of it back, without
+deploying anything.
+
 ## Topology
 
 ```text
@@ -180,4 +186,5 @@ anything.
 containerlab destroy -t topology.clab.yml --cleanup
 ```
 
-Redeploying gives you the start state again, because the start state is what `configs/` contains.
+Redeploying gives you the start state again, because the start state is what each router is
+handed at boot from `configs/<node>.cfg`.

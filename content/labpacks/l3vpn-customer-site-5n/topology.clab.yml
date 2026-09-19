@@ -6,19 +6,19 @@ topology:
   nodes:
     pe1:
       kind: juniper_vjunosrouter
-      startup-config: configs/pe1.set
+      startup-config: configs/pe1.cfg
     pe2:
       kind: juniper_vjunosrouter
-      startup-config: configs/pe2.set
+      startup-config: configs/pe2.cfg
     p1:
       kind: juniper_vjunosrouter
-      startup-config: configs/p1.set
+      startup-config: configs/p1.cfg
     ce1:
       kind: juniper_vjunosrouter
-      startup-config: configs/ce1.set
+      startup-config: configs/ce1.cfg
     ce2:
       kind: juniper_vjunosrouter
-      startup-config: configs/ce2.set
+      startup-config: configs/ce2.cfg
   links:
     - endpoints: ["ce1:eth1", "pe1:eth1"]
     - endpoints: ["pe1:eth2", "p1:eth1"]
