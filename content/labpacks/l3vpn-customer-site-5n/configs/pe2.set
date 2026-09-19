@@ -1,0 +1,27 @@
+set system host-name pe2
+set interfaces ge-0/0/0 unit 0 family inet address 172.16.12.1/30
+set interfaces ge-0/0/1 unit 0 family inet address 10.0.23.1/31
+set interfaces ge-0/0/1 unit 0 family mpls
+set interfaces ge-0/0/2 encapsulation ethernet-ccc
+set interfaces ge-0/0/2 unit 0 family ccc
+set interfaces lo0 unit 0 family inet address 10.255.0.3/32
+set routing-instances CUST-A instance-type vrf
+set routing-instances CUST-A routing-options autonomous-system 65000
+set routing-instances CUST-A protocols bgp group CE type external
+set routing-instances CUST-A protocols bgp group CE neighbor 172.16.12.2 peer-as 65100
+set routing-instances CUST-A protocols bgp group CE neighbor 172.16.12.2 as-override
+set routing-instances CUST-A interface ge-0/0/0.0
+set routing-instances CUST-A route-distinguisher 65000:102
+set routing-instances CUST-A vrf-target target:65000:100
+set routing-options router-id 10.255.0.3
+set routing-options autonomous-system 65000
+set protocols bgp group IBGP type internal
+set protocols bgp group IBGP local-address 10.255.0.3
+set protocols bgp group IBGP family inet-vpn unicast
+set protocols bgp group IBGP neighbor 10.255.0.2 peer-as 65000
+set protocols l2circuit neighbor 10.255.0.1 interface ge-0/0/2.0 virtual-circuit-id 200
+set protocols ldp interface ge-0/0/1.0
+set protocols ldp interface lo0.0
+set protocols mpls interface ge-0/0/1.0
+set protocols ospf area 0.0.0.0 interface lo0.0 passive
+set protocols ospf area 0.0.0.0 interface ge-0/0/1.0 interface-type p2p

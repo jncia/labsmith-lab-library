@@ -1,0 +1,8 @@
+set routing-instances CUST-A instance-type vrf
+set routing-instances CUST-A routing-options autonomous-system 65000
+set routing-instances CUST-A protocols bgp group CE type external
+set routing-instances CUST-A protocols bgp group CE neighbor 172.16.11.2 peer-as 65100
+set routing-instances CUST-A protocols bgp group CE neighbor 172.16.11.2 as-override
+set routing-instances CUST-A interface ge-0/0/0.0
+set routing-instances CUST-A route-distinguisher 65000:101
+set routing-instances CUST-A vrf-target target:65000:100

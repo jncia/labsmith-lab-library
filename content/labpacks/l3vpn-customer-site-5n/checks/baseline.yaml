@@ -1,0 +1,28 @@
+schemaVersion: 0
+checks:
+  - id: p1-pe1-bgp-established
+    description: The route reflector p1 has an established VPN-capable BGP session to pe1.
+    device: p1
+    type: bgp-neighbor
+    peer: 10.255.0.1
+    state: Established
+    family: bgp.l3vpn.0
+  - id: p1-pe2-bgp-established
+    description: The route reflector p1 has an established VPN-capable BGP session to pe2.
+    device: p1
+    type: bgp-neighbor
+    peer: 10.255.0.3
+    state: Established
+    family: bgp.l3vpn.0
+  - id: p1-pe1-ldp-operational
+    description: p1 has an operational LDP session to the pe1 loopback.
+    device: p1
+    type: ldp-session
+    peer: 10.255.0.1
+    state: Operational
+  - id: p1-pe2-ldp-operational
+    description: p1 has an operational LDP session to the pe2 loopback.
+    device: p1
+    type: ldp-session
+    peer: 10.255.0.3
+    state: Operational

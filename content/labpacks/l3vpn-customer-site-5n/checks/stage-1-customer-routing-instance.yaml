@@ -1,0 +1,13 @@
+schemaVersion: 0
+checks:
+  - id: pe1-remote-vrf-route
+    description: >-
+      The remote customer site loopback is present in the CUST-A table on pe1, learned by BGP.
+    hint: >-
+      A VPN route only lands in a local table when the local instance imports the route target the
+      far end attached to it. Check both ends of that agreement, not just the session state.
+    device: pe1
+    type: vpn-route
+    table: CUST-A.inet.0
+    prefix: 198.51.100.1/32
+    protocol: BGP

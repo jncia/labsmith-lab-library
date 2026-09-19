@@ -1,0 +1,25 @@
+set system host-name ce1
+set interfaces ge-0/0/0 unit 0 family inet address 172.16.11.2/30
+set interfaces ge-0/0/1 unit 0 family inet address 172.16.12.2/30
+set interfaces lo0 unit 1 family inet address 192.0.2.1/32
+set interfaces lo0 unit 2 family inet address 198.51.100.1/32
+set policy-options policy-statement EXPORT-SITE1 term LOOP from route-filter 192.0.2.1/32 exact
+set policy-options policy-statement EXPORT-SITE1 term LOOP then accept
+set policy-options policy-statement EXPORT-SITE1 term REJECT then reject
+set policy-options policy-statement EXPORT-SITE2 term LOOP from route-filter 198.51.100.1/32 exact
+set policy-options policy-statement EXPORT-SITE2 term LOOP then accept
+set policy-options policy-statement EXPORT-SITE2 term REJECT then reject
+set routing-instances SITE1 instance-type virtual-router
+set routing-instances SITE1 routing-options autonomous-system 65100
+set routing-instances SITE1 protocols bgp group PE type external
+set routing-instances SITE1 protocols bgp group PE export EXPORT-SITE1
+set routing-instances SITE1 protocols bgp group PE neighbor 172.16.11.1 peer-as 65000
+set routing-instances SITE1 interface ge-0/0/0.0
+set routing-instances SITE1 interface lo0.1
+set routing-instances SITE2 instance-type virtual-router
+set routing-instances SITE2 routing-options autonomous-system 65100
+set routing-instances SITE2 protocols bgp group PE type external
+set routing-instances SITE2 protocols bgp group PE export EXPORT-SITE2
+set routing-instances SITE2 protocols bgp group PE neighbor 172.16.12.1 peer-as 65000
+set routing-instances SITE2 interface ge-0/0/1.0
+set routing-instances SITE2 interface lo0.2

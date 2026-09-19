@@ -1,0 +1,16 @@
+set system host-name pe1
+set interfaces ge-0/0/0 unit 0 family inet address 172.16.11.1/30
+set interfaces ge-0/0/1 unit 0 family inet address 10.0.12.0/31
+set interfaces ge-0/0/1 unit 0 family mpls
+set interfaces lo0 unit 0 family inet address 10.255.0.1/32
+set routing-options router-id 10.255.0.1
+set routing-options autonomous-system 65000
+set protocols bgp group IBGP type internal
+set protocols bgp group IBGP local-address 10.255.0.1
+set protocols bgp group IBGP family inet-vpn unicast
+set protocols bgp group IBGP neighbor 10.255.0.2 peer-as 65000
+set protocols ldp interface ge-0/0/1.0
+set protocols ldp interface lo0.0
+set protocols mpls interface ge-0/0/1.0
+set protocols ospf area 0.0.0.0 interface lo0.0 passive
+set protocols ospf area 0.0.0.0 interface ge-0/0/1.0 interface-type p2p
