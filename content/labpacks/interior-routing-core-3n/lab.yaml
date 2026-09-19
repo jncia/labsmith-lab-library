@@ -1,0 +1,104 @@
+schemaVersion: 0
+id: interior-routing-core-3n
+title: Bring a Three-Router Core onto a Single Link-State Area
+summary: Three routers in a line, r1 - r2 - r3, start with addressed links and loopbacks
+  but no routing protocol. You bring them into a single OSPF area 0.0.0.0, first so
+  the far link subnets are learned, then so every loopback is learned and the two
+  ends ping each other across r2.
+labType: build
+level: Intermediate
+certifications:
+- Interior routing, seed input for the authoring proof
+topics:
+- Interior routing
+- Link-state protocol
+- Loopback reachability
+estimatedMinutes: 35
+nodes:
+- id: r1
+  kind: juniper_vjunosrouter
+  role: one end of the line
+- id: r2
+  kind: juniper_vjunosrouter
+  role: the middle router the path crosses
+- id: r3
+  kind: juniper_vjunosrouter
+  role: the other end of the line
+requirements:
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  minimumFreeMemoryGb: 18
+  minimumCores: 12
+stages:
+- id: s1
+  title: Bring up the routing area
+  goal: Make r1, r2 and r3 exchange routing information over their point-to-point
+    links, all in one OSPF area, 0.0.0.0. Only the link interfaces take part at this
+    stage. Each end router has to learn the far link subnet from the protocol, not
+    from a static entry. Do not disturb the link interfaces or their addresses.
+  doneWhen:
+  - r1 has a route to 10.0.23.0/30 whose protocol is OSPF, with r2 as the next hop.
+  - r3 has a route to 10.0.12.0/30 whose protocol is OSPF, with r2 as the next hop.
+  - The link interfaces on all three routers are still up.
+- id: s2
+  title: Prove end-to-end reachability
+  goal: Make every router's loopback part of the same routing area so that the loopbacks
+    are learned from the protocol, and the two ends of the line can reach each other's
+    loopback across r2. Keep the single area from stage 1 and do not add static routes.
+  doneWhen:
+  - r1 has OSPF routes to 10.255.0.2/32 and to 10.255.0.3/32.
+  - r3 has an OSPF route to 10.255.0.1/32.
+  - r1 can ping 10.255.0.3 and r3 can ping 10.255.0.1, with no packet loss.
+  - The link interfaces are still up.
+qualification:
+- contractVersion: labsmith.learner-labpack-qualification.v0
+  receiptId: interior-routing-core-3n-2026-09-19-a0a89a1c3f5c
+  labId: interior-routing-core-3n
+  packetContentHash: a0a89a1c3f5c18b6b17dbd0738ee5cd77d947e00c8386ceab8147146bad1caad
+  date: '2026-09-19'
+  generatedAt: '2026-09-19T17:36:05+00:00'
+  status: passed
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  toolVersions:
+    containerlab: 0.77.0
+    imageDigest: sha256:b343ea11ab9bfc9878632ba52cb910f5b147d018dc785bae337da9f7163da24d
+    labsmith: f2915438654ba9404f1f9c15602dbcc689b3bbf9
+  cleanup:
+    topologyName: labpack-interior-routing-core-3n-a0919uk0q
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-09-19T17:31:49+00:00'
+    clean: true
+  learnerCleanup:
+    topologyName: labpack-interior-routing-core-3n-a0919uk0ql
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-09-19T17:36:05+00:00'
+    clean: true
+  totalSeconds: 709.94
+  issues: []
+  message: null
+  runs:
+  - name: start-state
+    status: passed
+    elapsedSeconds: 294.46
+  - name: reference-solution
+    status: passed
+    elapsedSeconds: 96.353
+  - name: reset
+    status: passed
+    elapsedSeconds: 57.319
+  - name: learner-start
+    status: passed
+    elapsedSeconds: 246.379

@@ -1,0 +1,18 @@
+name: interior-routing-core-3n
+topology:
+  kinds:
+    juniper_vjunosrouter:
+      image: ${VJUNOS_ROUTER_IMAGE:=vrnetlab/juniper_vjunos-router:26.2R1.7}
+  nodes:
+    r1:
+      kind: juniper_vjunosrouter
+      startup-config: configs/r1.cfg
+    r2:
+      kind: juniper_vjunosrouter
+      startup-config: configs/r2.cfg
+    r3:
+      kind: juniper_vjunosrouter
+      startup-config: configs/r3.cfg
+  links:
+    - endpoints: ["r1:eth1", "r2:eth1"]
+    - endpoints: ["r2:eth2", "r3:eth1"]
