@@ -7,7 +7,7 @@ same topology and the same finished configuration (run `live-sp-vpn-wrong-rt-var
 2026-07-07T23:16:28+00:00, Junos 26.2R1.7, containerlab 0.77.0). Volatile fields —
 route ages, timestamps, counters and MPLS label values — are masked as `<age>`, `<timestamp>`,
 `<counter>` and `<label>`, so your own output will differ in exactly those places and nowhere
-else. Output marked **PLACEHOLDER** has not been captured on a live device yet.
+else. All output below was captured from the live lab during qualification.
 
 ---
 
@@ -49,7 +49,7 @@ CUST-A.inet.0: 5 destinations, 5 routes (5 active, 0 holddown, 0 hidden)
 ```
 
 `ce1` — the customer's own view, that the site reached through `pe1` has the other site's prefix
-and can reach it (**PLACEHOLDER**):
+and can reach it (**live-verified**):
 
 ```text
 show route table SITE1.inet.0 198.51.100.1/32 exact
@@ -57,12 +57,26 @@ ping routing-instance SITE1 198.51.100.1 count 3
 ```
 
 ```text
-PLACEHOLDER — not yet captured on a live device. These are the commands of this stage's packaged
-checks, so `labsmith labpack qualify` captures their output during its reference-solution run and
-keeps it in the receipt artifact it writes beside the packet. Copy it in here from that artifact.
+ce1> show route table SITE1.inet.0 198.51.100.1/32 exact
+SITE1.inet.0: 5 destinations, 5 routes (5 active, 0 holddown, 0 hidden)
++ = Active Route, - = Last Active, * = Both
+
+198.51.100.1/32    *[BGP/170] 00:00:31, localpref 100
+                      AS path: 65000 65000 I, validation-state: unverified
+                    >  to 172.16.11.1 via ge-0/0/0.0
+
+ce1> ping routing-instance SITE1 198.51.100.1 count 3
+PING 198.51.100.1 (198.51.100.1): 56 data bytes
+64 bytes from 198.51.100.1: icmp_seq=0 ttl=61 time=3.889 ms
+64 bytes from 198.51.100.1: icmp_seq=1 ttl=61 time=3.800 ms
+64 bytes from 198.51.100.1: icmp_seq=2 ttl=61 time=4.782 ms
+
+--- 198.51.100.1 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max/stddev = 3.800/4.157/4.782/0.443 ms
 ```
 
-`p1` — the core state you were required not to disturb (**PLACEHOLDER**):
+`p1` — the core state you were required not to disturb (**live-verified**):
 
 ```text
 show bgp summary
@@ -70,9 +84,23 @@ show ldp session
 ```
 
 ```text
-PLACEHOLDER — not yet captured on a live device. These are the baseline checks' commands.
-Qualification proves they pass before, during and after the reference solution, but it captures
-display output only for a stage's own checks, so this block is filled in from a live lab by hand.
+p1> show bgp summary
+Threading mode: BGP I/O
+Default eBGP mode: advertise - accept, receive - accept
+Groups: 1 Peers: 2 Down peers: 0
+Table          Tot Paths  Act Paths Suppressed    History Damp State    Pending
+bgp.l3vpn.0
+                       4          4          0          0          0          0
+Peer                     AS      InPkt     OutPkt    OutQ   Flaps Last Up/Dwn State|#Active/Received/Accepted/Damped...
+10.255.0.1            65000         10          9       0       0        1:38 Establ
+  bgp.l3vpn.0: 2/2/2/0
+10.255.0.3            65000          7          5       0       0        1:09 Establ
+  bgp.l3vpn.0: 2/2/2/0
+
+p1> show ldp session
+  Address                           State       Connection  Hold time  Adv. Mode
+10.255.0.1                          Operational Open          29         DU
+10.255.0.3                          Operational Open          29         DU
 ```
 
 ### Why it works
@@ -186,16 +214,41 @@ Neighbor: 10.255.0.3
       Flow Label Transmit: No, Flow Label Receive: No
 ```
 
-`pe2` — the far end's matching view (**PLACEHOLDER**):
+`pe2` — the far end's matching view (**live-verified**):
 
 ```text
 show l2circuit connections
 ```
 
 ```text
-PLACEHOLDER — not yet captured on a live device. These are the commands of this stage's packaged
-checks, so `labsmith labpack qualify` captures their output during its reference-solution run and
-keeps it in the receipt artifact it writes beside the packet. Copy it in here from that artifact.
+pe2> show l2circuit connections
+Layer-2 Circuit Connections:
+
+Legend for connection status (St)
+EI -- encapsulation invalid      NP -- interface h/w not present
+MM -- mtu mismatch               Dn -- down
+EM -- encapsulation mismatch     VC-Dn -- Virtual circuit Down
+CM -- control-word mismatch      Up -- operational
+VM -- vlan id mismatch		 CF -- Call admission control failure
+OL -- no outgoing label          IB -- TDM incompatible bitrate
+NC -- intf encaps not CCC/TCC    TM -- TDM misconfiguration
+BK -- Backup Connection          ST -- Standby Connection
+CB -- rcvd cell-bundle size bad  SP -- Static Pseudowire
+LD -- local site signaled down   RS -- remote site standby
+RD -- remote site signaled down  HS -- Hot-standby Connection
+XX -- unknown
+
+Legend for interface status
+Up -- operational
+Dn -- down
+Neighbor: 10.255.0.1
+    Interface                 Type  St     Time last up          # Up trans
+    ge-0/0/2.0(vc 200)        rmt   Up     Sep 19 05:05:53 2026           1
+      Remote PE: 10.255.0.1, Negotiated control-word: Yes (Null)
+      Incoming label: 299776, Outgoing label: 299824
+      Negotiated PW status TLV: No
+      Local interface: ge-0/0/2.0, Status: Up, Encapsulation: ETHERNET
+      Flow Label Transmit: No, Flow Label Receive: No
 ```
 
 ### Why it works
