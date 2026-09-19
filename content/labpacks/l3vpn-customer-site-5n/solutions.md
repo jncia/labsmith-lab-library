@@ -57,8 +57,9 @@ ping routing-instance SITE1 198.51.100.1 count 3
 ```
 
 ```text
-PLACEHOLDER — not yet captured. `labsmith labpack qualify` fills this in from the
-reference-solution run and records the capture in this packet's qualification receipt.
+PLACEHOLDER — not yet captured on a live device. These are the commands of this stage's packaged
+checks, so `labsmith labpack qualify` captures their output during its reference-solution run and
+keeps it in the receipt artifact it writes beside the packet. Copy it in here from that artifact.
 ```
 
 `p1` — the core state you were required not to disturb (**PLACEHOLDER**):
@@ -69,8 +70,9 @@ show ldp session
 ```
 
 ```text
-PLACEHOLDER — not yet captured. `labsmith labpack qualify` fills this in from the
-reference-solution run and records the capture in this packet's qualification receipt.
+PLACEHOLDER — not yet captured on a live device. These are the baseline checks' commands.
+Qualification proves they pass before, during and after the reference solution, but it captures
+display output only for a stage's own checks, so this block is filled in from a live lab by hand.
 ```
 
 ### Why it works
@@ -191,8 +193,9 @@ show l2circuit connections
 ```
 
 ```text
-PLACEHOLDER — not yet captured. `labsmith labpack qualify` fills this in from the
-reference-solution run and records the capture in this packet's qualification receipt.
+PLACEHOLDER — not yet captured on a live device. These are the commands of this stage's packaged
+checks, so `labsmith labpack qualify` captures their output during its reference-solution run and
+keeps it in the receipt artifact it writes beside the packet. Copy it in here from that artifact.
 ```
 
 ### Why it works
@@ -254,14 +257,18 @@ This packet is derived mechanically from LabSmith's live-verified material for t
   family. That keeps the start state free of an orphaned circuit-encapsulated port with no
   circuit, and it makes the stage teach the whole mechanism. The finished state is identical
   either way.
-- **Checks.** Stage 1's check is the golden package's `pe1-remote-vrf-route` assertion; stage 2's
-  is its `pe1-l2circuit-up` assertion; both are copied field for field. The golden's third
+- **Checks.** Stage 1's first check is the golden package's `pe1-remote-vrf-route` assertion;
+  stage 2's first is its `pe1-l2circuit-up` assertion; both are copied field for field. The rest
+  are archetype baseline assertions, also copied field for field, that cover the remaining
+  "you're done when" statements in the workbook: `ce1-site1-remote-loopback` and
+  `ce1-site1-ping-remote-loopback` for stage 1 (the customer learns the remote site and can reach
+  it), and `pe2-l2circuit-up` for stage 2 (both ends agree). The golden's third
   assertion is the negated variant used for its broken-route-target demonstration and does not
   apply to a build lab. `checks/baseline.yaml` is the four archetype baseline assertions that
   still hold once `pe1`'s customer configuration is removed — the route reflector's two VPN
   sessions and its two LDP sessions. The archetype's other eight baseline assertions all depend on
   `pe1`'s customer configuration, so they fail in the start state by construction and cannot be
-  baseline checks here.
+  baseline checks here; five of them are the stage checks above.
 - **Captured output.** Stage 1's verification output is the golden's `step-01-good-route` event.
   Stage 2's is the layer 2 circuit portion of its `step-03-restore-route-target` event, which is
   the same `show l2circuit connections` capture against the same finished configuration.
@@ -273,11 +280,11 @@ This packet is derived mechanically from LabSmith's live-verified material for t
   working core, and it is how the work would really be done, so the workbook says so plainly
   rather than pretending otherwise.
 - Both stages remove a whole configuration subtree from the start state
-  (`routing-instances CUST-A`, `protocols l2circuit`, `interfaces ge-0/0/2`). An ownership-scoped
-  reset derives the prefixes it is allowed to delete from the start configuration, so it has no
-  prefix covering statements the solution adds under a subtree the start state does not mention.
-  Qualification run 3 needs a reset that also deletes the drift a start-state comparison reports
-  as foreign, or it will not restore the start state for this packet.
+  (`routing-instances CUST-A`, `protocols l2circuit`, `interfaces ge-0/0/2`), so the reference
+  solution adds sections the start configuration never mentions. Qualification run 3 restores the
+  start state by deleting every such section, leaving alone only what the node carried before the
+  packet configured it; on `pe1` that is exactly those three deletions. That reset has been proved
+  offline only, so the first live qualification of this packet is also its first live proof.
 - No ping check exists for the layer 2 circuit. `ce2`'s two interfaces are the two addresses of one
   `/31` in one routing instance, so it has a local route to the far address and a ping from `ce2`
   would not cross the pseudowire. The archetype has no such assertion either; the circuit is proven
