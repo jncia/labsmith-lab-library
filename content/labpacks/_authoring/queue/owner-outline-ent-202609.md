@@ -59,7 +59,7 @@ Note: Approved by the integrator for the two-brief proof of the authoring loop, 
 Outcome: Choose between static, aggregate and generated routes for a given need, and confirm each one in the route table with the right protocol and next hop.
 Why: This is the foundation of the Protocol Independent Routing chapter and its lab section. All three route types can be seen with route-exists, so it is fully observable. The set runs from simple to conditional.
 
-    python -m labsmith.learner_labpack.authoring approve --queue /Users/bjacobson/juniper_lessons/.worktrees/lab-library-labpack-v0/content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve static-aggregate-generated-routes-3n
+    python -m labsmith.learner_labpack.authoring approve --queue content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve static-aggregate-generated-routes-3n
 
 ### ecmp-load-balancing-static-2n · build · 2 nodes · 3 stages · C03-C03V04
 
@@ -67,7 +67,7 @@ Status: proposed, priority 100
 Outcome: Get a route with two next hops into the forwarding table as a load-shared entry, and show what happens when one path fails.
 Why: Covers the ECMP part of load balancing with two nodes. The route table and forwarding table are both observable. How flows are hashed (per-flow versus per-packet) cannot be observed with the platform's checks, so the brief stays on how the forwarding entry is built.
 
-    python -m labsmith.learner_labpack.authoring approve --queue /Users/bjacobson/juniper_lessons/.worktrees/lab-library-labpack-v0/content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve ecmp-load-balancing-static-2n
+    python -m labsmith.learner_labpack.authoring approve --queue content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve ecmp-load-balancing-static-2n
 
 ### routing-instance-rib-group-3n · build · 3 nodes · 3 stages · C03-C03V03
 
@@ -75,7 +75,7 @@ Status: proposed, priority 100
 Outcome: Isolate an interface in a virtual-router instance and use a RIB group to copy only the needed routes between it and the main table.
 Why: Routing instances and RIB groups are the least visible parts of the PIR chapter. The named-table route check and ping inside an instance make them observable. Three nodes are the fewest that give a separate customer and a shared service.
 
-    python -m labsmith.learner_labpack.authoring approve --queue /Users/bjacobson/juniper_lessons/.worktrees/lab-library-labpack-v0/content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve routing-instance-rib-group-3n
+    python -m labsmith.learner_labpack.authoring approve --queue content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve routing-instance-rib-group-3n
 
 ### gre-tunnel-over-transit-3n · build · 3 nodes · 3 stages · C07-C07V02
 
@@ -83,7 +83,7 @@ Status: proposed, priority 100
 Outcome: Build a working GRE tunnel across a transit router, route inner subnets over it and check both the tunnel and the underlay.
 Why: GRE is the hands-on part of the tunnels chapter. The tunnel interface, the routes over it and the absence of routes on the transit router can all be seen. It assumes the lab host's virtual router supports tunnel interfaces once tunnel services are set in the start state, which should be confirmed before building. IP-IP would be a variation on this and is left for a later batch.
 
-    python -m labsmith.learner_labpack.authoring approve --queue /Users/bjacobson/juniper_lessons/.worktrees/lab-library-labpack-v0/content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve gre-tunnel-over-transit-3n
+    python -m labsmith.learner_labpack.authoring approve --queue content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve gre-tunnel-over-transit-3n
 
 ### ospf-multi-area-abr-3n · build · 3 nodes · 3 stages · C04-C04V01, C04-C04V04
 
@@ -92,7 +92,7 @@ Note: Approved by the integrator for the two-brief proof of the authoring loop, 
 Outcome: Configure a multi-area OSPF network with an area border router and confirm inter-area routes in the routing tables.
 Why: This is the multi-area lab from the OSPF chapter. The existing lab is a single-area build, so this one practises area borders and inter-area routing instead. Three nodes are the smallest layout with a border router.
 
-    python -m labsmith.learner_labpack.authoring approve --queue /Users/bjacobson/juniper_lessons/.worktrees/lab-library-labpack-v0/content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve ospf-multi-area-abr-3n
+    python -m labsmith.learner_labpack.authoring approve --queue content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve ospf-multi-area-abr-3n
 
 ### ospf-nssa-policy-default-3n · build · 3 nodes · 3 stages · C04-C04V05
 
@@ -100,7 +100,7 @@ Status: proposed, priority 100
 Outcome: Configure an NSSA, originate a default into it and export an external route with a policy that tags it.
 Why: Covers the policy and additional options lab in the OSPF chapter. It follows the multi-area brief and builds on that same shape. The tag on the route is not a separate check type, so the outcome is observed through the route entry, which the build should confirm can show it.
 
-    python -m labsmith.learner_labpack.authoring approve --queue /Users/bjacobson/juniper_lessons/.worktrees/lab-library-labpack-v0/content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve ospf-nssa-policy-default-3n
+    python -m labsmith.learner_labpack.authoring approve --queue content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve ospf-nssa-policy-default-3n
 
 ### isis-multi-level-3n · build · 3 nodes · 3 stages · C05-C04V04
 
@@ -108,7 +108,7 @@ Status: proposed, priority 100
 Outcome: Configure IS-IS levels and areas so that an L1-only router reaches the backbone through an L1/L2 router.
 Why: Multi-level IS-IS is the main hands-on skill of the IS-IS chapter. The results appear in routing tables, so route-exists and ping observe them. Adjacency internals such as DIS election and PDU contents cannot be observed with the platform's checks.
 
-    python -m labsmith.learner_labpack.authoring approve --queue /Users/bjacobson/juniper_lessons/.worktrees/lab-library-labpack-v0/content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve isis-multi-level-3n
+    python -m labsmith.learner_labpack.authoring approve --queue content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve isis-multi-level-3n
 
 ### isis-policy-leaking-3n · build · 3 nodes · 3 stages · C05-C04V05
 
@@ -116,7 +116,7 @@ Status: proposed, priority 100
 Outcome: Use IS-IS routing policy to leak a chosen level 2 route into level 1 and to advertise an external route, and show the effect on the route tables.
 Why: Follows the multi-level brief and practises a different skill, IS-IS policy. The presence and absence of routes on each router shows what the policy does.
 
-    python -m labsmith.learner_labpack.authoring approve --queue /Users/bjacobson/juniper_lessons/.worktrees/lab-library-labpack-v0/content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve isis-policy-leaking-3n
+    python -m labsmith.learner_labpack.authoring approve --queue content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve isis-policy-leaking-3n
 
 ### bgp-ibgp-ebgp-next-hop-3n · build · 3 nodes · 3 stages · C06-C06V04, C06-C06V01
 
@@ -124,7 +124,7 @@ Status: proposed, priority 100
 Outcome: Explain and fix the next-hop problem when EBGP routes are passed to IBGP peers, and confirm the session states and routes.
 Why: A candidate should be able to diagnose and fix this common BGP problem. Session state and route entries can be seen with the platform's checks. The five BGP message types and the state machine cannot be observed, so they are not covered.
 
-    python -m labsmith.learner_labpack.authoring approve --queue /Users/bjacobson/juniper_lessons/.worktrees/lab-library-labpack-v0/content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve bgp-ibgp-ebgp-next-hop-3n
+    python -m labsmith.learner_labpack.authoring approve --queue content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve bgp-ibgp-ebgp-next-hop-3n
 
 ### bgp-dual-homed-policy-3n · build · 3 nodes · 3 stages · C06-C06V02, C06-C06V05, C06-C06V06
 
@@ -132,7 +132,7 @@ Status: proposed, priority 100
 Outcome: Change BGP path selection with an import policy, limit what is advertised with an export policy, and prove both in the route tables.
 Why: This is the policy lab that closes the BGP chapter. The choice of next hop and the presence or absence of routes on each router show the effect. Troubleshooting with traceroute and logs is not covered because the platform cannot observe it.
 
-    python -m labsmith.learner_labpack.authoring approve --queue /Users/bjacobson/juniper_lessons/.worktrees/lab-library-labpack-v0/content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve bgp-dual-homed-policy-3n
+    python -m labsmith.learner_labpack.authoring approve --queue content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve bgp-dual-homed-policy-3n
 
 ### lag-two-links-2n · build · 2 nodes · 3 stages · C08-C08V01
 
@@ -140,4 +140,4 @@ Status: proposed, priority 100
 Outcome: Build a link aggregation group over two member links, address it and show that it stays up when a member is lost.
 Why: Link aggregation is the one high-availability topic that a router-only platform can build and check with interface and ping checks. Whether traffic is spread over the members is not observable, so the brief stays with bundle state and survival of a member failure. Redundant trunk groups need switching and are skipped.
 
-    python -m labsmith.learner_labpack.authoring approve --queue /Users/bjacobson/juniper_lessons/.worktrees/lab-library-labpack-v0/content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve lag-two-links-2n
+    python -m labsmith.learner_labpack.authoring approve --queue content/labpacks/_authoring/queue/owner-outline-ent-202609.yaml --approve lag-two-links-2n
