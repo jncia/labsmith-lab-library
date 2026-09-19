@@ -1,0 +1,3 @@
+set system host-name branch
+set interfaces ge-0/0/0 unit 0 family inet address 10.0.12.1/30
+set interfaces lo0 unit 0 family inet address 192.168.255.1/32

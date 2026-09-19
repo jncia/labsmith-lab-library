@@ -1,0 +1,126 @@
+{
+  "solutions": {
+    "intro": "Stage 1 and stage 3 go on branch. Stage 2 goes on hq. Each stage builds on the one before, and stage 3 depends directly on the routes from stage 1. In each case load the reference configuration in configuration mode and commit, then run the checks shown. The captures were taken after each stage was applied, so each one shows the state that stage should leave you in.",
+    "stages": [
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Using the wrong next hop, such as branch's own address or the hq loopback",
+            "recognise": "The route is missing from the branch route table, or it shows a next hop other than 10.0.12.2. Compare it with the design values.",
+            "symptom": "Pings fail with no route to host or time out."
+          },
+          {
+            "mistake": "Configuring only one of the two subnets",
+            "recognise": "Only one of the two prefixes is listed as Static on branch. Query both exact prefixes.",
+            "symptom": "One ping works and the other fails."
+          }
+        ],
+        "configurationIntro": "This goes on branch only. Load it in configuration mode and commit. hq needs no change, because it already has both subnets as connected routes on its loopback and the shared link as a connected route.",
+        "id": "s1",
+        "verification": [
+          {
+            "checkId": "s1-r1",
+            "lookFor": "Look at the protocol and the next hop on the 172.16.0.0/24 entry. It is Static, active, with next hop 10.0.12.2 out of ge-0/0/0.0. That is the hq address on the shared link, which is what the design calls for."
+          },
+          {
+            "checkId": "s1-r2",
+            "lookFor": "Same check for 172.16.1.0/24. It must also show Static with next hop 10.0.12.2. Both prefixes have to be there. One alone would give you half a result."
+          },
+          {
+            "checkId": "s1-p1",
+            "lookFor": "Five probes sent, none lost. The reply from 172.16.0.1 proves both directions work. The packet went out through the static route, and hq answered using its connected link back to branch."
+          },
+          {
+            "checkId": "s1-p2",
+            "lookFor": "The same for 172.16.1.1, with no loss. Together with the previous ping this shows that each of the two prefixes is reachable independently."
+          }
+        ],
+        "whyItWorks": "A static route needs only a prefix and a next hop that is directly reachable. Here the next hop is 10.0.12.2, hq's address on the shared /30, and branch already has that link as a connected route. The route table output shows the routes as Static with preference 5, next hop 10.0.12.2. The pings succeed because the return path needs nothing new. hq has the /30 connected, so replies to branch's 10.0.12.1 go straight back. The static routes on branch are also the raw material for stage 3."
+      },
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Creating the aggregate but no export policy",
+            "recognise": "hq shows the Aggregate route but upstream does not. The BGP session is still Established, which makes it look healthy.",
+            "symptom": "upstream has no 172.16.0.0/23."
+          },
+          {
+            "mistake": "Exporting direct routes as well as the aggregate",
+            "recognise": "upstream lists 172.16.0.0/24 and 172.16.1.0/24 and the baseline no-specifics checks now fail. Tighten the policy so only the aggregate is accepted and everything else is rejected.",
+            "symptom": "upstream shows the specifics next to the summary."
+          }
+        ],
+        "configurationIntro": "This goes on hq. There are two parts: the aggregate route itself, and an export policy applied to the BGP group towards upstream. Load both and commit. upstream needs no configuration, because it already accepts what its eBGP peer sends.",
+        "id": "s2",
+        "verification": [
+          {
+            "checkId": "s2-hq",
+            "lookFor": "On hq the 172.16.0.0/23 entry is Aggregate with a Reject next hop. That is normal for an aggregate. It is active because the two connected /24s on the loopback contribute to it, and traffic that matches only the summary and no more specific route is discarded."
+          },
+          {
+            "checkId": "s2-up",
+            "lookFor": "On upstream the 172.16.0.0/23 entry is BGP with AS path 65002 and next hop 10.0.23.1. That shows the summary crossed the session from hq. To confirm nothing else came across, repeat the two exact-prefix queries for the /24s on upstream. As at baseline, they must return nothing."
+          }
+        ],
+        "whyItWorks": "An aggregate route is active while at least one more specific route contributes to it. Here the two connected /24s do, and the hq output shows it active with preference 130. The summary is not sent by default, though. eBGP does not advertise routes from other protocols unless an export policy allows them. The policy therefore accepts routes whose protocol is aggregate. A final reject keeps the connected /24s from leaving hq. The upstream output shows the result, one BGP route for the /23 with next hop 10.0.23.1 and no specifics, so upstream sees the summary and nothing more."
+      },
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Configuring a static default route instead of a generated route",
+            "recognise": "The route table shows protocol Static for 0.0.0.0/0.",
+            "symptom": "The default stays when the contributors disappear."
+          },
+          {
+            "mistake": "Writing a policy that matches no route",
+            "recognise": "The configuration commits but the route table has no default, because no contributing route is accepted and the generated route stays inactive. Check that the stage 1 static routes are present and that the policy accepts the Static protocol.",
+            "symptom": "No 0.0.0.0/0 route appears."
+          }
+        ],
+        "configurationIntro": "This goes on branch. There are two parts: a policy that accepts static routes, and a generated route for 0.0.0.0/0 that uses that policy to pick its contributors. Load both and commit.",
+        "id": "s3",
+        "verification": [
+          {
+            "checkId": "s3-def",
+            "lookFor": "The 0.0.0.0/0 entry is protocol Aggregate, not Static, with next hop 10.0.12.2 out of ge-0/0/0.0. The protocol column is the point. It shows the route was generated from contributors and was not typed in."
+          }
+        ],
+        "whyItWorks": "A generated route is installed only while a contributing route accepted by its policy is active. The contributors here are the static routes to 172.16.0.0/24 and 172.16.1.0/24 from stage 1. The default takes the next hop of the contributor it selects, which is 10.0.12.2, and appears as Aggregate with preference 130. If the contributors go away, the default goes with them. That is the conditional behaviour a static default cannot give you."
+      }
+    ]
+  },
+  "summary": "Finish the routing on a three-router line, branch, hq and upstream. Give branch static routes to two subnets that hq owns, build one /23 summary on hq and pass only that to upstream over eBGP, then create a default on branch that exists only while the routes through hq exist. The finished tables show static, aggregate and generated routes.",
+  "workbook": {
+    "scenario": "You've taken over a small three-router network. branch connects to hq, and hq connects to upstream. hq owns two small subnets, 172.16.0.0/24 and 172.16.1.0/24, and branch has to reach them. upstream sits in a different AS and has no business knowing about two separate small prefixes. It should see one summary. branch also needs a default route towards hq, but only while the path to hq is alive. If the routes behind hq go away, the default has to go with them. You have three jobs: give branch the routes it lacks, summarise on hq for upstream, and make the default on branch depend on the routes that justify it.",
+    "stages": [
+      {
+        "doneWhen": [
+          "The branch route table lists 172.16.0.0/24 and 172.16.1.0/24 as static routes with next hop 10.0.12.2.",
+          "The branch router can ping 172.16.0.1 and 172.16.1.1."
+        ],
+        "goal": "The branch router has no route to the two small subnets that sit behind hq. Give it a fixed route for each, pointing at hq, so it can reach addresses inside them. Only branch needs to change.",
+        "hint": "Ask where branch should send the packet, not where the destination is. The next hop has to be an address on the link branch already shares with hq. hq already knows how to answer, so think about what is missing on branch alone.",
+        "id": "s1"
+      },
+      {
+        "doneWhen": [
+          "hq holds 172.16.0.0/23 as an aggregate route.",
+          "upstream holds 172.16.0.0/23 learned from BGP with next hop 10.0.23.1.",
+          "upstream still holds neither 172.16.0.0/24 nor 172.16.1.0/24."
+        ],
+        "goal": "The upstream router should learn one summary covering both subnets and none of the specifics. Build the summary on hq and make sure only that summary is passed to upstream over the existing BGP session. The session must stay as it is.",
+        "hint": "Two questions, and both are on hq. What has to exist before there is something to send? And what does eBGP send by default when it has been told nothing? Whatever policy you build decides what leaves, so decide what it must not let through as well as what it must.",
+        "id": "s2"
+      },
+      {
+        "doneWhen": [
+          "The branch route table holds 0.0.0.0/0 with protocol Aggregate and next hop 10.0.12.2."
+        ],
+        "goal": "The branch router needs a default route that exists only while a route through hq exists. Create it so that it depends on the branch routes towards the remote subnets and points at hq. It must not be a permanent route.",
+        "hint": "A route that is generated takes its next hop from a contributing route, and a policy chooses which routes may contribute. Look at what you built in stage 1 and let the policy accept exactly those routes and nothing else.",
+        "id": "s3"
+      }
+    ],
+    "startState": "All three routers are addressed and each has only its connected routes. The addressing table gives the link and loopback addresses. hq holds both remote subnets on its loopback. The eBGP session between hq (AS 65002, 10.0.23.1) and upstream (AS 65003, 10.0.23.2) is established and carries no routes yet. upstream currently has neither subnet, branch can reach hq on the shared link, and the interfaces are up. Leave the addressing and the BGP session as they are."
+  }
+}

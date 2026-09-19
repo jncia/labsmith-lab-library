@@ -1,0 +1,111 @@
+schemaVersion: 0
+id: static-aggregate-generated-routes-3n
+title: Summarise a branch's routes with static, aggregate and generated routes
+summary: Finish the routing on a three-router line, branch, hq and upstream. Give
+  branch static routes to two subnets that hq owns, build one /23 summary on hq and
+  pass only that to upstream over eBGP, then create a default on branch that exists
+  only while the routes through hq exist. The finished tables show static, aggregate
+  and generated routes.
+labType: build
+level: intermediate
+certifications:
+- JNCIS-ENT
+topics:
+- static routes
+- aggregate routes
+- generated routes
+- route table
+estimatedMinutes: 30
+nodes:
+- id: branch
+  kind: juniper_vjunosrouter
+  role: Branch router that needs the remote subnets and a conditional default
+- id: hq
+  kind: juniper_vjunosrouter
+  role: Headquarters router that owns the remote subnets and builds the summary
+- id: upstream
+  kind: juniper_vjunosrouter
+  role: Upstream router that should only see the summary
+requirements:
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  minimumFreeMemoryGb: 18
+  minimumCores: 12
+stages:
+- id: s1
+  title: Reach the remote subnets
+  goal: The branch router has no route to the two small subnets that sit behind hq.
+    Give it a fixed route for each, pointing at hq, so it can reach addresses inside
+    them. Only branch needs to change.
+  doneWhen:
+  - The branch route table lists 172.16.0.0/24 and 172.16.1.0/24 as static routes
+    with next hop 10.0.12.2.
+  - The branch router can ping 172.16.0.1 and 172.16.1.1.
+- id: s2
+  title: Summarise for the upstream router
+  goal: The upstream router should learn one summary covering both subnets and none
+    of the specifics. Build the summary on hq and make sure only that summary is passed
+    to upstream over the existing BGP session. The session must stay as it is.
+  doneWhen:
+  - hq holds 172.16.0.0/23 as an aggregate route.
+  - upstream holds 172.16.0.0/23 learned from BGP with next hop 10.0.23.1.
+  - upstream still holds neither 172.16.0.0/24 nor 172.16.1.0/24.
+- id: s3
+  title: Make a conditional default
+  goal: The branch router needs a default route that exists only while a route through
+    hq exists. Create it so that it depends on the branch routes towards the remote
+    subnets and points at hq. It must not be a permanent route.
+  doneWhen:
+  - The branch route table holds 0.0.0.0/0 with protocol Aggregate and next hop 10.0.12.2.
+qualification:
+- contractVersion: labsmith.learner-labpack-qualification.v0
+  receiptId: static-aggregate-generated-routes-3n-2026-09-19-5ad1b382e0c9
+  labId: static-aggregate-generated-routes-3n
+  packetContentHash: 5ad1b382e0c99cf1f1827ca4df548be61cf6f76803bda0925d1598a05563bccc
+  date: '2026-09-19'
+  generatedAt: '2026-09-19T20:12:29+00:00'
+  status: passed
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  toolVersions:
+    containerlab: 0.77.0
+    imageDigest: sha256:b343ea11ab9bfc9878632ba52cb910f5b147d018dc785bae337da9f7163da24d
+    labsmith: cb369822f235808915d0687adaaff53fdacfd837
+  cleanup:
+    topologyName: labpack-static-aggregate-generated-routes-3n-a0919ux7q
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-09-19T20:08:15+00:00'
+    clean: true
+  learnerCleanup:
+    topologyName: labpack-static-aggregate-generated-routes-3n-a0919ux7ql
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-09-19T20:12:29+00:00'
+    clean: true
+  totalSeconds: 738.441
+  issues: []
+  message: null
+  runs:
+  - name: start-state
+    status: passed
+    elapsedSeconds: 322.608
+  - name: reference-solution
+    status: passed
+    elapsedSeconds: 98.4
+  - name: reset
+    status: passed
+    elapsedSeconds: 58.283
+  - name: learner-start
+    status: passed
+    elapsedSeconds: 248.194

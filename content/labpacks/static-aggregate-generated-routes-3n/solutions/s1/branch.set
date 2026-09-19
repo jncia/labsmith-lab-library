@@ -1,0 +1,2 @@
+set routing-options static route 172.16.0.0/24 next-hop 10.0.12.2
+set routing-options static route 172.16.1.0/24 next-hop 10.0.12.2

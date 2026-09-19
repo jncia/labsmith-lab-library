@@ -1,0 +1,7 @@
+set system host-name upstream
+set interfaces ge-0/0/0 unit 0 family inet address 10.0.23.2/30
+set interfaces lo0 unit 0 family inet address 192.168.255.3/32
+set routing-options autonomous-system 65003
+set protocols bgp group hq type external
+set protocols bgp group hq peer-as 65002
+set protocols bgp group hq neighbor 10.0.23.1

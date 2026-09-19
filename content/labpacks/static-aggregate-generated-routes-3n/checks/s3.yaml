@@ -1,0 +1,9 @@
+schemaVersion: 0
+checks:
+- id: s3-def
+  description: branch has a generated default route via hq
+  device: branch
+  type: route-exists
+  next_hop: 10.0.12.2
+  prefix: 0.0.0.0/0
+  protocol: Aggregate

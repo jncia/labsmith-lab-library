@@ -1,0 +1,5 @@
+set policy-options policy-statement default-contributor term hq-nets from protocol static
+set policy-options policy-statement default-contributor term hq-nets from route-filter 172.16.0.0/23 longer
+set policy-options policy-statement default-contributor term hq-nets then accept
+set policy-options policy-statement default-contributor term rest then reject
+set routing-options generate route 0.0.0.0/0 policy default-contributor

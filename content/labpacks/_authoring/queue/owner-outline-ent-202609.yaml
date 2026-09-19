@@ -1,0 +1,873 @@
+schemaVersion: 0
+queueId: owner-outline-ent-202609
+blueprint:
+  credentialName: JNCIS-ENT
+  examCode: OWNER-OUTLINE-ENT
+  sourceFile: owner-outline-ent.json
+  sourceSha256: baff48767591c1b31bd0d898844a990f487a5389f4f694e5c9edeb6fd1e69679
+generated:
+  at: '2026-09-19T19:40:31+00:00'
+  model: claude-sonnet-5
+  costUsd: 0.215202
+  promptSha256: 6a3db8ea81762af6bf2b9a07156a0fef684e214136efb9344c6e2849dbe51526
+  ownerNote: 'Note written by the integrator from the course owner. This blueprint
+    is a mechanical transcription of the course owner course outline, not a certification
+    blueprint: an objective group is one chapter of that outline and an anchor is
+    one section of it, with the section own description as its boundary. The platform
+    document is the whole truth about what the lab host can build and observe today.
+    Where a section of the outline needs a node kind, a lab type, a feature or an
+    observation the platform does not offer, leave it out and say so plainly rather
+    than approximating it; the course owner would rather see an honest gap than a
+    lab that teaches the wrong thing.'
+skippedObjectives:
+- objective: C01-C01V01
+  reason: An introduction to the learning path. It has no skill to practise or observe.
+- objective: C01-C01V02
+  reason: Switched versus shared LAN and bridging concepts need an Ethernet switching
+    node. The platform offers only routers, and no check reads bridging state.
+- objective: C01-C01V03
+  reason: MAC learning and forwarding are observed in the MAC table. No check type
+    reads it, and the platform has no switch node.
+- objective: C01-C01V04
+  reason: Flooding, filtering and aging are bridging behaviours. There is no switch
+    node and no check can show them.
+- objective: C01-C01V05
+  reason: Three-tier design and collapsed core is a design topic, and the platform
+    cannot build or observe switch layers.
+- objective: C01-C01V06
+  reason: EX series platform differences are about hardware and cannot be built or
+    observed.
+- objective: C01-C01V07
+  reason: Frame processing for unknown and known MAC destinations needs a switch node
+    and MAC table observation. The platform offers neither.
+- objective: C01-C01V08
+  reason: Layer 2 forwarding troubleshooting needs bridging tables and frame counters.
+    No check reads them.
+- objective: C01-C01V09
+  reason: VLANs and access ports need Ethernet switching. The router node kind and
+    checks cannot show VLAN membership.
+- objective: C01-C01V10
+  reason: 802.1Q trunking, voice VLAN and native VLAN need switch ports. No check
+    reads tags or port modes.
+- objective: C01-C01V11
+  reason: Inter-VLAN routing depends on VLANs on a switch with IRB interfaces. Without
+    a switch node and VLAN observation it would be bent into something else.
+- objective: C01-C01V12
+  reason: The VLAN lab depends on the VLAN, trunk and IRB objectives above, none of
+    which the platform can build or observe.
+- objective: C02-C02V01
+  reason: Network storms and loop formation need a switched, looped topology and cannot
+    be observed with the platform's checks.
+- objective: C02-C02V02
+  reason: STP port types, states and timers need a switch node. No check reads spanning-tree
+    state, and timer values are also refused as configuration.
+- objective: C02-C02V03
+  reason: RSTP port roles and states cannot be built on router nodes or read by any
+    check.
+- objective: C02-C02V04
+  reason: Configuring and troubleshooting STP/RSTP needs a switch node and spanning-tree
+    state observation.
+- objective: C02-C02V05
+  reason: BPDU, loop and root guard and storm control depend on spanning tree on switch
+    ports, and none is observable.
+- objective: C02-C02V06
+  reason: Ethernet ring protection needs a ring of switches and ring state observation,
+    which the platform lacks.
+- objective: C02-C02V07
+  reason: MAC limiting and persistent MAC learning need switch ports and a MAC table.
+    No check can show them.
+- objective: C02-C02V08
+  reason: DHCP snooping, DAI and IP source guard need switch ports, DHCP clients and
+    binding table observation. The platform has none of these.
+- objective: C02-C02V09
+  reason: Layer 2 firewall filters and storm control act on bridged frames. The platform
+    has no switch node, and the checks cannot see filter matches or drops.
+- objective: C02-C02V10
+  reason: The layer 2 security lab depends on the switching-only features above, and
+    none can be built or observed.
+- objective: C03-C03V02
+  reason: Martian routes are observable in principle as an absent route, but were
+    left out of this batch in favour of objectives with more hands-on work. They could
+    be added as a stage to the static route brief.
+- objective: C03-C03V05
+  reason: Filter-based forwarding needs a check that shows which path a matched packet
+    takes. Ping only reports success rate, and the forwarding-table check does not
+    show filter matches.
+- objective: C04-C04V02
+  reason: OSPF packet types, adjacency states and DR/BDR election are not observable,
+    because the platform has no OSPF neighbour or DR check. Only their effect on routes
+    can be seen.
+- objective: C04-C04V03
+  reason: LSA types and the LSDB contents cannot be read by any check type.
+- objective: C05-C04V01
+  reason: IS-IS overview of adjacencies and levels is theory. Its practical part is
+    covered by the multi-level brief.
+- objective: C05-C04V02
+  reason: IS-IS adjacency formation and DIS election are not observable, because no
+    check reads IS-IS neighbours or the DIS.
+- objective: C05-C04V03
+  reason: PDU formats and TLVs are packet-level content, and no check can observe
+    them.
+- objective: C06-C06V03
+  reason: BGP message types and the state machine cannot be observed beyond the neighbour
+    state check. Message exchange per state has no check.
+- objective: C07-C07V01
+  reason: Purely theory on tunnel use cases. There is no device outcome to observe.
+- objective: C08-C08V02
+  reason: Virtual Chassis needs switch nodes, and graceful restart and GRES need dual
+    routing engines and chassis and system configuration the platform cannot reset.
+- objective: C08-C08V03
+  reason: Nonstop routing and bridging need dual routing engines, which the single-node
+    kind does not have, plus chassis configuration. No check observes their state.
+- objective: C08-C08V04
+  reason: VRRP needs a shared segment and BFD needs session state observation. Links
+    are point to point only, and no check reads VRRP mastership or BFD sessions.
+- objective: C08-C08V05
+  reason: ISSU needs dual routing engines, a software image and a chassis state that
+    the platform cannot provide or observe.
+entries:
+- status: approved
+  priority: 100
+  model: null
+  ownerNote: Approved by the integrator for the two-brief proof of the authoring loop,
+    not by the course owner. Two briefs from different objective groups, each of three
+    nodes, chosen to prove the queue runner unattended and to show that nothing topic-specific
+    changes between two labs. Every other brief in this queue is still waiting for
+    the course owner's own decision.
+  brief:
+    schemaVersion: 0
+    id: static-aggregate-generated-routes-3n
+    title: Summarise a branch's routes with static, aggregate and generated routes
+    labType: build
+    level: intermediate
+    certifications:
+    - JNCIS-ENT
+    blueprint:
+      examCode: OWNER-OUTLINE-ENT
+      objectives:
+      - C03-C03V01
+      - C03-C03V06
+    topics:
+    - static routes
+    - aggregate routes
+    - generated routes
+    - route table
+    scenario: A branch router reaches two small remote subnets through a headquarters
+      router. The upstream router should see one summary instead of several specifics,
+      and the branch needs a default route that exists only while the headquarters
+      path is alive. You are asked to finish the routing so the tables show exactly
+      that.
+    learnerOutcome: Choose between static, aggregate and generated routes for a given
+      need, and confirm each one in the route table with the right protocol and next
+      hop.
+    startStateSketch: Three routers in a line (branch, headquarters, upstream) with
+      addressed links and loopbacks. Each router has only its connected routes. The
+      remote subnets sit on loopback addresses of the headquarters router.
+    stageSketch:
+    - title: Reach the remote subnets
+      achieves: The branch router holds static routes for both remote subnets with
+        the headquarters router as next hop, and can ping them.
+    - title: Summarise for the upstream router
+      achieves: The headquarters router holds an aggregate route covering both subnets,
+        and it is the aggregate that is passed upstream, so the upstream router has
+        the summary and not the specifics.
+    - title: Make a conditional default
+      achieves: The branch router holds a generated default route whose existence
+        depends on a contributing route through headquarters, with the headquarters
+        router as its next hop.
+    observableOutcomes:
+    - The branch router has static routes for both remote subnets.
+    - The branch router can ping an address inside each remote subnet.
+    - The headquarters router has an aggregate-protocol route for the summary prefix.
+    - The upstream router has the summary route.
+    - The upstream router does not have the specific subnet routes (negated check).
+    - The branch router has a default route learned as an aggregate/generated route
+      pointing at headquarters.
+    topology:
+      nodes:
+      - id: branch
+        kind: vjunos-router
+        role: Branch router that needs the remote subnets and a conditional default
+      - id: hq
+        kind: vjunos-router
+        role: Headquarters router that owns the remote subnets and builds the summary
+      - id: upstream
+        kind: vjunos-router
+        role: Upstream router that should only see the summary
+      links:
+      - a: branch
+        b: hq
+      - a: hq
+        b: upstream
+    estimatedMinutes: 30
+    rationale: This is the foundation of the Protocol Independent Routing chapter
+      and its lab section. All three route types can be seen with route-exists, so
+      it is fully observable. The set runs from simple to conditional.
+- status: proposed
+  priority: 100
+  model: null
+  ownerNote: ''
+  brief:
+    schemaVersion: 0
+    id: ecmp-load-balancing-static-2n
+    title: Share traffic over two equal links with ECMP
+    labType: build
+    level: intermediate
+    certifications:
+    - JNCIS-ENT
+    blueprint:
+      examCode: OWNER-OUTLINE-ENT
+      objectives:
+      - C03-C03V04
+    topics:
+    - ECMP
+    - load balancing policy
+    - forwarding table
+    scenario: Two routers are joined by two parallel links and only one link carries
+      traffic, so the second sits idle. The operator wants both links in use for traffic
+      to a remote loopback and wants to know the network survives if one link is lost.
+    learnerOutcome: Get a route with two next hops into the forwarding table as a
+      load-shared entry, and show what happens when one path fails.
+    startStateSketch: Two routers with two addressed links between them and a loopback
+      on the far router. The near router has no route to that loopback.
+    stageSketch:
+    - title: Learn the loopback over both links
+      achieves: The near router has a route to the far loopback listing next hops
+        over both links, and the loopback answers a ping.
+    - title: Install both paths for forwarding
+      achieves: The forwarding table entry for the loopback holds both next hops as
+        a load-shared set, not just one.
+    - title: Lose one link
+      achieves: With one link taken down, the forwarding entry keeps only the surviving
+        next hop and the loopback still answers.
+    observableOutcomes:
+    - The near router has a route for the far loopback with the next hop on the first
+      link.
+    - The near router has a route for the far loopback with the next hop on the second
+      link.
+    - The forwarding table entry for the loopback is a multi-next-hop (unilist) entry.
+    - The loopback answers ping at full success rate.
+    - After the failure, the affected interface is not up (negated interface-up check)
+      and the loopback still answers ping.
+    topology:
+      nodes:
+      - id: near
+        kind: vjunos-router
+        role: Router that must spread traffic over two links
+      - id: far
+        kind: vjunos-router
+        role: Router that owns the destination loopback
+      links:
+      - a: near
+        b: far
+      - a: near
+        b: far
+    estimatedMinutes: 25
+    rationale: Covers the ECMP part of load balancing with two nodes. The route table
+      and forwarding table are both observable. How flows are hashed (per-flow versus
+      per-packet) cannot be observed with the platform's checks, so the brief stays
+      on how the forwarding entry is built.
+- status: proposed
+  priority: 100
+  model: null
+  ownerNote: ''
+  brief:
+    schemaVersion: 0
+    id: routing-instance-rib-group-3n
+    title: Put a customer in a virtual router and share routes with a RIB group
+    labType: build
+    level: intermediate
+    certifications:
+    - JNCIS-ENT
+    blueprint:
+      examCode: OWNER-OUTLINE-ENT
+      objectives:
+      - C03-C03V03
+    topics:
+    - virtual-router instance
+    - RIB groups
+    - route leaking
+    scenario: An edge router serves a customer site that must be kept in its own routing
+      table, but the customer needs to reach one shared upstream service and the upstream
+      must reach back to the customer. The router currently has everything in the
+      main table.
+    learnerOutcome: Isolate an interface in a virtual-router instance and use a RIB
+      group to copy only the needed routes between it and the main table.
+    startStateSketch: An edge router with a link to a customer router and a link to
+      an upstream router, all in the main routing table with addresses in place. Each
+      far router has a loopback.
+    stageSketch:
+    - title: Isolate the customer
+      achieves: The customer-facing interface and its connected route live in a named
+        virtual-router instance, and the customer prefix is gone from the main table.
+    - title: Bring the upstream service into the instance
+      achieves: The instance's table has a route to the upstream loopback, and the
+        customer router can reach it through the instance.
+    - title: Give the upstream a way back
+      achieves: The main table has a route to the customer prefix copied by a RIB
+        group, and the upstream loopback can reach the customer router.
+    observableOutcomes:
+    - The customer prefix is in the instance's routing table.
+    - The customer prefix is absent from the main table before the last stage (negated
+      route-exists).
+    - The instance's table holds a route to the upstream loopback.
+    - A ping from inside the instance to the upstream loopback succeeds.
+    - The main table holds the customer prefix after the RIB group is applied.
+    - The customer router answers a ping sourced from the upstream side.
+    topology:
+      nodes:
+      - id: edge
+        kind: vjunos-router
+        role: Edge router hosting the instance and the RIB group
+      - id: customer
+        kind: vjunos-router
+        role: Customer site router
+      - id: upstream
+        kind: vjunos-router
+        role: Shared upstream service router
+      links:
+      - a: edge
+        b: customer
+      - a: edge
+        b: upstream
+    estimatedMinutes: 35
+    rationale: Routing instances and RIB groups are the least visible parts of the
+      PIR chapter. The named-table route check and ping inside an instance make them
+      observable. Three nodes are the fewest that give a separate customer and a shared
+      service.
+- status: proposed
+  priority: 100
+  model: null
+  ownerNote: ''
+  brief:
+    schemaVersion: 0
+    id: gre-tunnel-over-transit-3n
+    title: Carry private subnets between two sites over a GRE tunnel
+    labType: build
+    level: intermediate
+    certifications:
+    - JNCIS-ENT
+    blueprint:
+      examCode: OWNER-OUTLINE-ENT
+      objectives:
+      - C07-C07V02
+    topics:
+    - GRE
+    - tunnel interface
+    - overlay routing
+    scenario: Two sites need to exchange private subnets, but the provider router
+      between them must not carry those subnets in its routing table. The team builds
+      a GRE tunnel between the site routers and needs to prove that it works and that
+      the provider stays unaware.
+    learnerOutcome: Build a working GRE tunnel across a transit router, route inner
+      subnets over it and check both the tunnel and the underlay.
+    startStateSketch: Site A, a provider router and Site B with addressed links and
+      loopbacks. The underlay already lets the two site loopbacks reach each other.
+      Tunnel services are already enabled in the start configuration, so no stage
+      touches the chassis. Each site has a private subnet on a loopback-style interface.
+    stageSketch:
+    - title: Bring the tunnel up
+      achieves: A GRE tunnel interface is up on both site routers, with the tunnel
+        endpoints being the site loopbacks, and the far tunnel address answers a ping.
+    - title: Route the private subnets over it
+      achieves: Each site router has a route to the other site's private subnet with
+        the tunnel as the way out.
+    - title: Prove the underlay stays clean
+      achieves: The private subnets can ping each other end to end, and the provider
+        router has no route for either private subnet.
+    observableOutcomes:
+    - The tunnel interface is up on Site A and on Site B.
+    - The far tunnel address answers a ping from each site.
+    - Each site has a route to the other's private subnet.
+    - A ping between the two private subnets succeeds.
+    - The provider router does not have either private subnet in its route table (negated
+      route-exists).
+    topology:
+      nodes:
+      - id: site-a
+        kind: vjunos-router
+        role: Site A tunnel endpoint
+      - id: provider
+        kind: vjunos-router
+        role: Transit router that only knows the underlay
+      - id: site-b
+        kind: vjunos-router
+        role: Site B tunnel endpoint
+      links:
+      - a: site-a
+        b: provider
+      - a: provider
+        b: site-b
+    estimatedMinutes: 35
+    rationale: GRE is the hands-on part of the tunnels chapter. The tunnel interface,
+      the routes over it and the absence of routes on the transit router can all be
+      seen. It assumes the lab host's virtual router supports tunnel interfaces once
+      tunnel services are set in the start state, which should be confirmed before
+      building. IP-IP would be a variation on this and is left for a later batch.
+- status: approved
+  priority: 100
+  model: null
+  ownerNote: Approved by the integrator for the two-brief proof of the authoring loop,
+    not by the course owner. Two briefs from different objective groups, each of three
+    nodes, chosen to prove the queue runner unattended and to show that nothing topic-specific
+    changes between two labs. Every other brief in this queue is still waiting for
+    the course owner's own decision.
+  brief:
+    schemaVersion: 0
+    id: ospf-multi-area-abr-3n
+    title: Split a growing OSPF network into a backbone and a second area
+    labType: build
+    level: intermediate
+    certifications:
+    - JNCIS-ENT
+    blueprint:
+      examCode: OWNER-OUTLINE-ENT
+      objectives:
+      - C04-C04V01
+      - C04-C04V04
+    topics:
+    - OSPF areas
+    - ABR
+    - inter-area routes
+    scenario: A site network runs as one flat area and the link-state database is
+      getting large. The plan is to keep the core in the backbone and move the access
+      router into its own area, with the middle router acting as area border router.
+      Everything must stay reachable through the change.
+    learnerOutcome: Configure a multi-area OSPF network with an area border router
+      and confirm inter-area routes in the routing tables.
+    startStateSketch: Three routers in a line, addressed, each with a loopback. Core
+      and middle routers already run OSPF in the backbone. The access router runs
+      nothing yet.
+    stageSketch:
+    - title: Join the access router in area 1
+      achieves: The access router and the middle router are OSPF neighbours in a non-backbone
+        area and the middle router now borders two areas.
+    - title: Learn across the border
+      achieves: The core router holds an OSPF route for the access loopback, and the
+        access router holds one for the core loopback.
+    - title: Verify end to end
+      achieves: Loopbacks ping across the border in both directions.
+    observableOutcomes:
+    - The core router has an OSPF route for the access loopback.
+    - The access router has an OSPF route for the core loopback.
+    - Each interface toward the neighbour is up.
+    - The core loopback and the access loopback answer pings from each other.
+    topology:
+      nodes:
+      - id: core
+        kind: vjunos-router
+        role: Backbone router
+      - id: abr
+        kind: vjunos-router
+        role: Area border router between area 0 and area 1
+      - id: access
+        kind: vjunos-router
+        role: Access router in area 1
+      links:
+      - a: core
+        b: abr
+      - a: abr
+        b: access
+    estimatedMinutes: 25
+    rationale: This is the multi-area lab from the OSPF chapter. The existing lab
+      is a single-area build, so this one practises area borders and inter-area routing
+      instead. Three nodes are the smallest layout with a border router.
+- status: proposed
+  priority: 100
+  model: null
+  ownerNote: ''
+  brief:
+    schemaVersion: 0
+    id: ospf-nssa-policy-default-3n
+    title: Turn an access area into an NSSA and control what enters it
+    labType: build
+    level: intermediate
+    certifications:
+    - JNCIS-ENT
+    blueprint:
+      examCode: OWNER-OUTLINE-ENT
+      objectives:
+      - C04-C04V05
+    topics:
+    - NSSA
+    - default originate
+    - OSPF export policy
+    - route tags
+    scenario: An access area contains a router that connects to a small partner network
+      by static route. The partner prefix must reach the backbone, but the area should
+      not accept the full external route set. The operator wants the area to be an
+      NSSA, with a default route from the border router and the partner prefix tagged
+      on export.
+    learnerOutcome: Configure an NSSA, originate a default into it and export an external
+      route with a policy that tags it.
+    startStateSketch: Backbone, border and access routers already running multi-area
+      OSPF with loopbacks reachable. The access router has a static route to the partner
+      prefix that is not yet advertised.
+    stageSketch:
+    - title: Make area 1 an NSSA
+      achieves: The border and access routers are still neighbours after the area
+        becomes not-so-stubby, and the loopbacks still ping.
+    - title: Give the NSSA a default
+      achieves: The access router has an OSPF-learned default route pointing at the
+        border router.
+    - title: Export the partner prefix with a tag
+      achieves: The backbone router holds an OSPF external route for the partner prefix
+        that carries the tag chosen by policy.
+    observableOutcomes:
+    - The access loopback and the backbone loopback answer pings after the area type
+      change.
+    - The access router has an OSPF default route with the border router as next hop.
+    - The backbone router has an OSPF route for the partner prefix.
+    - The partner route on the backbone router shows the policy's tag (route-exists
+      on the prefix with OSPF as protocol).
+    topology:
+      nodes:
+      - id: backbone
+        kind: vjunos-router
+        role: Backbone router that should learn the partner prefix
+      - id: border
+        kind: vjunos-router
+        role: Area border router for the NSSA
+      - id: access
+        kind: vjunos-router
+        role: NSSA router that redistributes the partner static route
+      links:
+      - a: backbone
+        b: border
+      - a: border
+        b: access
+    estimatedMinutes: 35
+    rationale: Covers the policy and additional options lab in the OSPF chapter. It
+      follows the multi-area brief and builds on that same shape. The tag on the route
+      is not a separate check type, so the outcome is observed through the route entry,
+      which the build should confirm can show it.
+- status: proposed
+  priority: 100
+  model: null
+  ownerNote: ''
+  brief:
+    schemaVersion: 0
+    id: isis-multi-level-3n
+    title: Split an IS-IS network into level 1 and level 2
+    labType: build
+    level: intermediate
+    certifications:
+    - JNCIS-ENT
+    blueprint:
+      examCode: OWNER-OUTLINE-ENT
+      objectives:
+      - C05-C04V04
+    topics:
+    - IS-IS levels
+    - L1/L2 router
+    - attached bit
+    scenario: An access router at a small site should only carry local IS-IS routing,
+      while the backbone runs level 2. A middle router sits on the border of the two.
+      The operator needs the access router to still reach the rest of the network.
+    learnerOutcome: Configure IS-IS levels and areas so that an L1-only router reaches
+      the backbone through an L1/L2 router.
+    startStateSketch: Three routers in a line with addressed links, loopbacks and
+      ISO addresses on the loopbacks, in two areas. No IS-IS is running yet.
+    stageSketch:
+    - title: Backbone at level 2
+      achieves: The backbone router and the middle router are level 2 neighbours and
+        exchange loopback routes.
+    - title: Access at level 1
+      achieves: The access router is a level 1 neighbour of the middle router, and
+        the middle router runs both levels.
+    - title: Reach the backbone from the access router
+      achieves: The access router holds an IS-IS default route toward the middle router,
+        and can ping the backbone loopback.
+    observableOutcomes:
+    - The backbone router has an IS-IS route for the middle router's loopback.
+    - The middle router has IS-IS routes for the backbone and the access loopbacks.
+    - The access router has an IS-IS default route pointing at the middle router.
+    - The access router can ping the backbone loopback.
+    topology:
+      nodes:
+      - id: backbone
+        kind: vjunos-router
+        role: Level 2 backbone router
+      - id: l1l2
+        kind: vjunos-router
+        role: Router in both levels between backbone and access
+      - id: access
+        kind: vjunos-router
+        role: Level 1 access router
+      links:
+      - a: backbone
+        b: l1l2
+      - a: l1l2
+        b: access
+    estimatedMinutes: 30
+    rationale: Multi-level IS-IS is the main hands-on skill of the IS-IS chapter.
+      The results appear in routing tables, so route-exists and ping observe them.
+      Adjacency internals such as DIS election and PDU contents cannot be observed
+      with the platform's checks.
+- status: proposed
+  priority: 100
+  model: null
+  ownerNote: ''
+  brief:
+    schemaVersion: 0
+    id: isis-policy-leaking-3n
+    title: Leak specific routes into level 1 and export a static route into IS-IS
+    labType: build
+    level: intermediate
+    certifications:
+    - JNCIS-ENT
+    blueprint:
+      examCode: OWNER-OUTLINE-ENT
+      objectives:
+      - C05-C04V05
+    topics:
+    - IS-IS export policy
+    - route leaking
+    - level 2 to level 1
+    scenario: An access router uses a default route to reach the backbone, but one
+      data-centre prefix needs a more specific route so traffic takes the right exit.
+      In addition, a partner subnet learned by static route on the backbone side must
+      be advertised into IS-IS. The operator wants both done with policy.
+    learnerOutcome: Use IS-IS routing policy to leak a chosen level 2 route into level
+      1 and to advertise an external route, and show the effect on the route tables.
+    startStateSketch: 'A working two-level IS-IS network: backbone, L1/L2 and access
+      routers. The access router only has a default route. The backbone router has
+      a static route for the partner subnet that is not advertised.'
+    stageSketch:
+    - title: Advertise the partner subnet
+      achieves: The L1/L2 router has an IS-IS route for the partner subnet, exported
+        from the backbone router by policy.
+    - title: Leak one prefix into level 1
+      achieves: The access router holds a specific IS-IS route for the data-centre
+        prefix, in addition to its default.
+    - title: Keep the rest out
+      achieves: The access router does not hold a specific route for the partner subnet,
+        and everything still pings.
+    observableOutcomes:
+    - The L1/L2 router has an IS-IS route for the partner subnet.
+    - The access router has an IS-IS route for the data-centre prefix.
+    - The access router does not have a specific route for the partner subnet (negated
+      route-exists).
+    - The access router can still ping the data-centre and partner addresses.
+    topology:
+      nodes:
+      - id: backbone
+        kind: vjunos-router
+        role: Backbone router with a partner static route and a data-centre prefix
+      - id: l1l2
+        kind: vjunos-router
+        role: Level boundary router where leaking is applied
+      - id: access
+        kind: vjunos-router
+        role: Level 1 access router that should see only selected routes
+      links:
+      - a: backbone
+        b: l1l2
+      - a: l1l2
+        b: access
+    estimatedMinutes: 35
+    rationale: Follows the multi-level brief and practises a different skill, IS-IS
+      policy. The presence and absence of routes on each router shows what the policy
+      does.
+- status: proposed
+  priority: 100
+  model: null
+  ownerNote: ''
+  brief:
+    schemaVersion: 0
+    id: bgp-ibgp-ebgp-next-hop-3n
+    title: Fix an EBGP route that an internal router cannot use
+    labType: build
+    level: intermediate
+    certifications:
+    - JNCIS-ENT
+    blueprint:
+      examCode: OWNER-OUTLINE-ENT
+      objectives:
+      - C06-C06V04
+      - C06-C06V01
+    topics:
+    - EBGP
+    - IBGP
+    - next-hop-self
+    - split horizon
+    scenario: A customer network has an EBGP session with an ISP. An internal router
+      in the customer AS receives the ISP's route over IBGP but cannot forward to
+      it. The engineer must find out why and fix it.
+    learnerOutcome: Explain and fix the next-hop problem when EBGP routes are passed
+      to IBGP peers, and confirm the session states and routes.
+    startStateSketch: An ISP router, a customer edge router and a customer internal
+      router. Loopbacks are reachable inside the customer AS through an IGP. The EBGP
+      session is configured and the IBGP session is not.
+    stageSketch:
+    - title: Bring up the sessions
+      achieves: The EBGP session and the IBGP session are both Established.
+    - title: See the symptom
+      achieves: The internal router has the ISP prefix in its BGP table but no usable
+        route for it, because the next hop is the ISP's address, which it cannot resolve.
+    - title: Make it usable
+      achieves: The internal router has an active BGP route for the ISP prefix, with
+        the edge router as next hop, and can ping the ISP loopback.
+    observableOutcomes:
+    - The EBGP neighbour is Established on the edge router.
+    - The IBGP neighbour is Established on the internal router.
+    - Before the fix, the internal router has no active route for the ISP prefix (negated
+      route-exists).
+    - After the fix, the internal router has a BGP route for the ISP prefix with the
+      edge router as next hop.
+    - The internal router can ping the ISP loopback.
+    topology:
+      nodes:
+      - id: isp
+        kind: vjunos-router
+        role: ISP router in a different AS that originates a prefix
+      - id: edge
+        kind: vjunos-router
+        role: Customer edge router with the EBGP session
+      - id: internal
+        kind: vjunos-router
+        role: Customer internal router that only speaks IBGP
+      links:
+      - a: isp
+        b: edge
+      - a: edge
+        b: internal
+    estimatedMinutes: 30
+    rationale: A candidate should be able to diagnose and fix this common BGP problem.
+      Session state and route entries can be seen with the platform's checks. The
+      five BGP message types and the state machine cannot be observed, so they are
+      not covered.
+- status: proposed
+  priority: 100
+  model: null
+  ownerNote: ''
+  brief:
+    schemaVersion: 0
+    id: bgp-dual-homed-policy-3n
+    title: Steer a dual-homed customer with BGP import and export policy
+    labType: build
+    level: intermediate
+    certifications:
+    - JNCIS-ENT
+    blueprint:
+      examCode: OWNER-OUTLINE-ENT
+      objectives:
+      - C06-C06V02
+      - C06-C06V05
+      - C06-C06V06
+    topics:
+    - BGP path selection
+    - local preference
+    - import and export policy
+    - BGP groups
+    scenario: A customer connects to two ISPs that both advertise the same destination.
+      Traffic currently uses whichever route wins by default, but the cheaper ISP
+      should be preferred. The customer also must not advertise the ISP's routes to
+      the other ISP, and only its own prefix should leave.
+    learnerOutcome: Change BGP path selection with an import policy, limit what is
+      advertised with an export policy, and prove both in the route tables.
+    startStateSketch: A customer router with EBGP sessions to ISP A and ISP B, both
+      Established, in a peer group. Both ISPs advertise the same destination prefix.
+      The customer has a prefix of its own that is not yet advertised.
+    stageSketch:
+    - title: Confirm the default choice
+      achieves: The customer router has two candidate routes for the destination,
+        and one ISP is the active next hop by default.
+    - title: Prefer the cheaper ISP
+      achieves: The active route for the destination now has ISP B as next hop, chosen
+        by policy.
+    - title: Advertise only the customer's prefix
+      achieves: Both ISPs hold the customer's prefix, and neither ISP holds a route
+        for the other's prefix learned from the customer (no transit).
+    observableOutcomes:
+    - Both EBGP neighbours are Established.
+    - The customer router has a route to the destination with ISP A as a next hop.
+    - The customer router has a route to the destination with ISP B as next hop, and
+      that one is the active one after the policy.
+    - Each ISP has the customer's own prefix.
+    - Each ISP does not have a route to the other ISP's own prefix through the customer
+      (negated route-exists).
+    topology:
+      nodes:
+      - id: customer
+        kind: vjunos-router
+        role: Dual-homed customer router where policy is applied
+      - id: isp-a
+        kind: vjunos-router
+        role: First ISP; advertises the destination
+      - id: isp-b
+        kind: vjunos-router
+        role: Second, preferred ISP; advertises the destination
+      links:
+      - a: customer
+        b: isp-a
+      - a: customer
+        b: isp-b
+    estimatedMinutes: 40
+    rationale: This is the policy lab that closes the BGP chapter. The choice of next
+      hop and the presence or absence of routes on each router show the effect. Troubleshooting
+      with traceroute and logs is not covered because the platform cannot observe
+      it.
+- status: proposed
+  priority: 100
+  model: null
+  ownerNote: ''
+  brief:
+    schemaVersion: 0
+    id: lag-two-links-2n
+    title: Combine two links into one aggregated Ethernet bundle
+    labType: build
+    level: intermediate
+    certifications:
+    - JNCIS-ENT
+    blueprint:
+      examCode: OWNER-OUTLINE-ENT
+      objectives:
+      - C08-C08V01
+    topics:
+    - link aggregation
+    - aggregated Ethernet
+    - member links
+    scenario: Two routers are joined by two separate links that are each addressed
+      on their own. The team wants one logical link that carries traffic over both
+      and keeps working when one member fails.
+    learnerOutcome: Build a link aggregation group over two member links, address
+      it and show that it stays up when a member is lost.
+    startStateSketch: Two routers with two links, each currently with its own address
+      and a loopback on each router. Aggregated devices are already enabled in the
+      start configuration, so no stage touches the chassis.
+    stageSketch:
+    - title: Move the links into a bundle
+      achieves: The aggregated interface is up on both routers, with the two links
+        as members and the old per-link addresses removed.
+    - title: Address the bundle and route over it
+      achieves: The aggregated interface has an address on each side, and each router
+        has a route to the other's loopback over it, which pings.
+    - title: Lose one member
+      achieves: With one member link down, the aggregated interface stays up and the
+        loopback still answers.
+    observableOutcomes:
+    - The aggregated interface is up on both routers.
+    - Each router has a route to the other's loopback through the aggregated interface.
+    - The loopbacks answer pings.
+    - After one member link is disabled, that member is not up (negated interface-up),
+      the aggregated interface is still up and the ping still succeeds.
+    topology:
+      nodes:
+      - id: r1
+        kind: vjunos-router
+        role: First end of the bundle
+      - id: r2
+        kind: vjunos-router
+        role: Second end of the bundle
+      links:
+      - a: r1
+        b: r2
+      - a: r1
+        b: r2
+    estimatedMinutes: 25
+    rationale: Link aggregation is the one high-availability topic that a router-only
+      platform can build and check with interface and ping checks. Whether traffic
+      is spread over the members is not observable, so the brief stays with bundle
+      state and survival of a member failure. Redundant trunk groups need switching
+      and are skipped.
