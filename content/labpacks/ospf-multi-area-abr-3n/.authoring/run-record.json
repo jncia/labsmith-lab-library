@@ -1,0 +1,161 @@
+{
+  "briefHash": "sha256:38cc383c80301381a32ffedfef12df3d5b2eb59a8d311adcf41c9a4713e31d62",
+  "briefId": "ospf-multi-area-abr-3n",
+  "cost": {
+    "byModel": {
+      "claude-sonnet-5": {
+        "cacheCreationInputTokens": 49061,
+        "cacheReadInputTokens": 406401,
+        "inputTokens": 42,
+        "outputTokens": 18400,
+        "usd": 0.461608
+      }
+    },
+    "byStage": {
+      "engineer": 0.370911,
+      "writer": 0.090697
+    },
+    "costKnown": true,
+    "totalUsd": 0.461608
+  },
+  "deferReason": null,
+  "finishedAt": "2026-09-19T20:37:39+00:00",
+  "labs": [
+    {
+      "baseDrift": false,
+      "cleanup": {
+        "clean": true
+      },
+      "deploySeconds": 207.5,
+      "labRunId": "a09193q1e"
+    }
+  ],
+  "ledger": null,
+  "occupancyProbeFailed": false,
+  "outcome": "qualified",
+  "parkReason": null,
+  "publication": null,
+  "qualification": {
+    "contentHash": "6ebbe6bf8920f4d7ef002a4707d919c03800031ce8172b9bc8a958e8f7fb37cb",
+    "receiptId": "ospf-multi-area-abr-3n-2026-09-19-6ebbe6bf8920",
+    "runs": [
+      {
+        "elapsedSeconds": 319.7,
+        "name": "start-state",
+        "status": "passed"
+      },
+      {
+        "elapsedSeconds": 101.7,
+        "name": "reference-solution",
+        "status": "passed"
+      },
+      {
+        "elapsedSeconds": 51.8,
+        "name": "reset",
+        "status": "passed"
+      },
+      {
+        "elapsedSeconds": 241.9,
+        "name": "learner-start",
+        "status": "passed"
+      }
+    ],
+    "seconds": 725.9,
+    "status": "passed"
+  },
+  "queueId": "owner-outline-ent-202609",
+  "rehearsals": [
+    {
+      "afterSession": 1,
+      "deadlineSeconds": 150,
+      "issues": [],
+      "repolled": false,
+      "seconds": 217.0,
+      "status": "passed"
+    }
+  ],
+  "runId": "a09193q1",
+  "schemaVersion": 0,
+  "sessions": [
+    {
+      "call": {
+        "costUsd": 0.3709108,
+        "durationMs": 294478,
+        "effort": "medium",
+        "exit": "ok",
+        "isError": false,
+        "model": "sonnet",
+        "modelUsage": {
+          "claude-sonnet-5": {
+            "cacheCreationInputTokens": 35704,
+            "cacheReadInputTokens": 404274,
+            "canonicalModel": "claude-sonnet-5",
+            "contextWindow": 1000000,
+            "costBasis": "list",
+            "costUSD": 0.3709108,
+            "inputTokens": 40,
+            "maxOutputTokens": 64000,
+            "outputTokens": 14716,
+            "provider": "firstParty",
+            "thinkingTokens": 2345,
+            "webSearchRequests": 0
+          }
+        },
+        "numTurns": 27,
+        "promptName": "engineer",
+        "promptSha256": "036355a759d8ea1a418ff5b67bc1a2bc58cf3aa2c53499f1b847db14aa021bb9",
+        "resultFile": "engineer-1.result.json"
+      },
+      "ended": "submitted",
+      "freeRejections": 6,
+      "kind": "engineer",
+      "labRunId": "a09193q1e",
+      "n": 1,
+      "outputChars": 34966,
+      "submissions": 1,
+      "toolCalls": 26
+    }
+  ],
+  "startedAt": "2026-09-19T20:12:31+00:00",
+  "validatorWarnings": [],
+  "versions": {
+    "claudeCode": "2.1.276 (Claude Code)",
+    "containerlab": "unknown",
+    "labsmith": "cb369822f235808915d0687adaaff53fdacfd837",
+    "limits": "97742db18b1ebd6f87173788554d836be45bcaec8afa684e58578892791068bc",
+    "prompts": {
+      "engineer": "036355a759d8ea1a418ff5b67bc1a2bc58cf3aa2c53499f1b847db14aa021bb9",
+      "writer": "69bfbd19ecbdda5f2931adebe66e980c82f7ca39e79cd2d8aacdbec664a5a81e"
+    }
+  },
+  "wallClockSeconds": 1508.269,
+  "writer": {
+    "attempts": 1,
+    "call": {
+      "costUsd": 0.09069740000000001,
+      "effort": "medium",
+      "exit": "ok",
+      "isError": false,
+      "model": "sonnet",
+      "modelUsage": {
+        "claude-sonnet-5": {
+          "cacheCreationInputTokens": 13357,
+          "cacheReadInputTokens": 2127,
+          "canonicalModel": "claude-sonnet-5",
+          "contextWindow": 1000000,
+          "costBasis": "list",
+          "costUSD": 0.09069740000000001,
+          "inputTokens": 2,
+          "maxOutputTokens": 64000,
+          "outputTokens": 3684,
+          "provider": "firstParty",
+          "thinkingTokens": 685,
+          "webSearchRequests": 0
+        }
+      },
+      "promptName": "writer",
+      "promptSha256": "69bfbd19ecbdda5f2931adebe66e980c82f7ca39e79cd2d8aacdbec664a5a81e"
+    },
+    "status": "accepted"
+  }
+}

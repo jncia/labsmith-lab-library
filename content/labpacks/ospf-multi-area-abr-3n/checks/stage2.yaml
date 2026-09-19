@@ -1,0 +1,21 @@
+schemaVersion: 0
+checks:
+- id: s2-abr-access-lo
+  description: abr has an OSPF route to the access loopback
+  device: abr
+  type: route-exists
+  prefix: 10.255.0.3/32
+  protocol: OSPF
+- id: s2-core-access-lo
+  description: Core has an OSPF route to the access loopback
+  device: core
+  type: route-exists
+  prefix: 10.255.0.3/32
+  protocol: OSPF
+- id: s2-ping
+  description: Core pings the access loopback
+  device: core
+  type: ping
+  count: 3
+  min_success_rate: 1
+  target: 10.255.0.3
