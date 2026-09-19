@@ -1,0 +1,713 @@
+{
+  "cleanup": {
+    "clean": true,
+    "containersRemaining": 0,
+    "destroyReturncode": 0,
+    "managementBridgeAbsent": true,
+    "managementNetworksRemaining": 0,
+    "topologyName": "labpack-l3vpn-customer-site-5n-q0918d",
+    "verifiedAt": "2026-09-19T04:04:37+00:00"
+  },
+  "contractVersion": "labsmith.learner-labpack-qualification.v0",
+  "date": "2026-09-19",
+  "generatedAt": "2026-09-19T04:04:37+00:00",
+  "images": [
+    {
+      "kind": "juniper_vjunosrouter",
+      "obtainFrom": "Download the vJunos-router qcow2 from Juniper's software downloads and package it as a containerlab vrnetlab image, or set VJUNOS_ROUTER_IMAGE to the tag you already have.",
+      "version": "26.2R1.7"
+    }
+  ],
+  "issues": [],
+  "labId": "l3vpn-customer-site-5n",
+  "message": null,
+  "packetContentHash": "e7022a22d79275f9b50d496569e0d6ff760057494dc516e58de4b1f40cbdbad6",
+  "receiptId": "l3vpn-customer-site-5n-2026-09-19-e7022a22d792",
+  "runs": [
+    {
+      "baseline": {
+        "checks": [
+          {
+            "attempts": 1,
+            "command": "show bgp summary | display json",
+            "description": "The route reflector p1 has an established VPN-capable BGP session to pe1.",
+            "device": "p1",
+            "elapsedSeconds": 0.532,
+            "error": null,
+            "expected": {
+              "family": "bgp.l3vpn.0",
+              "peer": "10.255.0.1",
+              "state": "Established",
+              "type": "bgp-neighbor"
+            },
+            "hint": null,
+            "id": "p1-pe1-bgp-established",
+            "metExpectation": true,
+            "passed": true,
+            "type": "bgp-neighbor"
+          },
+          {
+            "attempts": 2,
+            "command": "show bgp summary | display json",
+            "description": "The route reflector p1 has an established VPN-capable BGP session to pe2.",
+            "device": "p1",
+            "elapsedSeconds": 17.348,
+            "error": null,
+            "expected": {
+              "family": "bgp.l3vpn.0",
+              "peer": "10.255.0.3",
+              "state": "Established",
+              "type": "bgp-neighbor"
+            },
+            "hint": null,
+            "id": "p1-pe2-bgp-established",
+            "metExpectation": true,
+            "passed": true,
+            "type": "bgp-neighbor"
+          },
+          {
+            "attempts": 1,
+            "command": "show ldp session | display json",
+            "description": "p1 has an operational LDP session to the pe1 loopback.",
+            "device": "p1",
+            "elapsedSeconds": 1.41,
+            "error": null,
+            "expected": {
+              "peer": "10.255.0.1",
+              "state": "Operational",
+              "type": "ldp-session"
+            },
+            "hint": null,
+            "id": "p1-pe1-ldp-operational",
+            "metExpectation": true,
+            "passed": true,
+            "type": "ldp-session"
+          },
+          {
+            "attempts": 2,
+            "command": "show ldp session | display json",
+            "description": "p1 has an operational LDP session to the pe2 loopback.",
+            "device": "p1",
+            "elapsedSeconds": 17.788,
+            "error": null,
+            "expected": {
+              "peer": "10.255.0.3",
+              "state": "Operational",
+              "type": "ldp-session"
+            },
+            "hint": null,
+            "id": "p1-pe2-ldp-operational",
+            "metExpectation": true,
+            "passed": true,
+            "type": "ldp-session"
+          }
+        ],
+        "deadlineSeconds": 600,
+        "elapsedSeconds": 17.788,
+        "expect": "pass",
+        "intervalSeconds": 15,
+        "label": "baseline",
+        "polls": 2,
+        "satisfied": true
+      },
+      "elapsedSeconds": 351.485,
+      "issues": [],
+      "message": null,
+      "name": "start-state",
+      "stageExpectations": [
+        {
+          "checks": [
+            {
+              "attempts": 1,
+              "command": "show route table CUST-A.inet.0 198.51.100.1/32 exact | display json",
+              "description": "The remote customer site loopback is present in the CUST-A table on pe1, learned by BGP.",
+              "device": "pe1",
+              "elapsedSeconds": 0.478,
+              "error": null,
+              "expected": {
+                "prefix": "198.51.100.1/32",
+                "protocol": "BGP",
+                "table": "CUST-A.inet.0",
+                "type": "vpn-route"
+              },
+              "hint": "A VPN route only lands in a local table when the local instance imports the route target the far end attached to it. Check both ends of that agreement, not just the session state.",
+              "id": "pe1-remote-vrf-route",
+              "metExpectation": true,
+              "passed": false,
+              "type": "vpn-route"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table SITE1.inet.0 198.51.100.1/32 exact | display json",
+              "description": "The customer edge learns the remote site loopback, by BGP, in the site it reaches through pe1.",
+              "device": "ce1",
+              "elapsedSeconds": 0.945,
+              "error": null,
+              "expected": {
+                "prefix": "198.51.100.1/32",
+                "protocol": "BGP",
+                "table": "SITE1.inet.0",
+                "type": "route-exists"
+              },
+              "hint": "The customer only hears what pe1 tells it. If pe1 holds the remote route but the customer does not, look at the session between them, and at what the customer does with a route whose path already contains its own autonomous system.",
+              "id": "ce1-site1-remote-loopback",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "ping routing-instance SITE1 198.51.100.1 count 3 | display json",
+              "description": "The customer site reached through pe1 can reach the remote site loopback across the provider.",
+              "device": "ce1",
+              "elapsedSeconds": 13.574,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1.0,
+                "routing_instance": "SITE1",
+                "target": "198.51.100.1",
+                "type": "ping"
+              },
+              "hint": "A route in one direction is half a conversation. The reply needs a route back to the address the request was sent from, so check what the far site has learned as well.",
+              "id": "ce1-site1-ping-remote-loopback",
+              "metExpectation": true,
+              "passed": false,
+              "type": "ping"
+            }
+          ],
+          "deadlineSeconds": 600,
+          "elapsedSeconds": 13.574,
+          "expect": "fail",
+          "intervalSeconds": 15,
+          "label": "stage-1-customer-routing-instance",
+          "polls": 1,
+          "satisfied": true
+        },
+        {
+          "checks": [
+            {
+              "attempts": 1,
+              "command": "show l2circuit connections | display json",
+              "description": "pe1 reports the circuit to the remote provider edge as up, carrying virtual circuit 200.",
+              "device": "pe1",
+              "elapsedSeconds": 0.521,
+              "error": null,
+              "expected": {
+                "neighbor": "10.255.0.3",
+                "type": "l2circuit-up",
+                "vc_id": 200
+              },
+              "hint": "A circuit needs three things to agree: the access port must be presented as a circuit rather than a routed interface, both ends must use the same circuit identifier, and the remote end must be reachable by the transport label path the core already provides.",
+              "id": "pe1-l2circuit-up",
+              "metExpectation": true,
+              "passed": false,
+              "type": "l2circuit-up"
+            },
+            {
+              "attempts": 1,
+              "command": "show l2circuit connections | display json",
+              "description": "The remote provider edge agrees: it reports its side of virtual circuit 200 toward pe1 as up.",
+              "device": "pe2",
+              "elapsedSeconds": 0.958,
+              "error": null,
+              "expected": {
+                "neighbor": "10.255.0.1",
+                "type": "l2circuit-up",
+                "vc_id": 200
+              },
+              "hint": "A circuit is signalled by both ends. When the far end is still waiting, it says so in its own connection status, and the legend in that output names what it is waiting for.",
+              "id": "pe2-l2circuit-up",
+              "metExpectation": true,
+              "passed": false,
+              "type": "l2circuit-up"
+            }
+          ],
+          "deadlineSeconds": 600,
+          "elapsedSeconds": 0.958,
+          "expect": "fail",
+          "intervalSeconds": 15,
+          "label": "stage-2-layer2-circuit",
+          "polls": 1,
+          "satisfied": true
+        }
+      ],
+      "stages": [],
+      "status": "passed"
+    },
+    {
+      "baseline": null,
+      "elapsedSeconds": 62.829,
+      "issues": [],
+      "message": null,
+      "name": "reference-solution",
+      "stageExpectations": [],
+      "stages": [
+        {
+          "appliedNodes": [
+            "pe1"
+          ],
+          "captureCount": 3,
+          "captures": [
+            {
+              "checkId": "pe1-remote-vrf-route",
+              "command": "show route table CUST-A.inet.0 198.51.100.1/32 exact",
+              "node": "pe1",
+              "output": "CUST-A.inet.0: 5 destinations, 5 routes (5 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n198.51.100.1/32    *[BGP/170] <age>, localpref 100, from 10.255.0.2\n                      AS path: 65100 I, validation-state: unverified\n                    >  to 10.0.12.1 via ge-0/0/1.0, Push <label>, Push <label>(top)\n",
+              "stageId": "stage-1-customer-routing-instance"
+            },
+            {
+              "checkId": "ce1-site1-remote-loopback",
+              "command": "show route table SITE1.inet.0 198.51.100.1/32 exact",
+              "node": "ce1",
+              "output": "SITE1.inet.0: 5 destinations, 5 routes (5 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n198.51.100.1/32    *[BGP/170] <age>, localpref 100\n                      AS path: 65000 65000 I, validation-state: unverified\n                    >  to 172.16.11.1 via ge-0/0/0.0\n",
+              "stageId": "stage-1-customer-routing-instance"
+            },
+            {
+              "checkId": "ce1-site1-ping-remote-loopback",
+              "command": "ping routing-instance SITE1 198.51.100.1 count 3",
+              "node": "ce1",
+              "output": "PING 198.51.100.1 (198.51.100.1): 56 data bytes\n<counter> bytes from 198.51.100.1: icmp_seq=0 ttl=61 time=4.553 ms\n<counter> bytes from 198.51.100.1: icmp_seq=1 ttl=61 time=4.149 ms\n<counter> bytes from 198.51.100.1: icmp_seq=2 ttl=61 time=4.214 ms\n\n--- 198.51.100.1 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 4.149/4.305/4.553/0.177 ms\n",
+              "stageId": "stage-1-customer-routing-instance"
+            }
+          ],
+          "elapsedSeconds": 46.523,
+          "passed": true,
+          "regressions": [],
+          "stageId": "stage-1-customer-routing-instance",
+          "target": {
+            "checks": [
+              {
+                "attempts": 1,
+                "command": "show route table CUST-A.inet.0 198.51.100.1/32 exact | display json",
+                "description": "The remote customer site loopback is present in the CUST-A table on pe1, learned by BGP.",
+                "device": "pe1",
+                "elapsedSeconds": 0.494,
+                "error": null,
+                "expected": {
+                  "prefix": "198.51.100.1/32",
+                  "protocol": "BGP",
+                  "table": "CUST-A.inet.0",
+                  "type": "vpn-route"
+                },
+                "hint": "A VPN route only lands in a local table when the local instance imports the route target the far end attached to it. Check both ends of that agreement, not just the session state.",
+                "id": "pe1-remote-vrf-route",
+                "metExpectation": true,
+                "passed": true,
+                "type": "vpn-route"
+              },
+              {
+                "attempts": 2,
+                "command": "show route table SITE1.inet.0 198.51.100.1/32 exact | display json",
+                "description": "The customer edge learns the remote site loopback, by BGP, in the site it reaches through pe1.",
+                "device": "ce1",
+                "elapsedSeconds": 29.036,
+                "error": null,
+                "expected": {
+                  "prefix": "198.51.100.1/32",
+                  "protocol": "BGP",
+                  "table": "SITE1.inet.0",
+                  "type": "route-exists"
+                },
+                "hint": "The customer only hears what pe1 tells it. If pe1 holds the remote route but the customer does not, look at the session between them, and at what the customer does with a route whose path already contains its own autonomous system.",
+                "id": "ce1-site1-remote-loopback",
+                "metExpectation": true,
+                "passed": true,
+                "type": "route-exists"
+              },
+              {
+                "attempts": 2,
+                "command": "ping routing-instance SITE1 198.51.100.1 count 3 | display json",
+                "description": "The customer site reached through pe1 can reach the remote site loopback across the provider.",
+                "device": "ce1",
+                "elapsedSeconds": 31.546,
+                "error": null,
+                "expected": {
+                  "count": 3,
+                  "min_success_rate": 1.0,
+                  "routing_instance": "SITE1",
+                  "target": "198.51.100.1",
+                  "type": "ping"
+                },
+                "hint": "A route in one direction is half a conversation. The reply needs a route back to the address the request was sent from, so check what the far site has learned as well.",
+                "id": "ce1-site1-ping-remote-loopback",
+                "metExpectation": true,
+                "passed": true,
+                "type": "ping"
+              }
+            ],
+            "deadlineSeconds": 600,
+            "elapsedSeconds": 31.546,
+            "expect": "pass",
+            "intervalSeconds": 15,
+            "label": "stage-1-customer-routing-instance",
+            "polls": 2,
+            "satisfied": true
+          }
+        },
+        {
+          "appliedNodes": [
+            "pe1"
+          ],
+          "captureCount": 2,
+          "captures": [
+            {
+              "checkId": "pe1-l2circuit-up",
+              "command": "show l2circuit connections",
+              "node": "pe1",
+              "output": "Layer-2 Circuit Connections:\n\nLegend for connection status (St)\nEI -- encapsulation invalid      NP -- interface h/w not present\nMM -- mtu mismatch               Dn -- down\nEM -- encapsulation mismatch     VC-Dn -- Virtual circuit Down\nCM -- control-word mismatch      Up -- operational\nVM -- vlan id mismatch\t\t CF -- Call admission control failure\nOL -- no outgoing label          IB -- TDM incompatible bitrate\nNC -- intf encaps not CCC/TCC    TM -- TDM misconfiguration\nBK -- Backup Connection          ST -- Standby Connection\nCB -- rcvd cell-bundle size bad  SP -- Static Pseudowire\nLD -- local site signaled down   RS -- remote site standby\nRD -- remote site signaled down  HS -- Hot-standby Connection\nXX -- unknown\n\nLegend for interface status\nUp -- operational\nDn -- down\nNeighbor: 10.255.0.3\n    Interface                 Type  St     Time last up          # Up trans\n    ge-0/0/2.0(vc 200)        rmt   Up     <timestamp>           1\n      Remote PE: 10.255.0.3, Negotiated control-word: Yes (Null)\n      Incoming label: <label>, Outgoing label: <label>\n      Negotiated PW status TLV: No\n      Local interface: ge-0/0/2.0, Status: Up, Encapsulation: ETHERNET\n      Flow Label Transmit: No, Flow Label Receive: No\n",
+              "stageId": "stage-2-layer2-circuit"
+            },
+            {
+              "checkId": "pe2-l2circuit-up",
+              "command": "show l2circuit connections",
+              "node": "pe2",
+              "output": "Layer-2 Circuit Connections:\n\nLegend for connection status (St)\nEI -- encapsulation invalid      NP -- interface h/w not present\nMM -- mtu mismatch               Dn -- down\nEM -- encapsulation mismatch     VC-Dn -- Virtual circuit Down\nCM -- control-word mismatch      Up -- operational\nVM -- vlan id mismatch\t\t CF -- Call admission control failure\nOL -- no outgoing label          IB -- TDM incompatible bitrate\nNC -- intf encaps not CCC/TCC    TM -- TDM misconfiguration\nBK -- Backup Connection          ST -- Standby Connection\nCB -- rcvd cell-bundle size bad  SP -- Static Pseudowire\nLD -- local site signaled down   RS -- remote site standby\nRD -- remote site signaled down  HS -- Hot-standby Connection\nXX -- unknown\n\nLegend for interface status\nUp -- operational\nDn -- down\nNeighbor: 10.255.0.1\n    Interface                 Type  St     Time last up          # Up trans\n    ge-0/0/2.0(vc 200)        rmt   Up     <timestamp>           1\n      Remote PE: 10.255.0.1, Negotiated control-word: Yes (Null)\n      Incoming label: <label>, Outgoing label: <label>\n      Negotiated PW status TLV: No\n      Local interface: ge-0/0/2.0, Status: Up, Encapsulation: ETHERNET\n      Flow Label Transmit: No, Flow Label Receive: No\n",
+              "stageId": "stage-2-layer2-circuit"
+            }
+          ],
+          "elapsedSeconds": 16.306,
+          "passed": true,
+          "regressions": [
+            {
+              "checks": [
+                {
+                  "attempts": 1,
+                  "command": "show route table CUST-A.inet.0 198.51.100.1/32 exact | display json",
+                  "description": "The remote customer site loopback is present in the CUST-A table on pe1, learned by BGP.",
+                  "device": "pe1",
+                  "elapsedSeconds": 0.432,
+                  "error": null,
+                  "expected": {
+                    "prefix": "198.51.100.1/32",
+                    "protocol": "BGP",
+                    "table": "CUST-A.inet.0",
+                    "type": "vpn-route"
+                  },
+                  "hint": "A VPN route only lands in a local table when the local instance imports the route target the far end attached to it. Check both ends of that agreement, not just the session state.",
+                  "id": "pe1-remote-vrf-route",
+                  "metExpectation": true,
+                  "passed": true,
+                  "type": "vpn-route"
+                },
+                {
+                  "attempts": 1,
+                  "command": "show route table SITE1.inet.0 198.51.100.1/32 exact | display json",
+                  "description": "The customer edge learns the remote site loopback, by BGP, in the site it reaches through pe1.",
+                  "device": "ce1",
+                  "elapsedSeconds": 0.907,
+                  "error": null,
+                  "expected": {
+                    "prefix": "198.51.100.1/32",
+                    "protocol": "BGP",
+                    "table": "SITE1.inet.0",
+                    "type": "route-exists"
+                  },
+                  "hint": "The customer only hears what pe1 tells it. If pe1 holds the remote route but the customer does not, look at the session between them, and at what the customer does with a route whose path already contains its own autonomous system.",
+                  "id": "ce1-site1-remote-loopback",
+                  "metExpectation": true,
+                  "passed": true,
+                  "type": "route-exists"
+                },
+                {
+                  "attempts": 1,
+                  "command": "ping routing-instance SITE1 198.51.100.1 count 3 | display json",
+                  "description": "The customer site reached through pe1 can reach the remote site loopback across the provider.",
+                  "device": "ce1",
+                  "elapsedSeconds": 3.459,
+                  "error": null,
+                  "expected": {
+                    "count": 3,
+                    "min_success_rate": 1.0,
+                    "routing_instance": "SITE1",
+                    "target": "198.51.100.1",
+                    "type": "ping"
+                  },
+                  "hint": "A route in one direction is half a conversation. The reply needs a route back to the address the request was sent from, so check what the far site has learned as well.",
+                  "id": "ce1-site1-ping-remote-loopback",
+                  "metExpectation": true,
+                  "passed": true,
+                  "type": "ping"
+                }
+              ],
+              "deadlineSeconds": 600,
+              "elapsedSeconds": 3.459,
+              "expect": "pass",
+              "intervalSeconds": 15,
+              "label": "stage-1-customer-routing-instance",
+              "polls": 1,
+              "satisfied": true
+            }
+          ],
+          "stageId": "stage-2-layer2-circuit",
+          "target": {
+            "checks": [
+              {
+                "attempts": 1,
+                "command": "show l2circuit connections | display json",
+                "description": "pe1 reports the circuit to the remote provider edge as up, carrying virtual circuit 200.",
+                "device": "pe1",
+                "elapsedSeconds": 0.455,
+                "error": null,
+                "expected": {
+                  "neighbor": "10.255.0.3",
+                  "type": "l2circuit-up",
+                  "vc_id": 200
+                },
+                "hint": "A circuit needs three things to agree: the access port must be presented as a circuit rather than a routed interface, both ends must use the same circuit identifier, and the remote end must be reachable by the transport label path the core already provides.",
+                "id": "pe1-l2circuit-up",
+                "metExpectation": true,
+                "passed": true,
+                "type": "l2circuit-up"
+              },
+              {
+                "attempts": 1,
+                "command": "show l2circuit connections | display json",
+                "description": "The remote provider edge agrees: it reports its side of virtual circuit 200 toward pe1 as up.",
+                "device": "pe2",
+                "elapsedSeconds": 0.93,
+                "error": null,
+                "expected": {
+                  "neighbor": "10.255.0.1",
+                  "type": "l2circuit-up",
+                  "vc_id": 200
+                },
+                "hint": "A circuit is signalled by both ends. When the far end is still waiting, it says so in its own connection status, and the legend in that output names what it is waiting for.",
+                "id": "pe2-l2circuit-up",
+                "metExpectation": true,
+                "passed": true,
+                "type": "l2circuit-up"
+              }
+            ],
+            "deadlineSeconds": 600,
+            "elapsedSeconds": 0.93,
+            "expect": "pass",
+            "intervalSeconds": 15,
+            "label": "stage-2-layer2-circuit",
+            "polls": 1,
+            "satisfied": true
+          }
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "checks": [
+          {
+            "attempts": 1,
+            "command": "show bgp summary | display json",
+            "description": "The route reflector p1 has an established VPN-capable BGP session to pe1.",
+            "device": "p1",
+            "elapsedSeconds": 0.46,
+            "error": null,
+            "expected": {
+              "family": "bgp.l3vpn.0",
+              "peer": "10.255.0.1",
+              "state": "Established",
+              "type": "bgp-neighbor"
+            },
+            "hint": null,
+            "id": "p1-pe1-bgp-established",
+            "metExpectation": true,
+            "passed": true,
+            "type": "bgp-neighbor"
+          },
+          {
+            "attempts": 1,
+            "command": "show bgp summary | display json",
+            "description": "The route reflector p1 has an established VPN-capable BGP session to pe2.",
+            "device": "p1",
+            "elapsedSeconds": 0.866,
+            "error": null,
+            "expected": {
+              "family": "bgp.l3vpn.0",
+              "peer": "10.255.0.3",
+              "state": "Established",
+              "type": "bgp-neighbor"
+            },
+            "hint": null,
+            "id": "p1-pe2-bgp-established",
+            "metExpectation": true,
+            "passed": true,
+            "type": "bgp-neighbor"
+          },
+          {
+            "attempts": 1,
+            "command": "show ldp session | display json",
+            "description": "p1 has an operational LDP session to the pe1 loopback.",
+            "device": "p1",
+            "elapsedSeconds": 1.418,
+            "error": null,
+            "expected": {
+              "peer": "10.255.0.1",
+              "state": "Operational",
+              "type": "ldp-session"
+            },
+            "hint": null,
+            "id": "p1-pe1-ldp-operational",
+            "metExpectation": true,
+            "passed": true,
+            "type": "ldp-session"
+          },
+          {
+            "attempts": 1,
+            "command": "show ldp session | display json",
+            "description": "p1 has an operational LDP session to the pe2 loopback.",
+            "device": "p1",
+            "elapsedSeconds": 1.897,
+            "error": null,
+            "expected": {
+              "peer": "10.255.0.3",
+              "state": "Operational",
+              "type": "ldp-session"
+            },
+            "hint": null,
+            "id": "p1-pe2-ldp-operational",
+            "metExpectation": true,
+            "passed": true,
+            "type": "ldp-session"
+          }
+        ],
+        "deadlineSeconds": 600,
+        "elapsedSeconds": 1.897,
+        "expect": "pass",
+        "intervalSeconds": 15,
+        "label": "baseline",
+        "polls": 1,
+        "satisfied": true
+      },
+      "elapsedSeconds": 30.286,
+      "issues": [],
+      "message": null,
+      "name": "reset",
+      "stageExpectations": [
+        {
+          "checks": [
+            {
+              "attempts": 1,
+              "command": "show route table CUST-A.inet.0 198.51.100.1/32 exact | display json",
+              "description": "The remote customer site loopback is present in the CUST-A table on pe1, learned by BGP.",
+              "device": "pe1",
+              "elapsedSeconds": 0.445,
+              "error": null,
+              "expected": {
+                "prefix": "198.51.100.1/32",
+                "protocol": "BGP",
+                "table": "CUST-A.inet.0",
+                "type": "vpn-route"
+              },
+              "hint": "A VPN route only lands in a local table when the local instance imports the route target the far end attached to it. Check both ends of that agreement, not just the session state.",
+              "id": "pe1-remote-vrf-route",
+              "metExpectation": true,
+              "passed": false,
+              "type": "vpn-route"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table SITE1.inet.0 198.51.100.1/32 exact | display json",
+              "description": "The customer edge learns the remote site loopback, by BGP, in the site it reaches through pe1.",
+              "device": "ce1",
+              "elapsedSeconds": 0.935,
+              "error": null,
+              "expected": {
+                "prefix": "198.51.100.1/32",
+                "protocol": "BGP",
+                "table": "SITE1.inet.0",
+                "type": "route-exists"
+              },
+              "hint": "The customer only hears what pe1 tells it. If pe1 holds the remote route but the customer does not, look at the session between them, and at what the customer does with a route whose path already contains its own autonomous system.",
+              "id": "ce1-site1-remote-loopback",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "ping routing-instance SITE1 198.51.100.1 count 3 | display json",
+              "description": "The customer site reached through pe1 can reach the remote site loopback across the provider.",
+              "device": "ce1",
+              "elapsedSeconds": 13.488,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1.0,
+                "routing_instance": "SITE1",
+                "target": "198.51.100.1",
+                "type": "ping"
+              },
+              "hint": "A route in one direction is half a conversation. The reply needs a route back to the address the request was sent from, so check what the far site has learned as well.",
+              "id": "ce1-site1-ping-remote-loopback",
+              "metExpectation": true,
+              "passed": false,
+              "type": "ping"
+            }
+          ],
+          "deadlineSeconds": 600,
+          "elapsedSeconds": 13.488,
+          "expect": "fail",
+          "intervalSeconds": 15,
+          "label": "stage-1-customer-routing-instance",
+          "polls": 1,
+          "satisfied": true
+        },
+        {
+          "checks": [
+            {
+              "attempts": 1,
+              "command": "show l2circuit connections | display json",
+              "description": "pe1 reports the circuit to the remote provider edge as up, carrying virtual circuit 200.",
+              "device": "pe1",
+              "elapsedSeconds": 0.45,
+              "error": null,
+              "expected": {
+                "neighbor": "10.255.0.3",
+                "type": "l2circuit-up",
+                "vc_id": 200
+              },
+              "hint": "A circuit needs three things to agree: the access port must be presented as a circuit rather than a routed interface, both ends must use the same circuit identifier, and the remote end must be reachable by the transport label path the core already provides.",
+              "id": "pe1-l2circuit-up",
+              "metExpectation": true,
+              "passed": false,
+              "type": "l2circuit-up"
+            },
+            {
+              "attempts": 1,
+              "command": "show l2circuit connections | display json",
+              "description": "The remote provider edge agrees: it reports its side of virtual circuit 200 toward pe1 as up.",
+              "device": "pe2",
+              "elapsedSeconds": 0.93,
+              "error": null,
+              "expected": {
+                "neighbor": "10.255.0.1",
+                "type": "l2circuit-up",
+                "vc_id": 200
+              },
+              "hint": "A circuit is signalled by both ends. When the far end is still waiting, it says so in its own connection status, and the legend in that output names what it is waiting for.",
+              "id": "pe2-l2circuit-up",
+              "metExpectation": true,
+              "passed": false,
+              "type": "l2circuit-up"
+            }
+          ],
+          "deadlineSeconds": 600,
+          "elapsedSeconds": 0.93,
+          "expect": "fail",
+          "intervalSeconds": 15,
+          "label": "stage-2-layer2-circuit",
+          "polls": 1,
+          "satisfied": true
+        }
+      ],
+      "stages": [],
+      "status": "passed"
+    }
+  ],
+  "status": "passed",
+  "toolVersions": {
+    "containerlab": "0.77.0",
+    "imageDigest": "sha256:b343ea11ab9bfc9878632ba52cb910f5b147d018dc785bae337da9f7163da24d",
+    "labsmith": "d0c98300fde8ed4cf91766e84b23c02ee57547f0"
+  },
+  "totalSeconds": 449.501
+}
