@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1016" height="212" viewBox="0 0 1016 212" role="img">
+<!-- labpack-diagram: generated from this packet's own data -->
+<title>Bring a Three-Router Core onto a Single Link-State Area</title>
+<desc>3 nodes and 2 links, each node labelled with its identifier and its part in the network and each link with the interface and address at both of its ends.</desc>
+<rect x="0" y="0" width="1016" height="212" fill="#ffffff"/>
+<text x="24" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="19" fill="#12233b" font-weight="600">Bring a Three-Router Core onto a Single Link-State Area</text>
+<text x="24" y="56" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" fill="#4c5c72">interior-routing-core-3n</text>
+<polyline points="160,117 440,117" fill="none" stroke="#2b4058" stroke-width="1.5"/>
+<polyline points="576,117 856,117" fill="none" stroke="#2b4058" stroke-width="1.5"/>
+<rect x="24" y="76" width="136" height="82" rx="0" ry="0" fill="#e7eef8" stroke="#12233b" stroke-width="1.5"/>
+<text x="92" y="106" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#12233b" text-anchor="middle" font-weight="600">r1</text>
+<text x="92" y="119" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#4c5c72" text-anchor="middle">one end of the line</text>
+<text x="92" y="136" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="middle">lo0.0 10.255.0.1/32</text>
+<rect x="440" y="76" width="136" height="82" rx="0" ry="0" fill="#e7eef8" stroke="#12233b" stroke-width="1.5"/>
+<text x="508" y="100" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#12233b" text-anchor="middle" font-weight="600">r2</text>
+<text x="508" y="113" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#4c5c72" text-anchor="middle">the middle router the</text>
+<text x="508" y="126" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#4c5c72" text-anchor="middle">path crosses</text>
+<text x="508" y="143" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="middle">lo0.0 10.255.0.2/32</text>
+<rect x="856" y="76" width="136" height="82" rx="0" ry="0" fill="#e7eef8" stroke="#12233b" stroke-width="1.5"/>
+<text x="924" y="100" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#12233b" text-anchor="middle" font-weight="600">r3</text>
+<text x="924" y="113" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#4c5c72" text-anchor="middle">the other end of the</text>
+<text x="924" y="126" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#4c5c72" text-anchor="middle">line</text>
+<text x="924" y="143" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="middle">lo0.0 10.255.0.3/32</text>
+<rect x="165" y="103" width="54" height="12" fill="#ffffff"/>
+<text x="168" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b">ge-0/0/0</text>
+<rect x="165" y="121" width="78" height="12" fill="#ffffff"/>
+<text x="168" y="130" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72">10.0.12.1/30</text>
+<rect x="381" y="103" width="54" height="12" fill="#ffffff"/>
+<text x="432" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="end">ge-0/0/0</text>
+<rect x="357" y="121" width="78" height="12" fill="#ffffff"/>
+<text x="432" y="130" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="end">10.0.12.2/30</text>
+<rect x="581" y="103" width="54" height="12" fill="#ffffff"/>
+<text x="584" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b">ge-0/0/1</text>
+<rect x="581" y="121" width="78" height="12" fill="#ffffff"/>
+<text x="584" y="130" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72">10.0.23.1/30</text>
+<rect x="797" y="103" width="54" height="12" fill="#ffffff"/>
+<text x="848" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="end">ge-0/0/0</text>
+<rect x="773" y="121" width="78" height="12" fill="#ffffff"/>
+<text x="848" y="130" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="end">10.0.23.2/30</text>
+<rect x="261" y="102" width="78" height="12" fill="#ffffff"/>
+<text x="300" y="111" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="middle">10.0.12.0/30</text>
+<rect x="677" y="102" width="78" height="12" fill="#ffffff"/>
+<text x="716" y="111" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="middle">10.0.23.0/30</text>
+<rect x="24" y="182" width="26" height="16" rx="0" ry="0" fill="#e7eef8" stroke="#12233b" stroke-width="1.5"/>
+<text x="56" y="194" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" fill="#4c5c72">device you configure</text>
+<line x1="199" y1="190" x2="221" y2="190" stroke="#2b4058" stroke-width="1.5"/>
+<text x="227" y="194" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" fill="#4c5c72">link, with each end's interface and address and the shared subnet</text>
+</svg>

@@ -1,0 +1,106 @@
+{
+  "solutions": {
+    "intro": "Both stages are configured on all three routers, in configuration mode, then committed. Stage 1 puts the link interfaces into the area, and stage 2 adds the loopbacks to the same area. Nothing else changes: the addressing stays as it was, and the design is one area, 0.0.0.0, everywhere. The captured checks come from r1 and r3, the two ends, because they are the routers that learn everything through r2.",
+    "stages": [
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Putting a router or an interface in a different area number",
+            "recognise": "The OSPF neighbour list is empty on the router with the odd area, and the OSPF section of the route table lacks the far link subnet.",
+            "symptom": "The adjacency never forms, so the far link subnet does not appear on the end routers."
+          },
+          {
+            "mistake": "Leaving one of r2's two interfaces out of the area",
+            "recognise": "r2 shows only one neighbour. One of r1 or r3 has an empty neighbour list, and the check for that router fails.",
+            "symptom": "One end router has an adjacency and the other has nothing. The end that is cut off learns no OSPF routes at all."
+          }
+        ],
+        "configurationIntro": "Apply this on each of the three routers, then commit. Each router puts its link interfaces into area 0.0.0.0: r1 ge-0/0/0, r2 ge-0/0/0 and ge-0/0/1, r3 ge-0/0/0. Leave the loopbacks out for now. r2 has two interfaces in the area, and r1 and r3 have one each.",
+        "id": "s1",
+        "verification": [
+          {
+            "checkId": "s1-r1-link23",
+            "lookFor": "Read the entry for <private-address>/30 on r1. The protocol shown is OSPF, and the next hop is <private-address> out of ge-0/0/0.0. That address is r2 on the r1-r2 link. r1 has no interface on the r2-r3 link, so the only way it can hold this route is that r2 announced it. That also proves the r1-r2 adjacency is up."
+          },
+          {
+            "checkId": "s1-r3-link12",
+            "lookFor": "Read the entry for <private-address>/30 on r3. The protocol is OSPF and the next hop is <private-address> out of ge-0/0/0.0, which is r2 on the r2-r3 link. This is the mirror of the r1 check, and it proves the r2-r3 adjacency is up as well. Both entries carry a metric of 2, one link to r2 plus the link beyond it."
+          }
+        ],
+        "whyItWorks": "OSPF forms an adjacency on each link where both ends put the interface in the same area. With ge-0/0/0 on r1, both r2 interfaces and ge-0/0/0 on r3 all in 0.0.0.0, r2 has an adjacency with each end router, and each router floods its link subnets into a shared database. The captured routes show the result. r1 holds the r2-r3 subnet with r2 as next hop, and r3 holds the r1-r2 subnet the same way. Neither router is directly attached to the far subnet, so the entries can only come from the protocol. The route table marks them OSPF, and the point of the first stage is that the routes come from the protocol and not from anything typed in by hand."
+      },
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Loopback left out of the area on one router",
+            "recognise": "The OSPF routes on the other routers lack that /32, and the ping reports no route to host. The other loopbacks are still present, so only one address is missing.",
+            "symptom": "That router's /32 is missing everywhere else, and a ping to it fails with no route."
+          },
+          {
+            "mistake": "Putting the loopback in a different area from the links",
+            "recognise": "Check the area shown for lo0.0 against the area of the link interfaces on the same router. Any difference is the fault.",
+            "symptom": "The router's link adjacencies stay up, but its loopback is announced as part of another area. The design calls for one area, 0.0.0.0, everywhere, and this breaks it."
+          },
+          {
+            "mistake": "Adding loopbacks on r1 and r3 only and forgetting r2",
+            "recognise": "The check for r1's route to <private-address>/32 fails, because r1 has no OSPF route for it.",
+            "symptom": "r1 and r3 can reach each other's loopbacks, but nobody can reach <private-address>. The end-to-end ping passes, so it hides the fault."
+          }
+        ],
+        "configurationIntro": "Apply this on each of the three routers, then commit. Each router adds its own loopback, lo0.0, to area 0.0.0.0, the same area as its links. The loopback addresses are <private-address>/32 on r1, <private-address>/32 on r2 and <private-address>/32 on r3. Do it on all three: a loopback left out is not announced, and the other routers cannot learn it.",
+        "id": "s2",
+        "verification": [
+          {
+            "checkId": "s2-r1-lo2",
+            "lookFor": "On r1, the route to <private-address>/32 is learned from OSPF with next hop <private-address> via ge-0/0/0.0. The metric is 1. r2's loopback is directly behind the next hop, so this is the shortest path."
+          },
+          {
+            "checkId": "s2-r1-lo3",
+            "lookFor": "On r1, the route to <private-address>/32 is learned from OSPF, still through <private-address> via ge-0/0/0.0. The metric is 2, one more than r2's loopback, which fits r3 being one router further along the line. The next hop is r2, not r3, because r1 has no link to r3."
+          },
+          {
+            "checkId": "s2-r3-lo1",
+            "lookFor": "On r3, the route to <private-address>/32 is learned from OSPF, with next hop <private-address> via ge-0/0/0.0 and a metric of 2. It is the same path as on r1, seen from the other end, and shows r1's loopback made it across r2."
+          },
+          {
+            "checkId": "s2-r1-ping",
+            "lookFor": "All three probes from r1 to <private-address> are answered, with 0% loss in the statistics. The TTL is 63: the reply left r3 with 64 and lost one at r2, so the path crossed exactly one router. That is what an end-to-end path over r2 should look like."
+          },
+          {
+            "checkId": "s2-r3-ping",
+            "lookFor": "All three probes from r3 to <private-address> are answered with 0% loss, and again the TTL is 63, showing one router in the middle. Running the ping in both directions matters, because each direction depends on the other end having a route back."
+          }
+        ],
+        "whyItWorks": "Adding the loopbacks to the area makes each router announce its /32 in the same database that already carries the link subnets. The routes captured on r1 and r3 show that: r1 has both far loopbacks, r3 has r1's, and every next hop is r2. The metrics grow with the number of links along the way, 1 to r2's loopback and 2 to the loopback beyond it. The pings work in both directions because each side has a route to the other's loopback and a route back to the link it came in on. The link subnets from stage 1 are what let the replies find their way back. The TTL of 63 confirms the packets crossed r2 as a router and were not switched around it."
+      }
+    ]
+  },
+  "summary": "Three routers in a line, r1 - r2 - r3, start with addressed links and loopbacks but no routing protocol. You bring them into a single OSPF area 0.0.0.0, first so the far link subnets are learned, then so every loopback is learned and the two ends ping each other across r2.",
+  "workbook": {
+    "scenario": "You run a small core made of three routers in a line: r1, r2 and r3. r1 connects to r2, and r2 connects to r3. The links are addressed and up, and every router has a loopback. What is missing is a routing protocol. Today each router reaches only the neighbours it shares a link with, so r1 and r3 cannot see each other at all. The team does not want static routes. They want the routers to learn each other's networks from a link-state protocol, and they want proof that the two ends of the line can reach each other's loopbacks through r2. You will do it in two stages: first get the routers talking to each other, then bring the loopbacks in.",
+    "stages": [
+      {
+        "doneWhen": [
+          "r1 has a route to <private-address>/30 whose protocol is OSPF, with r2 as the next hop.",
+          "r3 has a route to <private-address>/30 whose protocol is OSPF, with r2 as the next hop.",
+          "The link interfaces on all three routers are still up."
+        ],
+        "goal": "Make r1, r2 and r3 exchange routing information over their point-to-point links, all in one OSPF area, 0.0.0.0. Only the link interfaces take part at this stage. Each end router has to learn the far link subnet from the protocol, not from a static entry. Do not disturb the link interfaces or their addresses.",
+        "hint": "Ask what each end router knew about the far link before, and what would have to reach it to change that. A neighbour only tells you about networks it has been told to announce, and it only becomes a neighbour if both sides agree on the area.",
+        "id": "s1"
+      },
+      {
+        "doneWhen": [
+          "r1 has OSPF routes to <private-address>/32 and to <private-address>/32.",
+          "r3 has an OSPF route to <private-address>/32.",
+          "r1 can ping <private-address> and r3 can ping <private-address>, with no packet loss.",
+          "The link interfaces are still up."
+        ],
+        "goal": "Make every router's loopback part of the same routing area so that the loopbacks are learned from the protocol, and the two ends of the line can reach each other's loopback across r2. Keep the single area from stage 1 and do not add static routes.",
+        "hint": "A loopback has no neighbours, so nothing will announce it on its own. Think about what makes the protocol aware of an address that is not on a link, and check that all three routers did the same.",
+        "id": "s2"
+      }
+    ],
+    "startState": "Every link interface and every loopback is already addressed and up, and you should leave that alone. The addressing and design values tables show what is where. No routing protocol is configured on any router, and there are no static routes to carry the traffic. r1 can reach r2 on the r1-r2 link, and r3 can reach r2 on the r2-r3 link. Nothing goes further than one hop."
+  }
+}

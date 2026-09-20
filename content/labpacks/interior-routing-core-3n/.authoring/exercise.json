@@ -1,0 +1,333 @@
+{
+  "baselineChecks": [
+    {
+      "description": "r1 ge-0/0/0 is up",
+      "device": "r1",
+      "id": "b-r1-if",
+      "interface": "ge-0/0/0",
+      "type": "interface-up"
+    },
+    {
+      "description": "r2 ge-0/0/0 is up",
+      "device": "r2",
+      "id": "b-r2-if0",
+      "interface": "ge-0/0/0",
+      "type": "interface-up"
+    },
+    {
+      "description": "r2 ge-0/0/1 is up",
+      "device": "r2",
+      "id": "b-r2-if1",
+      "interface": "ge-0/0/1",
+      "type": "interface-up"
+    },
+    {
+      "description": "r3 ge-0/0/0 is up",
+      "device": "r3",
+      "id": "b-r3-if",
+      "interface": "ge-0/0/0",
+      "type": "interface-up"
+    },
+    {
+      "count": 3,
+      "description": "r1 reaches r2 on the r1-r2 link",
+      "device": "r1",
+      "id": "b-r1-nbr",
+      "min_success_rate": 1,
+      "target": "<private-address>",
+      "type": "ping"
+    },
+    {
+      "count": 3,
+      "description": "r3 reaches r2 on the r2-r3 link",
+      "device": "r3",
+      "id": "b-r3-nbr",
+      "min_success_rate": 1,
+      "target": "<private-address>",
+      "type": "ping"
+    }
+  ],
+  "briefId": "interior-routing-core-3n",
+  "labType": "build",
+  "provenance": {
+    "checksUntestedAtStart": [],
+    "derived": [
+      "startState.configs",
+      "stages[].solution",
+      "topology",
+      "provenance"
+    ],
+    "engineerModel": "sonnet",
+    "runId": "a0919uk0",
+    "snapshots": {
+      "s1": "db120d83e5440d4366c9bf2d3137e2f98db411f57ecb8f17c66bf24020b60f89",
+      "s2": "a72aad797b50e387e07c7b4d68852cd844293bf58c17343ae388d5416d1a4481",
+      "start": "1fb615b5b778ea5c63e02a20b17d0f7e34bb67b09b07f8bbad437cfb0bd4dbea"
+    }
+  },
+  "referenceTables": [
+    {
+      "columns": [
+        "Router",
+        "Interface",
+        "Address"
+      ],
+      "rows": [
+        [
+          "r1",
+          "ge-0/0/0 (to r2)",
+          "<private-address>/30"
+        ],
+        [
+          "r1",
+          "lo0.0",
+          "<private-address>/32"
+        ],
+        [
+          "r2",
+          "ge-0/0/0 (to r1)",
+          "<private-address>/30"
+        ],
+        [
+          "r2",
+          "ge-0/0/1 (to r3)",
+          "<private-address>/30"
+        ],
+        [
+          "r2",
+          "lo0.0",
+          "<private-address>/32"
+        ],
+        [
+          "r3",
+          "ge-0/0/0 (to r2)",
+          "<private-address>/30"
+        ],
+        [
+          "r3",
+          "lo0.0",
+          "<private-address>/32"
+        ]
+      ],
+      "title": "Addressing"
+    },
+    {
+      "columns": [
+        "Item",
+        "Value"
+      ],
+      "rows": [
+        [
+          "OSPF area",
+          "0.0.0.0 on all three routers"
+        ],
+        [
+          "Link interfaces in the area",
+          "r1 ge-0/0/0; r2 ge-0/0/0 and ge-0/0/1; r3 ge-0/0/0"
+        ],
+        [
+          "Loopbacks advertised into the area",
+          "<private-address>/32, <private-address>/32, <private-address>/32"
+        ]
+      ],
+      "title": "Design values"
+    }
+  ],
+  "scenario": "Three routers r1, r2 and r3 sit in a line: r1 - r2 - r3. The links are addressed and up and each router has a loopback, but no routing protocol runs. Each router reaches only its neighbours. The team wants loopbacks learned from a routing protocol, not static routes, and then wants the two ends of the line to reach each other.",
+  "schemaVersion": 0,
+  "stages": [
+    {
+      "checks": [
+        {
+          "description": "r1 has the r2-r3 link subnet learned by OSPF",
+          "device": "r1",
+          "id": "s1-r1-link23",
+          "prefix": "<private-address>/30",
+          "protocol": "OSPF",
+          "type": "route-exists"
+        },
+        {
+          "description": "r3 has the r1-r2 link subnet learned by OSPF",
+          "device": "r3",
+          "id": "s1-r3-link12",
+          "prefix": "<private-address>/30",
+          "protocol": "OSPF",
+          "type": "route-exists"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Putting a router or an interface in a different area number",
+          "recognise": "show ospf neighbor is empty or the far subnet is missing from show route protocol ospf",
+          "symptom": "No route from OSPF for the far link subnet appears"
+        }
+      ],
+      "doneWhen": [
+        "r1 has a route to <private-address>/30 with protocol OSPF.",
+        "r3 has a route to <private-address>/30 with protocol OSPF.",
+        "The link interfaces are still up."
+      ],
+      "explanation": [
+        "OSPF adjacencies form over the link interfaces in area 0.0.0.0, so each router floods its link subnets.",
+        "The route-exists checks show the far link subnet with protocol OSPF and a next hop through r2, so the protocol installed it."
+      ],
+      "goal": "Make r1, r2 and r3 exchange routing information over their point-to-point links in a single OSPF area, so that each end router learns the far link subnet from the protocol.",
+      "hint": "Look at which routes r1 and r3 hold for the far link subnet and by which protocol they were installed.",
+      "id": "s1",
+      "solution": {
+        "r1": [
+          "set protocols ospf area 0.0.0.0 interface ge-0/0/0.0 interface-type p2p"
+        ],
+        "r2": [
+          "set protocols ospf area 0.0.0.0 interface ge-0/0/0.0 interface-type p2p",
+          "set protocols ospf area 0.0.0.0 interface ge-0/0/1.0 interface-type p2p"
+        ],
+        "r3": [
+          "set protocols ospf area 0.0.0.0 interface ge-0/0/0.0 interface-type p2p"
+        ]
+      },
+      "title": "Bring up the routing area"
+    },
+    {
+      "checks": [
+        {
+          "description": "r1 learns r2's loopback by OSPF",
+          "device": "r1",
+          "id": "s2-r1-lo2",
+          "prefix": "<private-address>/32",
+          "protocol": "OSPF",
+          "type": "route-exists"
+        },
+        {
+          "description": "r1 learns r3's loopback by OSPF",
+          "device": "r1",
+          "id": "s2-r1-lo3",
+          "prefix": "<private-address>/32",
+          "protocol": "OSPF",
+          "type": "route-exists"
+        },
+        {
+          "description": "r3 learns r1's loopback by OSPF",
+          "device": "r3",
+          "id": "s2-r3-lo1",
+          "prefix": "<private-address>/32",
+          "protocol": "OSPF",
+          "type": "route-exists"
+        },
+        {
+          "count": 3,
+          "description": "r1 reaches r3's loopback",
+          "device": "r1",
+          "id": "s2-r1-ping",
+          "min_success_rate": 1,
+          "target": "<private-address>",
+          "type": "ping"
+        },
+        {
+          "count": 3,
+          "description": "r3 reaches r1's loopback",
+          "device": "r3",
+          "id": "s2-r3-ping",
+          "min_success_rate": 1,
+          "target": "<private-address>",
+          "type": "ping"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Loopback left out of the area on one router",
+          "recognise": "show route protocol ospf lacks the /32; ping reports no route to host",
+          "symptom": "That router's /32 is missing elsewhere, and the ping to it fails with no route"
+        }
+      ],
+      "doneWhen": [
+        "r1 and r3 each hold an OSPF route to the other end's loopback, and r1 also holds one to r2's loopback.",
+        "r1 can ping <private-address> and r3 can ping <private-address> with no loss.",
+        "The link interfaces are still up."
+      ],
+      "explanation": [
+        "Once each loopback is in area 0.0.0.0 its /32 is flooded to every router and appears with protocol OSPF.",
+        "The ping succeeds because r1 has a route to r3's loopback via r2 and r3 has a return route to the r1-r2 link subnet from stage 1."
+      ],
+      "goal": "Make every router's loopback part of the routing area so the two ends of the line reach each other loopback to loopback across r2.",
+      "hint": "A loopback is not advertised until it is part of the protocol; it needs no neighbours.",
+      "id": "s2",
+      "solution": {
+        "r1": [
+          "set protocols ospf area 0.0.0.0 interface lo0.0 passive"
+        ],
+        "r2": [
+          "set protocols ospf area 0.0.0.0 interface lo0.0 passive"
+        ],
+        "r3": [
+          "set protocols ospf area 0.0.0.0 interface lo0.0 passive"
+        ]
+      },
+      "title": "Prove end-to-end reachability"
+    }
+  ],
+  "startState": {
+    "configs": {
+      "r1": [
+        "set system host-name r1",
+        "set interfaces ge-0/0/0 unit 0 family inet address <private-address>/30",
+        "set interfaces lo0 unit 0 family inet address <private-address>/32"
+      ],
+      "r2": [
+        "set system host-name r2",
+        "set interfaces ge-0/0/0 unit 0 family inet address <private-address>/30",
+        "set interfaces ge-0/0/1 unit 0 family inet address <private-address>/30",
+        "set interfaces lo0 unit 0 family inet address <private-address>/32"
+      ],
+      "r3": [
+        "set system host-name r3",
+        "set interfaces ge-0/0/0 unit 0 family inet address <private-address>/30",
+        "set interfaces lo0 unit 0 family inet address <private-address>/32"
+      ]
+    },
+    "description": "Every link interface and loopback is addressed and up; no routing protocol is configured on any router. Each router reaches only its directly connected neighbours."
+  },
+  "summary": "Three routers in a line are brought into one OSPF area so that every loopback is learned by the protocol and the two ends reach each other.",
+  "title": "Bring a Three-Router Core onto a Single Link-State Area",
+  "topology": {
+    "links": [
+      {
+        "a": {
+          "interface": "ge-0/0/0",
+          "node": "r1"
+        },
+        "b": {
+          "interface": "ge-0/0/0",
+          "node": "r2"
+        }
+      },
+      {
+        "a": {
+          "interface": "ge-0/0/1",
+          "node": "r2"
+        },
+        "b": {
+          "interface": "ge-0/0/0",
+          "node": "r3"
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "id": "r1",
+        "kind": "vjunos-router",
+        "role": "one end of the line"
+      },
+      {
+        "id": "r2",
+        "kind": "vjunos-router",
+        "role": "the middle router the path crosses"
+      },
+      {
+        "id": "r3",
+        "kind": "vjunos-router",
+        "role": "the other end of the line"
+      }
+    ]
+  }
+}

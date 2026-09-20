@@ -1,0 +1,14 @@
+schemaVersion: 0
+checks:
+- id: s1-r1-link23
+  description: r1 has the r2-r3 link subnet learned by OSPF
+  device: r1
+  type: route-exists
+  prefix: 10.0.23.0/30
+  protocol: OSPF
+- id: s1-r3-link12
+  description: r3 has the r1-r2 link subnet learned by OSPF
+  device: r3
+  type: route-exists
+  prefix: 10.0.12.0/30
+  protocol: OSPF
