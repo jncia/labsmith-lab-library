@@ -1,0 +1,91 @@
+{
+  "baseline": [
+    {
+      "checkId": "b-n1",
+      "command": "show route table inet.0 172.16.0.0/24 exact",
+      "node": "upstream",
+      "output": ""
+    },
+    {
+      "checkId": "b-n2",
+      "command": "show route table inet.0 172.16.1.0/24 exact",
+      "node": "upstream",
+      "output": ""
+    },
+    {
+      "checkId": "b-bgp",
+      "command": "show bgp summary",
+      "node": "hq",
+      "output": "Threading mode: BGP I/O\nDefault eBGP mode: advertise - accept, receive - accept\nGroups: 1 Peers: 1 Down peers: 0\nTable          Tot Paths  Act Paths Suppressed    History Damp State    Pending\ninet.0\n                       0          0          0          0          0          0\nPeer                     AS      InPkt     OutPkt    OutQ   Flaps Last Up/Dwn State|#Active/Received/Accepted/Damped...\n10.0.23.2             65003         22         22       0       0        <age> Establ\n  inet.0: 0/0/0/0\n"
+    },
+    {
+      "checkId": "b-ping",
+      "command": "ping 10.0.12.2 count 5",
+      "node": "branch",
+      "output": "PING 10.0.12.2 (10.0.12.2): 56 data bytes\n<counter> bytes from 10.0.12.2: icmp_seq=0 ttl=64 time=1.766 ms\n<counter> bytes from 10.0.12.2: icmp_seq=1 ttl=64 time=2.124 ms\n<counter> bytes from 10.0.12.2: icmp_seq=2 ttl=64 time=1.671 ms\n<counter> bytes from 10.0.12.2: icmp_seq=3 ttl=64 time=1.838 ms\n<counter> bytes from 10.0.12.2: icmp_seq=4 ttl=64 time=1.810 ms\n\n--- 10.0.12.2 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 1.671/1.842/2.124/0.152 ms\n"
+    },
+    {
+      "checkId": "b-if1",
+      "command": "show interfaces ge-0/0/0 terse",
+      "node": "branch",
+      "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.12.1/30\n                                   multiservice\n"
+    },
+    {
+      "checkId": "b-if2",
+      "command": "show interfaces ge-0/0/0 terse",
+      "node": "upstream",
+      "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.23.2/30\n                                   multiservice\n"
+    }
+  ],
+  "receiptId": "static-aggregate-generated-routes-3n-2026-09-19-06806b9a63ca",
+  "stages": {
+    "s1": [
+      {
+        "checkId": "s1-r1",
+        "command": "show route table inet.0 172.16.0.0/24 exact",
+        "node": "branch",
+        "output": "inet.0: 5 destinations, 5 routes (5 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n172.16.0.0/24      *[Static/5] <age>\n                    >  to 10.0.12.2 via ge-0/0/0.0\n"
+      },
+      {
+        "checkId": "s1-r2",
+        "command": "show route table inet.0 172.16.1.0/24 exact",
+        "node": "branch",
+        "output": "inet.0: 5 destinations, 5 routes (5 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n172.16.1.0/24      *[Static/5] <age>\n                    >  to 10.0.12.2 via ge-0/0/0.0\n"
+      },
+      {
+        "checkId": "s1-p1",
+        "command": "ping 172.16.0.1 count 5",
+        "node": "branch",
+        "output": "PING 172.16.0.1 (172.16.0.1): 56 data bytes\n<counter> bytes from 172.16.0.1: icmp_seq=0 ttl=64 time=1.802 ms\n<counter> bytes from 172.16.0.1: icmp_seq=1 ttl=64 time=1.713 ms\n<counter> bytes from 172.16.0.1: icmp_seq=2 ttl=64 time=1.638 ms\n<counter> bytes from 172.16.0.1: icmp_seq=3 ttl=64 time=2.091 ms\n<counter> bytes from 172.16.0.1: icmp_seq=4 ttl=64 time=1.962 ms\n\n--- 172.16.0.1 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 1.638/1.841/2.091/0.165 ms\n"
+      },
+      {
+        "checkId": "s1-p2",
+        "command": "ping 172.16.1.1 count 5",
+        "node": "branch",
+        "output": "PING 172.16.1.1 (172.16.1.1): 56 data bytes\n<counter> bytes from 172.16.1.1: icmp_seq=0 ttl=64 time=1.610 ms\n<counter> bytes from 172.16.1.1: icmp_seq=1 ttl=64 time=2.116 ms\n<counter> bytes from 172.16.1.1: icmp_seq=2 ttl=64 time=1.715 ms\n<counter> bytes from 172.16.1.1: icmp_seq=3 ttl=64 time=1.972 ms\n<counter> bytes from 172.16.1.1: icmp_seq=4 ttl=64 time=1.635 ms\n\n--- 172.16.1.1 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 1.610/1.810/2.116/0.200 ms\n"
+      }
+    ],
+    "s2": [
+      {
+        "checkId": "s2-hq",
+        "command": "show route table inet.0 172.16.0.0/23 exact",
+        "node": "hq",
+        "output": "inet.0: 10 destinations, 10 routes (10 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n172.16.0.0/23      *[Aggregate/130] <age>\n                       Reject\n"
+      },
+      {
+        "checkId": "s2-up",
+        "command": "show route table inet.0 172.16.0.0/23 exact",
+        "node": "upstream",
+        "output": "inet.0: 4 destinations, 4 routes (4 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n172.16.0.0/23      *[BGP/170] <age>, localpref 100\n                      AS path: 65002 I, validation-state: unverified\n                    >  to 10.0.23.1 via ge-0/0/0.0\n"
+      }
+    ],
+    "s3": [
+      {
+        "checkId": "s3-def",
+        "command": "show route table inet.0 0.0.0.0/0 exact",
+        "node": "branch",
+        "output": "inet.0: 6 destinations, 6 routes (6 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n0.0.0.0/0          *[Aggregate/130] <age>\n                    >  to 10.0.12.2 via ge-0/0/0.0\n"
+      }
+    ]
+  }
+}

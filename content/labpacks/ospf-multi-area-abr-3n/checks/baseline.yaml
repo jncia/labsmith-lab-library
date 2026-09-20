@@ -1,0 +1,41 @@
+schemaVersion: 0
+checks:
+- id: b-core-if
+  description: core ge-0/0/0 is up
+  device: core
+  type: interface-up
+  interface: ge-0/0/0
+- id: b-abr-if0
+  description: abr ge-0/0/0 is up
+  device: abr
+  type: interface-up
+  interface: ge-0/0/0
+- id: b-abr-if1
+  description: abr ge-0/0/1 is up
+  device: abr
+  type: interface-up
+  interface: ge-0/0/1
+- id: b-access-if
+  description: access ge-0/0/0 is up
+  device: access
+  type: interface-up
+  interface: ge-0/0/0
+- id: b-core-abr-lo
+  description: core has an OSPF route to the abr loopback
+  device: core
+  type: route-exists
+  prefix: 10.255.0.2/32
+  protocol: OSPF
+- id: b-abr-core-lo
+  description: abr has an OSPF route to the core loopback
+  device: abr
+  type: route-exists
+  prefix: 10.255.0.1/32
+  protocol: OSPF
+- id: b-ping
+  description: core pings the abr loopback
+  device: core
+  type: ping
+  count: 3
+  min_success_rate: 1
+  target: 10.255.0.2

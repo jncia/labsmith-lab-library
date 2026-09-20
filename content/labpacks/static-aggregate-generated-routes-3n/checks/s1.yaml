@@ -1,0 +1,30 @@
+schemaVersion: 0
+checks:
+- id: s1-r1
+  description: branch has a static route to 172.16.0.0/24 via hq
+  device: branch
+  type: route-exists
+  next_hop: 10.0.12.2
+  prefix: 172.16.0.0/24
+  protocol: Static
+- id: s1-r2
+  description: branch has a static route to 172.16.1.0/24 via hq
+  device: branch
+  type: route-exists
+  next_hop: 10.0.12.2
+  prefix: 172.16.1.0/24
+  protocol: Static
+- id: s1-p1
+  description: branch pings 172.16.0.1
+  device: branch
+  type: ping
+  count: 5
+  min_success_rate: 0.8
+  target: 172.16.0.1
+- id: s1-p2
+  description: branch pings 172.16.1.1
+  device: branch
+  type: ping
+  count: 5
+  min_success_rate: 0.8
+  target: 172.16.1.1

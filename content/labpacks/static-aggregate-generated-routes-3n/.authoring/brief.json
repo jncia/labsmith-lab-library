@@ -1,0 +1,79 @@
+{
+  "blueprint": {
+    "examCode": "OWNER-OUTLINE-ENT",
+    "objectives": [
+      "C03-C03V01",
+      "C03-C03V06"
+    ]
+  },
+  "certifications": [
+    "JNCIS-ENT"
+  ],
+  "estimatedMinutes": 30,
+  "id": "static-aggregate-generated-routes-3n",
+  "labType": "build",
+  "learnerOutcome": "Choose between static, aggregate and generated routes for a given need, and confirm each one in the route table with the right protocol and next hop.",
+  "level": "intermediate",
+  "observableOutcomes": [
+    "The branch router has static routes for both remote subnets.",
+    "The branch router can ping an address inside each remote subnet.",
+    "The headquarters router has an aggregate-protocol route for the summary prefix.",
+    "The upstream router has the summary route.",
+    "The upstream router does not have the specific subnet routes (negated check).",
+    "The branch router has a default route learned as an aggregate/generated route pointing at headquarters."
+  ],
+  "rationale": "This is the foundation of the Protocol Independent Routing chapter and its lab section. All three route types can be seen with route-exists, so it is fully observable. The set runs from simple to conditional.",
+  "scenario": "A branch router reaches two small remote subnets through a headquarters router. The upstream router should see one summary instead of several specifics, and the branch needs a default route that exists only while the headquarters path is alive. You are asked to finish the routing so the tables show exactly that.",
+  "schemaVersion": 0,
+  "stageSketch": [
+    {
+      "achieves": "The branch router holds static routes for both remote subnets with the headquarters router as next hop, and can ping them.",
+      "title": "Reach the remote subnets"
+    },
+    {
+      "achieves": "The headquarters router holds an aggregate route covering both subnets, and it is the aggregate that is passed upstream, so the upstream router has the summary and not the specifics.",
+      "title": "Summarise for the upstream router"
+    },
+    {
+      "achieves": "The branch router holds a generated default route whose existence depends on a contributing route through headquarters, with the headquarters router as its next hop.",
+      "title": "Make a conditional default"
+    }
+  ],
+  "startStateSketch": "Three routers in a line (branch, headquarters, upstream) with addressed links and loopbacks. Each router has only its connected routes. The remote subnets sit on loopback addresses of the headquarters router.",
+  "title": "Summarise a branch's routes with static, aggregate and generated routes",
+  "topics": [
+    "static routes",
+    "aggregate routes",
+    "generated routes",
+    "route table"
+  ],
+  "topology": {
+    "links": [
+      {
+        "a": "branch",
+        "b": "hq"
+      },
+      {
+        "a": "hq",
+        "b": "upstream"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "branch",
+        "kind": "vjunos-router",
+        "role": "Branch router that needs the remote subnets and a conditional default"
+      },
+      {
+        "id": "hq",
+        "kind": "vjunos-router",
+        "role": "Headquarters router that owns the remote subnets and builds the summary"
+      },
+      {
+        "id": "upstream",
+        "kind": "vjunos-router",
+        "role": "Upstream router that should only see the summary"
+      }
+    ]
+  }
+}

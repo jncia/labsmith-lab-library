@@ -1,0 +1,37 @@
+schemaVersion: 0
+checks:
+- id: b-n1
+  description: upstream has no 172.16.0.0/24
+  device: upstream
+  type: route-exists
+  negate: true
+  prefix: 172.16.0.0/24
+- id: b-n2
+  description: upstream has no 172.16.1.0/24
+  device: upstream
+  type: route-exists
+  negate: true
+  prefix: 172.16.1.0/24
+- id: b-bgp
+  description: hq BGP session to upstream is established
+  device: hq
+  type: bgp-neighbor
+  peer: 10.0.23.2
+  state: Established
+- id: b-ping
+  description: branch reaches hq on the shared link
+  device: branch
+  type: ping
+  count: 5
+  min_success_rate: 0.8
+  target: 10.0.12.2
+- id: b-if1
+  description: branch ge-0/0/0 is up
+  device: branch
+  type: interface-up
+  interface: ge-0/0/0
+- id: b-if2
+  description: upstream ge-0/0/0 is up
+  device: upstream
+  type: interface-up
+  interface: ge-0/0/0

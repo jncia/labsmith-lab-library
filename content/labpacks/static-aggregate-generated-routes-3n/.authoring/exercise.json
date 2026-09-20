@@ -1,0 +1,405 @@
+{
+  "baselineChecks": [
+    {
+      "description": "upstream has no 172.16.0.0/24",
+      "device": "upstream",
+      "id": "b-n1",
+      "negate": true,
+      "prefix": "172.16.0.0/24",
+      "type": "route-exists"
+    },
+    {
+      "description": "upstream has no 172.16.1.0/24",
+      "device": "upstream",
+      "id": "b-n2",
+      "negate": true,
+      "prefix": "172.16.1.0/24",
+      "type": "route-exists"
+    },
+    {
+      "description": "hq BGP session to upstream is established",
+      "device": "hq",
+      "id": "b-bgp",
+      "peer": "10.0.23.2",
+      "state": "Established",
+      "type": "bgp-neighbor"
+    },
+    {
+      "count": 5,
+      "description": "branch reaches hq on the shared link",
+      "device": "branch",
+      "id": "b-ping",
+      "min_success_rate": 0.8,
+      "target": "10.0.12.2",
+      "type": "ping"
+    },
+    {
+      "description": "branch ge-0/0/0 is up",
+      "device": "branch",
+      "id": "b-if1",
+      "interface": "ge-0/0/0",
+      "type": "interface-up"
+    },
+    {
+      "description": "upstream ge-0/0/0 is up",
+      "device": "upstream",
+      "id": "b-if2",
+      "interface": "ge-0/0/0",
+      "type": "interface-up"
+    }
+  ],
+  "briefId": "static-aggregate-generated-routes-3n",
+  "labType": "build",
+  "provenance": {
+    "checksUntestedAtStart": [],
+    "derived": [
+      "startState.configs",
+      "stages[].solution",
+      "topology",
+      "provenance"
+    ],
+    "engineerModel": "sonnet",
+    "runId": "a0919ux7",
+    "snapshots": {
+      "s1": "f4bb6965850fa702d08480e02154dff177bcaa3a03df4ae8ae9428ae990f7b89",
+      "s2": "4745190867e3f5fc97702da98b1cf636889e5f1beca2c123608b5493428c7467",
+      "s3": "3cccf7f2c87d88533b9fc7dbcc75e948691f920a7c87785339da6c96eb014a2d",
+      "start": "46a63b0ffb73e86bd932ee4636a0aa4f51fdceb0d76c3b3ada4d2bda3a78bb3c"
+    }
+  },
+  "referenceTables": [
+    {
+      "columns": [
+        "Router",
+        "Interface",
+        "Address"
+      ],
+      "rows": [
+        [
+          "branch",
+          "ge-0/0/0",
+          "10.0.12.1/30"
+        ],
+        [
+          "hq",
+          "ge-0/0/0",
+          "10.0.12.2/30"
+        ],
+        [
+          "hq",
+          "ge-0/0/1",
+          "10.0.23.1/30"
+        ],
+        [
+          "upstream",
+          "ge-0/0/0",
+          "10.0.23.2/30"
+        ],
+        [
+          "hq",
+          "lo0.0",
+          "192.168.255.2/32, 172.16.0.1/24, 172.16.1.1/24"
+        ]
+      ],
+      "title": "Addressing"
+    },
+    {
+      "columns": [
+        "Router",
+        "AS",
+        "Peer"
+      ],
+      "rows": [
+        [
+          "hq",
+          "65002",
+          "10.0.23.2 (AS 65003)"
+        ],
+        [
+          "upstream",
+          "65003",
+          "10.0.23.1 (AS 65002)"
+        ]
+      ],
+      "title": "BGP"
+    },
+    {
+      "columns": [
+        "Item",
+        "Value"
+      ],
+      "rows": [
+        [
+          "Remote subnets",
+          "172.16.0.0/24 and 172.16.1.0/24"
+        ],
+        [
+          "Next hop from branch to the subnets",
+          "10.0.12.2 (hq)"
+        ],
+        [
+          "Summary prefix built on hq",
+          "172.16.0.0/23"
+        ],
+        [
+          "Generated default on branch",
+          "0.0.0.0/0, next hop 10.0.12.2"
+        ]
+      ],
+      "title": "Design values"
+    }
+  ],
+  "scenario": "A branch router reaches two small remote subnets on a headquarters router. The upstream router should see one summary instead of the specifics, and the branch needs a default route that exists only while the headquarters path is alive.",
+  "schemaVersion": 0,
+  "stages": [
+    {
+      "checks": [
+        {
+          "description": "branch has a static route to 172.16.0.0/24 via hq",
+          "device": "branch",
+          "id": "s1-r1",
+          "next_hop": "10.0.12.2",
+          "prefix": "172.16.0.0/24",
+          "protocol": "Static",
+          "type": "route-exists"
+        },
+        {
+          "description": "branch has a static route to 172.16.1.0/24 via hq",
+          "device": "branch",
+          "id": "s1-r2",
+          "next_hop": "10.0.12.2",
+          "prefix": "172.16.1.0/24",
+          "protocol": "Static",
+          "type": "route-exists"
+        },
+        {
+          "count": 5,
+          "description": "branch pings 172.16.0.1",
+          "device": "branch",
+          "id": "s1-p1",
+          "min_success_rate": 0.8,
+          "target": "172.16.0.1",
+          "type": "ping"
+        },
+        {
+          "count": 5,
+          "description": "branch pings 172.16.1.1",
+          "device": "branch",
+          "id": "s1-p2",
+          "min_success_rate": 0.8,
+          "target": "172.16.1.1",
+          "type": "ping"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Using the wrong next hop, such as the branch's own address or the hq loopback",
+          "recognise": "The route is missing or shows a different next hop in the branch route table.",
+          "symptom": "Pings fail with no route to host or time out."
+        },
+        {
+          "mistake": "Configuring only one of the two subnets",
+          "recognise": "Only one of the two prefixes is listed as Static on branch.",
+          "symptom": "One ping works and the other fails."
+        }
+      ],
+      "doneWhen": [
+        "The branch route table lists 172.16.0.0/24 and 172.16.1.0/24 as static routes with next hop 10.0.12.2.",
+        "The branch router can ping 172.16.0.1 and 172.16.1.1."
+      ],
+      "explanation": [
+        "A static route has protocol Static and the next hop is the hq address on the shared link.",
+        "hq already has the subnets as connected routes and the link is connected, so replies return without further configuration.",
+        "The route table on branch shows preference 5 and next hop 10.0.12.2."
+      ],
+      "goal": "The branch router has no route to the two small subnets that sit behind hq. Give it a fixed route for each, pointing at hq, so it can reach addresses inside them.",
+      "hint": "Static routes are configured under routing-options; the next hop is the hq address on the shared link.",
+      "id": "s1",
+      "solution": {
+        "branch": [
+          "set routing-options static route 172.16.0.0/24 next-hop 10.0.12.2",
+          "set routing-options static route 172.16.1.0/24 next-hop 10.0.12.2"
+        ]
+      },
+      "title": "Reach the remote subnets"
+    },
+    {
+      "checks": [
+        {
+          "description": "hq has the aggregate route 172.16.0.0/23",
+          "device": "hq",
+          "id": "s2-hq",
+          "prefix": "172.16.0.0/23",
+          "protocol": "Aggregate",
+          "type": "route-exists"
+        },
+        {
+          "description": "upstream has 172.16.0.0/23 from BGP via hq",
+          "device": "upstream",
+          "id": "s2-up",
+          "next_hop": "10.0.23.1",
+          "prefix": "172.16.0.0/23",
+          "protocol": "BGP",
+          "type": "route-exists"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Creating the aggregate but no export policy",
+          "recognise": "hq shows the Aggregate route but upstream does not.",
+          "symptom": "upstream has no 172.16.0.0/23."
+        },
+        {
+          "mistake": "Exporting direct routes as well as the aggregate",
+          "recognise": "upstream lists 172.16.0.0/24 and 172.16.1.0/24 and the no-specifics baseline check fails.",
+          "symptom": "upstream shows the specifics next to the summary."
+        }
+      ],
+      "doneWhen": [
+        "hq holds 172.16.0.0/23 as an aggregate route.",
+        "upstream holds 172.16.0.0/23 learned from BGP with next hop 10.0.23.1.",
+        "upstream holds neither 172.16.0.0/24 nor 172.16.1.0/24."
+      ],
+      "explanation": [
+        "An aggregate route is active while at least one more specific route contributes to it; here the two connected subnets do.",
+        "On hq it has preference 130 and a reject next hop.",
+        "eBGP does not advertise non-BGP routes by default, so an export policy matching protocol aggregate lets the summary through and a final reject keeps the connected specifics out of upstream.",
+        "The upstream route table shows BGP with next hop 10.0.23.1."
+      ],
+      "goal": "The upstream router should learn one summary covering both subnets and none of the specifics. Build the summary on hq and make sure only it is passed to upstream over the existing BGP session.",
+      "hint": "The BGP session sends nothing until it has an export policy. Match the aggregate protocol in that policy and reject everything else.",
+      "id": "s2",
+      "solution": {
+        "hq": [
+          "set policy-options policy-statement export-summary term agg from protocol aggregate",
+          "set policy-options policy-statement export-summary term agg from route-filter 172.16.0.0/23 exact",
+          "set policy-options policy-statement export-summary term agg then accept",
+          "set policy-options policy-statement export-summary term rest then reject",
+          "set routing-options aggregate route 172.16.0.0/23",
+          "set protocols bgp group upstream export export-summary"
+        ]
+      },
+      "title": "Summarise for the upstream router"
+    },
+    {
+      "checks": [
+        {
+          "description": "branch has a generated default route via hq",
+          "device": "branch",
+          "id": "s3-def",
+          "next_hop": "10.0.12.2",
+          "prefix": "0.0.0.0/0",
+          "protocol": "Aggregate",
+          "type": "route-exists"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Configuring a static default route instead of a generated route",
+          "recognise": "The route table shows protocol Static for 0.0.0.0/0.",
+          "symptom": "The default stays when the contributors disappear."
+        },
+        {
+          "mistake": "Policy that matches no route",
+          "recognise": "There is no contributing route so the generated route stays inactive.",
+          "symptom": "No 0.0.0.0/0 route appears."
+        }
+      ],
+      "doneWhen": [
+        "The branch route table holds 0.0.0.0/0 with protocol Aggregate and next hop 10.0.12.2."
+      ],
+      "explanation": [
+        "A generated route is installed only while a contributing route accepted by its policy is active.",
+        "Here the contributors are the static routes to 172.16.0.0/24 and 172.16.1.0/24, so the default takes their next hop 10.0.12.2 and shows as Aggregate with preference 130.",
+        "If the contributors go away the default disappears with them."
+      ],
+      "goal": "The branch router needs a default route that exists only while a route through hq exists. Create it so that it depends on the branch routes towards the remote subnets and points at hq.",
+      "hint": "A generated route takes its next hop from a contributing route selected by a policy. The policy must accept the static routes from stage 1 and nothing else.",
+      "id": "s3",
+      "solution": {
+        "branch": [
+          "set policy-options policy-statement default-contributor term hq-nets from protocol static",
+          "set policy-options policy-statement default-contributor term hq-nets from route-filter 172.16.0.0/23 longer",
+          "set policy-options policy-statement default-contributor term hq-nets then accept",
+          "set policy-options policy-statement default-contributor term rest then reject",
+          "set routing-options generate route 0.0.0.0/0 policy default-contributor"
+        ]
+      },
+      "title": "Make a conditional default"
+    }
+  ],
+  "startState": {
+    "configs": {
+      "branch": [
+        "set system host-name branch",
+        "set interfaces ge-0/0/0 unit 0 family inet address 10.0.12.1/30",
+        "set interfaces lo0 unit 0 family inet address 192.168.255.1/32"
+      ],
+      "hq": [
+        "set system host-name hq",
+        "set interfaces ge-0/0/0 unit 0 family inet address 10.0.12.2/30",
+        "set interfaces ge-0/0/1 unit 0 family inet address 10.0.23.1/30",
+        "set interfaces lo0 unit 0 family inet address 192.168.255.2/32",
+        "set interfaces lo0 unit 0 family inet address 172.16.0.1/24",
+        "set interfaces lo0 unit 0 family inet address 172.16.1.1/24",
+        "set routing-options autonomous-system 65002",
+        "set protocols bgp group upstream type external",
+        "set protocols bgp group upstream peer-as 65003",
+        "set protocols bgp group upstream neighbor 10.0.23.2"
+      ],
+      "upstream": [
+        "set system host-name upstream",
+        "set interfaces ge-0/0/0 unit 0 family inet address 10.0.23.2/30",
+        "set interfaces lo0 unit 0 family inet address 192.168.255.3/32",
+        "set routing-options autonomous-system 65003",
+        "set protocols bgp group hq type external",
+        "set protocols bgp group hq peer-as 65002",
+        "set protocols bgp group hq neighbor 10.0.23.1"
+      ]
+    },
+    "description": "Branch, hq and upstream are addressed and each has only connected routes. hq owns 172.16.0.0/24 and 172.16.1.0/24 on lo0. An eBGP session (AS 65002 hq to AS 65003 upstream) is established between hq 10.0.23.1 and upstream 10.0.23.2 and carries no routes yet."
+  },
+  "summary": "Finish the routing on a three-router line so the tables show static, aggregate and generated routes.",
+  "title": "Summarise a branch's routes with static, aggregate and generated routes",
+  "topology": {
+    "links": [
+      {
+        "a": {
+          "interface": "ge-0/0/0",
+          "node": "branch"
+        },
+        "b": {
+          "interface": "ge-0/0/0",
+          "node": "hq"
+        }
+      },
+      {
+        "a": {
+          "interface": "ge-0/0/1",
+          "node": "hq"
+        },
+        "b": {
+          "interface": "ge-0/0/0",
+          "node": "upstream"
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "id": "branch",
+        "kind": "vjunos-router",
+        "role": "Branch router that needs the remote subnets and a conditional default"
+      },
+      {
+        "id": "hq",
+        "kind": "vjunos-router",
+        "role": "Headquarters router that owns the remote subnets and builds the summary"
+      },
+      {
+        "id": "upstream",
+        "kind": "vjunos-router",
+        "role": "Upstream router that should only see the summary"
+      }
+    ]
+  }
+}

@@ -1,0 +1,343 @@
+{
+  "baselineChecks": [
+    {
+      "description": "core ge-0/0/0 is up",
+      "device": "core",
+      "id": "b-core-if",
+      "interface": "ge-0/0/0",
+      "type": "interface-up"
+    },
+    {
+      "description": "abr ge-0/0/0 is up",
+      "device": "abr",
+      "id": "b-abr-if0",
+      "interface": "ge-0/0/0",
+      "type": "interface-up"
+    },
+    {
+      "description": "abr ge-0/0/1 is up",
+      "device": "abr",
+      "id": "b-abr-if1",
+      "interface": "ge-0/0/1",
+      "type": "interface-up"
+    },
+    {
+      "description": "access ge-0/0/0 is up",
+      "device": "access",
+      "id": "b-access-if",
+      "interface": "ge-0/0/0",
+      "type": "interface-up"
+    },
+    {
+      "description": "core has an OSPF route to the abr loopback",
+      "device": "core",
+      "id": "b-core-abr-lo",
+      "prefix": "10.255.0.2/32",
+      "protocol": "OSPF",
+      "type": "route-exists"
+    },
+    {
+      "description": "abr has an OSPF route to the core loopback",
+      "device": "abr",
+      "id": "b-abr-core-lo",
+      "prefix": "10.255.0.1/32",
+      "protocol": "OSPF",
+      "type": "route-exists"
+    },
+    {
+      "count": 3,
+      "description": "core pings the abr loopback",
+      "device": "core",
+      "id": "b-ping",
+      "min_success_rate": 1,
+      "target": "10.255.0.2",
+      "type": "ping"
+    }
+  ],
+  "briefId": "ospf-multi-area-abr-3n",
+  "labType": "build",
+  "provenance": {
+    "checksUntestedAtStart": [],
+    "derived": [
+      "startState.configs",
+      "stages[].solution",
+      "topology",
+      "provenance"
+    ],
+    "engineerModel": "sonnet",
+    "runId": "a09193q1",
+    "snapshots": {
+      "stage1": "7e8b2019623049624de4c95585333498fb967e2f0a2bc71119fe7b92fe6e6d50",
+      "stage2": "12e403db30ac7b4ea6e1d6ab544c9a995b7b61be0e6a501e9ed96b0491dfb07d",
+      "start": "e9c80e10a5e5d55f8e1bd07f1420992a9db9091e6f9087db51baaf9df4cabd36"
+    }
+  },
+  "referenceTables": [
+    {
+      "columns": [
+        "Node",
+        "Interface",
+        "Address"
+      ],
+      "rows": [
+        [
+          "core",
+          "ge-0/0/0",
+          "10.0.12.1/30"
+        ],
+        [
+          "core",
+          "lo0.0",
+          "10.255.0.1/32"
+        ],
+        [
+          "abr",
+          "ge-0/0/0",
+          "10.0.12.2/30"
+        ],
+        [
+          "abr",
+          "ge-0/0/1",
+          "10.0.23.1/30"
+        ],
+        [
+          "abr",
+          "lo0.0",
+          "10.255.0.2/32"
+        ],
+        [
+          "access",
+          "ge-0/0/0",
+          "10.0.23.2/30"
+        ],
+        [
+          "access",
+          "lo0.0",
+          "10.255.0.3/32"
+        ]
+      ],
+      "title": "Addressing"
+    },
+    {
+      "columns": [
+        "Item",
+        "Value"
+      ],
+      "rows": [
+        [
+          "Backbone area",
+          "0.0.0.0 (core-abr link, core and abr loopbacks)"
+        ],
+        [
+          "Access area",
+          "0.0.0.1 (abr ge-0/0/1, access ge-0/0/0 and access loopback)"
+        ],
+        [
+          "Link type",
+          "point-to-point on all transit links"
+        ],
+        [
+          "Loopbacks",
+          "passive (advertised, no adjacency)"
+        ]
+      ],
+      "title": "OSPF design"
+    }
+  ],
+  "scenario": "A site network runs as one flat area and the link-state database is getting large. The core stays in the backbone and the access router moves into its own area, with the middle router as area border router. Everything must stay reachable through the change.",
+  "schemaVersion": 0,
+  "stages": [
+    {
+      "checks": [
+        {
+          "description": "Access has an OSPF route to the core loopback",
+          "device": "access",
+          "id": "s1-access-core-lo",
+          "prefix": "10.255.0.1/32",
+          "protocol": "OSPF",
+          "type": "route-exists"
+        },
+        {
+          "description": "Access has an OSPF route to the core-abr link",
+          "device": "access",
+          "id": "s1-access-core-link",
+          "prefix": "10.0.12.0/30",
+          "protocol": "OSPF",
+          "type": "route-exists"
+        },
+        {
+          "count": 3,
+          "description": "Access pings the core loopback",
+          "device": "access",
+          "id": "s1-ping",
+          "min_success_rate": 1,
+          "target": "10.255.0.1",
+          "type": "ping"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Putting the access router uplink in area 0 instead of area 1, or using different areas on the two ends",
+          "recognise": "show ospf neighbor is empty on access; area mismatch or no neighbour on the link",
+          "symptom": "No OSPF neighbour on the abr-access link; the access router has no OSPF routes"
+        },
+        {
+          "mistake": "Configuring only the access router and forgetting the abr side of the link",
+          "recognise": "show ospf interface on abr does not list ge-0/0/1.0",
+          "symptom": "Access has no neighbour and no OSPF routes"
+        }
+      ],
+      "doneWhen": [
+        "The access router has OSPF routes for the core loopback and for the core-to-abr link.",
+        "The access router can ping the core loopback."
+      ],
+      "explanation": [
+        "Once ge-0/0/1 on the abr and ge-0/0/0 on access are both in area 0.0.0.1, they form an adjacency and the abr becomes an ABR because it now has interfaces in areas 0 and 1.",
+        "The abr originates summary (inter-area) LSAs into area 1 for the area 0 prefixes, so the access router installs OSPF routes for 10.255.0.1/32 and 10.0.12.0/30 via 10.0.23.1.",
+        "The ping from access to the core loopback works because core already has a route back to 10.0.23.0/30 through the abr's area 0 summary."
+      ],
+      "goal": "Bring the access router into the OSPF network as a member of a non-backbone area so that the middle router borders two areas and the access router learns the backbone routes across that border.",
+      "hint": "The abr needs the access-facing interface in area 1 and the access router needs its uplink in the same area; both ends must agree on the area.",
+      "id": "stage1",
+      "solution": {
+        "abr": [
+          "set protocols ospf area 0.0.0.1 interface ge-0/0/1.0 interface-type p2p"
+        ],
+        "access": [
+          "set protocols ospf area 0.0.0.1 interface ge-0/0/0.0 interface-type p2p"
+        ]
+      },
+      "title": "Join the access router in area 1"
+    },
+    {
+      "checks": [
+        {
+          "description": "abr has an OSPF route to the access loopback",
+          "device": "abr",
+          "id": "s2-abr-access-lo",
+          "prefix": "10.255.0.3/32",
+          "protocol": "OSPF",
+          "type": "route-exists"
+        },
+        {
+          "description": "Core has an OSPF route to the access loopback",
+          "device": "core",
+          "id": "s2-core-access-lo",
+          "prefix": "10.255.0.3/32",
+          "protocol": "OSPF",
+          "type": "route-exists"
+        },
+        {
+          "count": 3,
+          "description": "Core pings the access loopback",
+          "device": "core",
+          "id": "s2-ping",
+          "min_success_rate": 1,
+          "target": "10.255.0.3",
+          "type": "ping"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Leaving the access loopback out of OSPF",
+          "recognise": "show route 10.255.0.3 on core and abr returns nothing",
+          "symptom": "Core and abr have no route to 10.255.0.3 and the ping from core fails"
+        },
+        {
+          "mistake": "Placing the access loopback in area 0 on the access router",
+          "recognise": "show ospf interface on access lists lo0.0 in area 0.0.0.0 and the core has no route for 10.255.0.3",
+          "symptom": "The access router has area 0 interfaces without a backbone adjacency, so the loopback is not carried across the border"
+        }
+      ],
+      "doneWhen": [
+        "The abr and the core have OSPF routes for the access loopback.",
+        "The core can ping the access loopback."
+      ],
+      "explanation": [
+        "Placing lo0.0 in area 0.0.0.1 on access (passive) advertises 10.255.0.3/32 in a router LSA in area 1.",
+        "The abr turns it into a summary LSA in area 0, so the core installs an OSPF route for 10.255.0.3/32 via 10.0.12.2.",
+        "The core ping to 10.255.0.3 succeeds because the reverse path to core is already learned from stage 1."
+      ],
+      "goal": "Make the access loopback reachable from the backbone so that the core learns it as an inter-area route and loopbacks answer pings in both directions.",
+      "hint": "A loopback is only advertised when its interface is placed in an OSPF area on its own router.",
+      "id": "stage2",
+      "solution": {
+        "access": [
+          "set protocols ospf area 0.0.0.1 interface lo0.0 passive"
+        ]
+      },
+      "title": "Advertise the access loopback across the border"
+    }
+  ],
+  "startState": {
+    "configs": {
+      "abr": [
+        "set system host-name abr",
+        "set interfaces ge-0/0/0 unit 0 family inet address 10.0.12.2/30",
+        "set interfaces ge-0/0/1 unit 0 family inet address 10.0.23.1/30",
+        "set interfaces lo0 unit 0 family inet address 10.255.0.2/32",
+        "set routing-options router-id 10.255.0.2",
+        "set protocols ospf area 0.0.0.0 interface ge-0/0/0.0 interface-type p2p",
+        "set protocols ospf area 0.0.0.0 interface lo0.0 passive"
+      ],
+      "access": [
+        "set system host-name access",
+        "set interfaces ge-0/0/0 unit 0 family inet address 10.0.23.2/30",
+        "set interfaces lo0 unit 0 family inet address 10.255.0.3/32",
+        "set routing-options router-id 10.255.0.3"
+      ],
+      "core": [
+        "set system host-name core",
+        "set interfaces ge-0/0/0 unit 0 family inet address 10.0.12.1/30",
+        "set interfaces lo0 unit 0 family inet address 10.255.0.1/32",
+        "set routing-options router-id 10.255.0.1",
+        "set protocols ospf area 0.0.0.0 interface ge-0/0/0.0 interface-type p2p",
+        "set protocols ospf area 0.0.0.0 interface lo0.0 passive"
+      ]
+    },
+    "description": "Three routers in a line, addressed, each with a loopback. Core and abr run OSPF in area 0 (point-to-point) on their shared link, with their loopbacks passive in area 0. The abr-to-access link is addressed but runs no OSPF. Access runs no routing protocol."
+  },
+  "summary": "Move the access router into OSPF area 1 with the middle router as ABR and confirm inter-area routes.",
+  "title": "Split a growing OSPF network into a backbone and a second area",
+  "topology": {
+    "links": [
+      {
+        "a": {
+          "interface": "ge-0/0/0",
+          "node": "core"
+        },
+        "b": {
+          "interface": "ge-0/0/0",
+          "node": "abr"
+        }
+      },
+      {
+        "a": {
+          "interface": "ge-0/0/1",
+          "node": "abr"
+        },
+        "b": {
+          "interface": "ge-0/0/0",
+          "node": "access"
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "id": "core",
+        "kind": "vjunos-router",
+        "role": "Backbone router"
+      },
+      {
+        "id": "abr",
+        "kind": "vjunos-router",
+        "role": "Area border router between area 0 and area 1"
+      },
+      {
+        "id": "access",
+        "kind": "vjunos-router",
+        "role": "Access router in area 1"
+      }
+    ]
+  }
+}

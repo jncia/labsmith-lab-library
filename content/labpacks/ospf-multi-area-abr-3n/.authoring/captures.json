@@ -1,0 +1,89 @@
+{
+  "baseline": [
+    {
+      "checkId": "b-core-if",
+      "command": "show interfaces ge-0/0/0 terse",
+      "node": "core",
+      "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.12.1/30\n                                   multiservice\n"
+    },
+    {
+      "checkId": "b-abr-if0",
+      "command": "show interfaces ge-0/0/0 terse",
+      "node": "abr",
+      "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.12.2/30\n                                   multiservice\n"
+    },
+    {
+      "checkId": "b-abr-if1",
+      "command": "show interfaces ge-0/0/1 terse",
+      "node": "abr",
+      "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/1                up    up\nge-0/0/1.0              up    up   inet     10.0.23.1/30\n                                   multiservice\n"
+    },
+    {
+      "checkId": "b-access-if",
+      "command": "show interfaces ge-0/0/0 terse",
+      "node": "access",
+      "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.23.2/30\n                                   multiservice\n"
+    },
+    {
+      "checkId": "b-core-abr-lo",
+      "command": "show route table inet.0 10.255.0.2/32 exact",
+      "node": "core",
+      "output": "inet.0: 7 destinations, 7 routes (7 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.255.0.2/32      *[OSPF/10] <age>, metric 1\n                    >  to 10.0.12.2 via ge-0/0/0.0\n"
+    },
+    {
+      "checkId": "b-abr-core-lo",
+      "command": "show route table inet.0 10.255.0.1/32 exact",
+      "node": "abr",
+      "output": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.255.0.1/32      *[OSPF/10] <age>, metric 1\n                    >  to 10.0.12.1 via ge-0/0/0.0\n"
+    },
+    {
+      "checkId": "b-ping",
+      "command": "ping 10.255.0.2 count 3",
+      "node": "core",
+      "output": "PING 10.255.0.2 (10.255.0.2): 56 data bytes\n<counter> bytes from 10.255.0.2: icmp_seq=0 ttl=64 time=2.063 ms\n<counter> bytes from 10.255.0.2: icmp_seq=1 ttl=64 time=2.117 ms\n<counter> bytes from 10.255.0.2: icmp_seq=2 ttl=64 time=1.907 ms\n\n--- 10.255.0.2 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 1.907/2.029/2.117/0.089 ms\n"
+    }
+  ],
+  "receiptId": "ospf-multi-area-abr-3n-2026-09-19-fb1c03f8281c",
+  "stages": {
+    "stage1": [
+      {
+        "checkId": "s1-access-core-lo",
+        "command": "show route table inet.0 10.255.0.1/32 exact",
+        "node": "access",
+        "output": "inet.0: 7 destinations, 7 routes (7 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.255.0.1/32      *[OSPF/10] <age>, metric 2\n                    >  to 10.0.23.1 via ge-0/0/0.0\n"
+      },
+      {
+        "checkId": "s1-access-core-link",
+        "command": "show route table inet.0 10.0.12.0/30 exact",
+        "node": "access",
+        "output": "inet.0: 7 destinations, 7 routes (7 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.0.12.0/30       *[OSPF/10] <age>, metric 2\n                    >  to 10.0.23.1 via ge-0/0/0.0\n"
+      },
+      {
+        "checkId": "s1-ping",
+        "command": "ping 10.255.0.1 count 3",
+        "node": "access",
+        "output": "PING 10.255.0.1 (10.255.0.1): 56 data bytes\n<counter> bytes from 10.255.0.1: icmp_seq=0 ttl=63 time=2.652 ms\n<counter> bytes from 10.255.0.1: icmp_seq=1 ttl=63 time=3.292 ms\n<counter> bytes from 10.255.0.1: icmp_seq=2 ttl=63 time=3.025 ms\n\n--- 10.255.0.1 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 2.652/2.990/3.292/0.262 ms\n"
+      }
+    ],
+    "stage2": [
+      {
+        "checkId": "s2-abr-access-lo",
+        "command": "show route table inet.0 10.255.0.3/32 exact",
+        "node": "abr",
+        "output": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.255.0.3/32      *[OSPF/10] <age>, metric 1\n                    >  to 10.0.23.2 via ge-0/0/1.0\n"
+      },
+      {
+        "checkId": "s2-core-access-lo",
+        "command": "show route table inet.0 10.255.0.3/32 exact",
+        "node": "core",
+        "output": "inet.0: 7 destinations, 7 routes (7 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.255.0.3/32      *[OSPF/10] <age>, metric 2\n                    >  to 10.0.12.2 via ge-0/0/0.0\n"
+      },
+      {
+        "checkId": "s2-ping",
+        "command": "ping 10.255.0.3 count 3",
+        "node": "core",
+        "output": "PING 10.255.0.3 (10.255.0.3): 56 data bytes\n<counter> bytes from 10.255.0.3: icmp_seq=0 ttl=63 time=2.333 ms\n<counter> bytes from 10.255.0.3: icmp_seq=1 ttl=63 time=2.985 ms\n<counter> bytes from 10.255.0.3: icmp_seq=2 ttl=63 time=4.523 ms\n\n--- 10.255.0.3 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 2.333/3.280/4.523/0.918 ms\n"
+      }
+    ]
+  }
+}

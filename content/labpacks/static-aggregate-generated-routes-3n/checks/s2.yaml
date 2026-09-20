@@ -1,0 +1,15 @@
+schemaVersion: 0
+checks:
+- id: s2-hq
+  description: hq has the aggregate route 172.16.0.0/23
+  device: hq
+  type: route-exists
+  prefix: 172.16.0.0/23
+  protocol: Aggregate
+- id: s2-up
+  description: upstream has 172.16.0.0/23 from BGP via hq
+  device: upstream
+  type: route-exists
+  next_hop: 10.0.23.1
+  prefix: 172.16.0.0/23
+  protocol: BGP

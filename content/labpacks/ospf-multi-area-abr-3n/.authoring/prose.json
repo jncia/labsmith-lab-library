@@ -1,0 +1,95 @@
+{
+  "solutions": {
+    "intro": "Both stages are small changes on two routers: abr and access. Stage 1 forms the adjacency and creates the border. Stage 2 adds the access loopback so the backbone learns it. In both, the captured output shows the effect on the routing tables. The metric and next hop on each route tell you which router originated it and which way it came.",
+    "stages": [
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Putting the access uplink in area 0 instead of area 1, or using different areas on the two ends",
+            "recognise": "show ospf neighbor is empty on access. If the areas differ, the hellos are dropped because of an area mismatch. Compare the area shown in show ospf interface on both ends.",
+            "symptom": "No OSPF neighbour forms on the abr-access link, and access has no OSPF routes."
+          },
+          {
+            "mistake": "Configuring only access and forgetting the abr side of the link",
+            "recognise": "show ospf interface on abr does not list ge-0/0/1.0, and show ospf neighbor on abr shows only core.",
+            "symptom": "Access has no neighbour and no OSPF routes, and abr is not a border router."
+          }
+        ],
+        "configurationIntro": "Apply the reference configuration in configuration mode on two routers. On abr, add ge-0/0/1.0 to area 0.0.0.1 as a point-to-point interface. On access, add ge-0/0/0.0 to area 0.0.0.1 the same way. Commit on both. The core-abr side is already in place and needs no change. When abr has interfaces in both area 0.0.0.0 and area 0.0.0.1, it acts as the ABR without any further statement.",
+        "id": "stage1",
+        "verification": [
+          {
+            "checkId": "s1-access-core-lo",
+            "lookFor": "Access now holds 10.255.0.1/32 as an OSPF route with metric 2 and next hop 10.0.23.1 out ge-0/0/0.0. That next hop is abr's address on the access link. The core loopback lives in area 0, so access can only have learned it through abr's inter-area advertisement. The metric of 2 is the access-abr link plus the abr-core hop."
+          },
+          {
+            "checkId": "s1-access-core-link",
+            "lookFor": "10.0.12.0/30, the core-abr link, is present on access as an OSPF route with metric 2 through the same next hop 10.0.23.1. Access does not touch that link. It is another area 0 prefix that abr passes into area 1."
+          },
+          {
+            "checkId": "s1-ping",
+            "lookFor": "Three packets sent, three received, 0% packet loss. Access reaches 10.255.0.1, so the forward path works. The reply also came back, so core has a route back to the access-facing subnet. That is the other half of what this stage proves."
+          }
+        ],
+        "whyItWorks": "With ge-0/0/1 on abr and ge-0/0/0 on access both in area 0.0.0.1, the two ends agree on the area and the adjacency forms. abr now has one interface in area 0 and one in area 1, which is what makes it an area border router. It floods the area 0 prefixes into area 1 as inter-area routes, and that is what the captured routes on access show. Both 10.255.0.1/32 and 10.0.12.0/30 point at 10.0.23.1 and both carry metric 2. That metric is the cost to abr plus abr's cost to the prefix. In the other direction abr advertises the 10.0.23.0/30 link into area 0, so core has a return route. That is why the ping from access succeeds even though core was never touched."
+      },
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Leaving the access loopback out of OSPF",
+            "recognise": "show route 10.255.0.3 on core and abr returns nothing. On access, show ospf interface does not list lo0.0.",
+            "symptom": "Core and abr have no route to 10.255.0.3, and the ping from core fails."
+          },
+          {
+            "mistake": "Placing the access loopback in area 0 on access",
+            "recognise": "show ospf interface on access lists lo0.0 in area 0.0.0.0, while the uplink is in area 0.0.0.1, and core has no route for 10.255.0.3.",
+            "symptom": "Access now has an area 0 interface but no backbone adjacency, so the loopback is not carried across the border and core still has no route for 10.255.0.3."
+          }
+        ],
+        "configurationIntro": "Apply on access only. Add lo0.0 to area 0.0.0.1 and mark it passive, as the design table says. Commit. abr and core need no change, because abr already translates area 1 prefixes into area 0.",
+        "id": "stage2",
+        "verification": [
+          {
+            "checkId": "s2-abr-access-lo",
+            "lookFor": "abr has 10.255.0.3/32 as an OSPF route with metric 1 and next hop 10.0.23.2 out ge-0/0/1.0. That is access's own address on the shared link. abr learned the loopback directly from access inside area 1."
+          },
+          {
+            "checkId": "s2-core-access-lo",
+            "lookFor": "core has the same prefix as an OSPF route with metric 2 and next hop 10.0.12.2 out ge-0/0/0.0, which is abr. The metric is one higher than on abr because of the core-abr link. The route reached core because abr re-advertised it into area 0."
+          },
+          {
+            "checkId": "s2-ping",
+            "lookFor": "Three of three replies, 0% packet loss, from 10.255.0.3. Core reaches the access loopback across the border. This closes the loop. Access already reached core in stage 1, and now core reaches access."
+          }
+        ],
+        "whyItWorks": "When lo0.0 is placed in area 0.0.0.1 on access, 10.255.0.3/32 is included in access's area 1 advertisement. Because the interface is passive, the prefix is advertised but no adjacency is attempted on the loopback. abr sees it as an intra-area route in area 1 (metric 1, next hop 10.0.23.2), then advertises it into area 0 as an inter-area route. Core installs it with metric 2 via 10.0.12.2. Nothing had to be done on abr or core, which is the point of an ABR. The return path for the ping was already there from stage 1."
+      }
+    ]
+  },
+  "summary": "Three routers in a line start with core and abr in OSPF area 0. You bring the access router into area 1 with abr as the area border router, then advertise the access loopback so the backbone learns it as an inter-area route. Reachability is proved in both directions.",
+  "workbook": {
+    "scenario": "You run a small site network built from three routers in a line: core, abr and access. It has been one flat OSPF area, and the link-state database has grown larger than anyone wants to carry. The plan is to keep core in the backbone and move access into its own area. The middle router, abr, becomes the area border router between the two. Nothing may become unreachable while you do it. Right now the abr-to-access link is addressed but carries no OSPF, and access runs no routing protocol at all. You do the change on abr and access, then prove that each end can reach the other's loopback.",
+    "stages": [
+      {
+        "doneWhen": [
+          "access has OSPF routes for the core loopback and for the core-to-abr link, and both are learned via abr's address on the access link.",
+          "access can ping the core loopback with no loss."
+        ],
+        "goal": "Bring access into the OSPF network as a member of a non-backbone area, area 1. abr must end up with one interface in area 0 and one in area 1, so it borders both, and access must learn the backbone routes across that border. Follow the design: the transit link is point-to-point. Do not touch the existing area 0 configuration on core and abr.",
+        "hint": "An adjacency only forms when both ends of a link agree on the area. Ask yourself which two interfaces share the abr-access link, and which router each one lives on. Then ask what has to be true of abr for it to count as a border router.",
+        "id": "stage1"
+      },
+      {
+        "doneWhen": [
+          "abr has an OSPF route for the access loopback, learned from access.",
+          "core has an OSPF route for the access loopback, learned via abr.",
+          "core can ping the access loopback with no loss."
+        ],
+        "goal": "Make the access loopback reachable from the backbone, so that core learns it as an inter-area route and the two loopbacks answer each other in both directions. The loopback must be advertised without trying to form an adjacency on it, and it must sit in the same area as the rest of access.",
+        "hint": "A router only advertises a loopback that its own OSPF configuration includes. After that, decide which area the prefix belongs to by asking where access lives, not where core lives.",
+        "id": "stage2"
+      }
+    ],
+    "startState": "All three routers are addressed and every loopback is in place. Core and abr already run OSPF in area 0 as point-to-point on their shared link, and their loopbacks are passive in area 0. The core-abr adjacency is up and core and abr can already ping each other's loopbacks. Leave all of this alone. The addressing and the OSPF design tables show the values you should end up with, including the area numbers, the point-to-point link type and the passive loopbacks."
+  }
+}

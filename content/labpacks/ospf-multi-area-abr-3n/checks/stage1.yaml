@@ -1,0 +1,21 @@
+schemaVersion: 0
+checks:
+- id: s1-access-core-lo
+  description: Access has an OSPF route to the core loopback
+  device: access
+  type: route-exists
+  prefix: 10.255.0.1/32
+  protocol: OSPF
+- id: s1-access-core-link
+  description: Access has an OSPF route to the core-abr link
+  device: access
+  type: route-exists
+  prefix: 10.0.12.0/30
+  protocol: OSPF
+- id: s1-ping
+  description: Access pings the core loopback
+  device: access
+  type: ping
+  count: 3
+  min_success_rate: 1
+  target: 10.255.0.1

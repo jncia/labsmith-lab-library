@@ -1,0 +1,6 @@
+set policy-options policy-statement export-summary term agg from protocol aggregate
+set policy-options policy-statement export-summary term agg from route-filter 172.16.0.0/23 exact
+set policy-options policy-statement export-summary term agg then accept
+set policy-options policy-statement export-summary term rest then reject
+set routing-options aggregate route 172.16.0.0/23
+set protocols bgp group upstream export export-summary

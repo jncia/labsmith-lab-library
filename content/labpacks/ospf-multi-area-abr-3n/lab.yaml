@@ -1,0 +1,105 @@
+schemaVersion: 0
+id: ospf-multi-area-abr-3n
+title: Split a growing OSPF network into a backbone and a second area
+summary: Three routers in a line start with core and abr in OSPF area 0. You bring
+  the access router into area 1 with abr as the area border router, then advertise
+  the access loopback so the backbone learns it as an inter-area route. Reachability
+  is proved in both directions.
+labType: build
+level: intermediate
+certifications:
+- JNCIS-ENT
+topics:
+- OSPF areas
+- ABR
+- inter-area routes
+estimatedMinutes: 25
+nodes:
+- id: core
+  kind: juniper_vjunosrouter
+  role: Backbone router
+- id: abr
+  kind: juniper_vjunosrouter
+  role: Area border router between area 0 and area 1
+- id: access
+  kind: juniper_vjunosrouter
+  role: Access router in area 1
+requirements:
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  minimumFreeMemoryGb: 18
+  minimumCores: 12
+stages:
+- id: stage1
+  title: Join the access router in area 1
+  goal: 'Bring access into the OSPF network as a member of a non-backbone area, area
+    1. abr must end up with one interface in area 0 and one in area 1, so it borders
+    both, and access must learn the backbone routes across that border. Follow the
+    design: the transit link is point-to-point. Do not touch the existing area 0 configuration
+    on core and abr.'
+  doneWhen:
+  - access has OSPF routes for the core loopback and for the core-to-abr link, and
+    both are learned via abr's address on the access link.
+  - access can ping the core loopback with no loss.
+- id: stage2
+  title: Advertise the access loopback across the border
+  goal: Make the access loopback reachable from the backbone, so that core learns
+    it as an inter-area route and the two loopbacks answer each other in both directions.
+    The loopback must be advertised without trying to form an adjacency on it, and
+    it must sit in the same area as the rest of access.
+  doneWhen:
+  - abr has an OSPF route for the access loopback, learned from access.
+  - core has an OSPF route for the access loopback, learned via abr.
+  - core can ping the access loopback with no loss.
+qualification:
+- contractVersion: labsmith.learner-labpack-qualification.v0
+  receiptId: ospf-multi-area-abr-3n-2026-09-19-6ebbe6bf8920
+  labId: ospf-multi-area-abr-3n
+  packetContentHash: 6ebbe6bf8920f4d7ef002a4707d919c03800031ce8172b9bc8a958e8f7fb37cb
+  date: '2026-09-19'
+  generatedAt: '2026-09-19T20:37:39+00:00'
+  status: passed
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  toolVersions:
+    containerlab: 0.77.0
+    imageDigest: sha256:b343ea11ab9bfc9878632ba52cb910f5b147d018dc785bae337da9f7163da24d
+    labsmith: cb369822f235808915d0687adaaff53fdacfd837
+  cleanup:
+    topologyName: labpack-ospf-multi-area-abr-3n-a09193q1q
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-09-19T20:33:32+00:00'
+    clean: true
+  learnerCleanup:
+    topologyName: labpack-ospf-multi-area-abr-3n-a09193q1ql
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-09-19T20:37:39+00:00'
+    clean: true
+  totalSeconds: 725.858
+  issues: []
+  message: null
+  runs:
+  - name: start-state
+    status: passed
+    elapsedSeconds: 319.669
+  - name: reference-solution
+    status: passed
+    elapsedSeconds: 101.683
+  - name: reset
+    status: passed
+    elapsedSeconds: 51.812
+  - name: learner-start
+    status: passed
+    elapsedSeconds: 241.911

@@ -1,0 +1,76 @@
+{
+  "blueprint": {
+    "examCode": "OWNER-OUTLINE-ENT",
+    "objectives": [
+      "C04-C04V01",
+      "C04-C04V04"
+    ]
+  },
+  "certifications": [
+    "JNCIS-ENT"
+  ],
+  "estimatedMinutes": 25,
+  "id": "ospf-multi-area-abr-3n",
+  "labType": "build",
+  "learnerOutcome": "Configure a multi-area OSPF network with an area border router and confirm inter-area routes in the routing tables.",
+  "level": "intermediate",
+  "observableOutcomes": [
+    "The core router has an OSPF route for the access loopback.",
+    "The access router has an OSPF route for the core loopback.",
+    "Each interface toward the neighbour is up.",
+    "The core loopback and the access loopback answer pings from each other."
+  ],
+  "rationale": "This is the multi-area lab from the OSPF chapter. The existing lab is a single-area build, so this one practises area borders and inter-area routing instead. Three nodes are the smallest layout with a border router.",
+  "scenario": "A site network runs as one flat area and the link-state database is getting large. The plan is to keep the core in the backbone and move the access router into its own area, with the middle router acting as area border router. Everything must stay reachable through the change.",
+  "schemaVersion": 0,
+  "stageSketch": [
+    {
+      "achieves": "The access router and the middle router are OSPF neighbours in a non-backbone area and the middle router now borders two areas.",
+      "title": "Join the access router in area 1"
+    },
+    {
+      "achieves": "The core router holds an OSPF route for the access loopback, and the access router holds one for the core loopback.",
+      "title": "Learn across the border"
+    },
+    {
+      "achieves": "Loopbacks ping across the border in both directions.",
+      "title": "Verify end to end"
+    }
+  ],
+  "startStateSketch": "Three routers in a line, addressed, each with a loopback. Core and middle routers already run OSPF in the backbone. The access router runs nothing yet.",
+  "title": "Split a growing OSPF network into a backbone and a second area",
+  "topics": [
+    "OSPF areas",
+    "ABR",
+    "inter-area routes"
+  ],
+  "topology": {
+    "links": [
+      {
+        "a": "core",
+        "b": "abr"
+      },
+      {
+        "a": "abr",
+        "b": "access"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "core",
+        "kind": "vjunos-router",
+        "role": "Backbone router"
+      },
+      {
+        "id": "abr",
+        "kind": "vjunos-router",
+        "role": "Area border router between area 0 and area 1"
+      },
+      {
+        "id": "access",
+        "kind": "vjunos-router",
+        "role": "Access router in area 1"
+      }
+    ]
+  }
+}
