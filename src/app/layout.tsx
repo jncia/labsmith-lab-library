@@ -14,9 +14,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LabSmith Lab Library",
+  metadataBase: new URL("https://labsmith-lab-library.vercel.app"),
+  title: {
+    default: "LabSmith Lab Library",
+    template: "%s | LabSmith Lab Library",
+  },
   description:
-    "A public catalog of runnable, verified network lab exercises for service-provider and data-center technologies.",
+    "Free, runnable network labs verified on real virtual Junos devices — topologies, per-device configurations, workbook tasks, and captured outputs.",
+  openGraph: {
+    siteName: "LabSmith Lab Library",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

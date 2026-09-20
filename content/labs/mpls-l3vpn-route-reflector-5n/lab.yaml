@@ -1,9 +1,12 @@
 id: mpls-l3vpn-route-reflector-5n
 title: MPLS L3VPN with Route Reflector Core
+summary: Five-node Junos service-provider floor with PE routers, a core route reflector, dual
+  customer edges, VPNv4 control plane, LDP transport, and a guided import/export failure exercise.
 status: verified
-topology_family: sp-vpn-floor-5n
+difficulty: Advanced
+vendor: Juniper vJunos-router
 node_count: 5
-primary_format: containerlab
+topology_family: sp-vpn-floor-5n
 technologies:
   - MPLS
   - L3VPN
@@ -11,10 +14,96 @@ technologies:
   - Route Reflector
   - LDP
   - VRF
+scenarios:
+  - VPNv4 route reflection
+  - VRF target import/export
+  - Remote customer loopback reachability
+  - Broken route target repair
+devices:
+  - id: pe1
+    role: provider edge
+  - id: p1
+    role: core route reflector
+  - id: pe2
+    role: provider edge
+  - id: ce1
+    role: customer edge
+  - id: ce2
+    role: customer edge
 verification:
   last_run: 2026-07-07
   mode: LabSmith live proof seed
   assertions: 12 baseline assertions
+  notes:
+    - Uses the current LabSmith sp-vpn-floor-5n archetype as the first public seed.
+    - Public files intentionally omit host details, credentials, image digests, and raw private logs.
+diagram:
+  nodes:
+    - id: ce1
+      role: CE
+      x: 92
+      y: 120
+    - id: pe1
+      role: PE
+      x: 242
+      y: 120
+    - id: p1
+      role: core RR
+      x: 360
+      y: 188
+    - id: pe2
+      role: PE
+      x: 478
+      y: 120
+    - id: ce2
+      role: CE
+      x: 628
+      y: 120
+  links:
+    - from: ce1
+      to: pe1
+      label: eBGP
+    - from: pe1
+      to: p1
+      label: LDP/MPLS
+    - from: p1
+      to: pe2
+      label: LDP/MPLS
+    - from: pe2
+      to: ce2
+      label: VRF edge
+    - from: ce1
+      to: pe2
+      label: dual home
+tasks:
+  - id: mpls-l3vpn-route-reflector-5n-task-01
+    title: Confirm VPNv4 sessions terminate on the route reflector
+    why: The core route reflector should carry VPN routes without hosting a customer VRF.
+    commands:
+      - show bgp summary
+      - show route table bgp.l3vpn.0
+    expected: p1 has established BGP sessions to pe1 and pe2 and sees VPNv4 NLRI.
+  - id: mpls-l3vpn-route-reflector-5n-task-02
+    title: Break one VRF target import
+    why: Changing the route target demonstrates that VPN reachability depends on route-target
+      membership, not just BGP session state.
+    commands:
+      - delete routing-instances CUST-A vrf-target target:65000:100
+      - set routing-instances CUST-A vrf-target target:65000:999
+      - commit check
+      - commit
+      - show route table CUST-A.inet.0 198.51.100.1/32 exact
+    expected: The remote customer loopback disappears from the CUST-A table on the modified PE.
+  - id: mpls-l3vpn-route-reflector-5n-task-03
+    title: Restore the import target and verify traffic
+    why: The repair closes the loop between control-plane policy and customer reachability.
+    commands:
+      - delete routing-instances CUST-A vrf-target target:65000:999
+      - set routing-instances CUST-A vrf-target target:65000:100
+      - commit
+      - show route table CUST-A.inet.0 198.51.100.1/32 exact
+      - ping routing-instance CUST-A 198.51.100.1 count 3
+    expected: The remote prefix returns and the routed ping succeeds.
 notes:
   - Public files omit host details, credentials, image digests, and raw private logs.
   - Set VJUNOS_ROUTER_IMAGE before deployment if your local image tag differs.

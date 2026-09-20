@@ -1,0 +1,37 @@
+schemaVersion: 0
+checks:
+  - id: pe1-remote-vrf-route
+    description: >-
+      The remote customer site loopback is present in the CUST-A table on pe1, learned by BGP.
+    hint: >-
+      A VPN route only lands in a local table when the local instance imports the route target the
+      far end attached to it. Check both ends of that agreement, not just the session state.
+    device: pe1
+    type: vpn-route
+    table: CUST-A.inet.0
+    prefix: 198.51.100.1/32
+    protocol: BGP
+  - id: ce1-site1-remote-loopback
+    description: >-
+      The customer edge learns the remote site loopback, by BGP, in the site it reaches through pe1.
+    hint: >-
+      The customer only hears what pe1 tells it. If pe1 holds the remote route but the customer does
+      not, look at the session between them, and at what the customer does with a route whose path
+      already contains its own autonomous system.
+    device: ce1
+    type: route-exists
+    table: SITE1.inet.0
+    prefix: 198.51.100.1/32
+    protocol: BGP
+  - id: ce1-site1-ping-remote-loopback
+    description: >-
+      The customer site reached through pe1 can reach the remote site loopback across the provider.
+    hint: >-
+      A route in one direction is half a conversation. The reply needs a route back to the address
+      the request was sent from, so check what the far site has learned as well.
+    device: ce1
+    type: ping
+    routing_instance: SITE1
+    target: 198.51.100.1
+    count: 3
+    min_success_rate: 1.0

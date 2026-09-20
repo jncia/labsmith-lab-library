@@ -1,16 +1,101 @@
 id: interprovider-option-b-6n
 title: Inter-provider MPLS VPN Option B
+summary: Six-node inter-provider scenario with two ASBRs exchanging VPNv4 routes, separate provider
+  cores, and a guided failure around next-hop reachability.
 status: planned
-topology_family: interprovider-option-b-6n
+difficulty: Advanced
+vendor: Juniper vJunos-router
 node_count: 6
-primary_format: containerlab
+topology_family: interprovider-option-b-6n
 technologies:
   - MPLS
   - Inter-provider
   - Option B
   - MP-BGP
   - L3VPN
+scenarios:
+  - ASBR-to-ASBR VPNv4 exchange
+  - Next-hop-self behavior
+  - Provider boundary troubleshooting
+  - Route-target preservation
+devices:
+  - id: asbr-a
+    role: provider A ASBR
+  - id: asbr-b
+    role: provider B ASBR
 verification:
   last_run: pending
   mode: planned archetype
   assertions: not yet pinned
+  notes:
+    - Included to reserve the six-node inter-provider pattern.
+    - Needs a dedicated LabSmith archetype and live verification.
+diagram:
+  nodes:
+    - id: ce-a
+      role: CE
+      x: 80
+      y: 180
+    - id: pe-a
+      role: PE
+      x: 200
+      y: 180
+    - id: asbr-a
+      role: ASBR
+      x: 320
+      y: 180
+    - id: asbr-b
+      role: ASBR
+      x: 440
+      y: 180
+    - id: pe-b
+      role: PE
+      x: 560
+      y: 180
+    - id: ce-b
+      role: CE
+      x: 680
+      y: 180
+  links:
+    - from: ce-a
+      to: pe-a
+      label: VRF
+    - from: pe-a
+      to: asbr-a
+      label: AS 65100
+    - from: asbr-a
+      to: asbr-b
+      label: VPNv4 eBGP
+    - from: asbr-b
+      to: pe-b
+      label: AS 65200
+    - from: pe-b
+      to: ce-b
+      label: VRF
+tasks:
+  - id: interprovider-option-b-6n-task-01
+    title: Confirm VPNv4 exchange across the AS boundary
+    why: Option B keeps VPN labels and VPNv4 routes at the ASBR boundary instead of back-to-back VRFs.
+    commands:
+      - show bgp summary
+      - show route table bgp.l3vpn.0
+    expected: Each ASBR sees VPNv4 routes from the other provider.
+  - id: interprovider-option-b-6n-task-02
+    title: Break next-hop reachability
+    why: This separates BGP route exchange from transport resolution across the provider edge.
+    commands:
+      - delete protocols bgp group ASBR-B next-hop-self
+      - commit check
+      - commit
+      - show route table bgp.l3vpn.0 hidden extensive
+    expected: VPNv4 routes remain present but hidden or unresolved.
+  - id: interprovider-option-b-6n-task-03
+    title: Restore next-hop handling and verify CE reachability
+    why: The repair shows which device owns inter-AS transport correctness.
+    commands:
+      - set protocols bgp group ASBR-B next-hop-self
+      - commit
+      - show route table CUST-A.inet.0
+      - ping routing-instance CUST-A 198.51.100.1 count 3
+    expected: The VPN route resolves and customer reachability returns.
+notes: []

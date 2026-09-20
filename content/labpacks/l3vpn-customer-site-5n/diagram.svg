@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1220" height="654" viewBox="0 0 1220 654" role="img">
+<!-- labpack-diagram: generated from this packet's own data -->
+<title>Bring a Customer Site Back onto the L3VPN and the Layer 2 Circuit</title>
+<desc>5 nodes and 6 links, each node labelled with its identifier and its part in the network and each link with the interface and address at both of its ends.</desc>
+<rect x="0" y="0" width="1220" height="654" fill="#ffffff"/>
+<text x="24" y="36" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="19" fill="#12233b" font-weight="600">Bring a Customer Site Back onto the L3VPN and the Layer 2 Circuit</text>
+<text x="24" y="56" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" fill="#4c5c72">l3vpn-customer-site-5n</text>
+<polyline points="520,338 204,338" fill="none" stroke="#2b4058" stroke-width="1.5"/>
+<polyline points="204,300 520,152" fill="none" stroke="#2b4058" stroke-width="1.5"/>
+<polyline points="520,524 204,376" fill="none" stroke="#2b4058" stroke-width="1.5"/>
+<polyline points="700,338 1016,338" fill="none" stroke="#2b4058" stroke-width="1.5"/>
+<polyline points="700,152 1016,300" fill="none" stroke="#2b4058" stroke-width="1.5"/>
+<polyline points="700,524 1016,376" fill="none" stroke="#2b4058" stroke-width="1.5"/>
+<rect x="24" y="262" width="180" height="152" rx="0" ry="0" fill="#e7eef8" stroke="#12233b" stroke-width="1.5"/>
+<text x="114" y="327" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#12233b" text-anchor="middle" font-weight="600">pe1</text>
+<text x="114" y="340" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#4c5c72" text-anchor="middle">provider-edge</text>
+<text x="114" y="357" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="middle">lo0.0 10.255.0.1/32</text>
+<rect x="1016" y="262" width="180" height="152" rx="0" ry="0" fill="#e7eef8" stroke="#12233b" stroke-width="1.5"/>
+<text x="1106" y="327" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#12233b" text-anchor="middle" font-weight="600">pe2</text>
+<text x="1106" y="340" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#4c5c72" text-anchor="middle">provider-edge</text>
+<text x="1106" y="357" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="middle">lo0.0 10.255.0.3/32</text>
+<rect x="520" y="76" width="180" height="152" rx="0" ry="0" fill="#e7eef8" stroke="#12233b" stroke-width="1.5"/>
+<text x="610" y="141" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#12233b" text-anchor="middle" font-weight="600">p1</text>
+<text x="610" y="154" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#4c5c72" text-anchor="middle">provider-core-route-reflector</text>
+<text x="610" y="171" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="middle">lo0.0 10.255.0.2/32</text>
+<rect x="520" y="262" width="180" height="152" rx="0" ry="0" fill="#e7eef8" stroke="#12233b" stroke-width="1.5"/>
+<text x="610" y="321" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#12233b" text-anchor="middle" font-weight="600">ce1</text>
+<text x="610" y="334" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#4c5c72" text-anchor="middle">dual-homed-customer-edge</text>
+<text x="610" y="351" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="middle">lo0.1 192.0.2.1/32</text>
+<text x="610" y="364" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="middle">lo0.2 198.51.100.1/32</text>
+<rect x="520" y="448" width="180" height="152" rx="0" ry="0" fill="#e7eef8" stroke="#12233b" stroke-width="1.5"/>
+<text x="610" y="522" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14" fill="#12233b" text-anchor="middle" font-weight="600">ce2</text>
+<text x="610" y="535" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="10" fill="#4c5c72" text-anchor="middle">l2vpn-customer-edge</text>
+<rect x="461" y="324" width="54" height="12" fill="#ffffff"/>
+<text x="512" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="end">ge-0/0/0</text>
+<rect x="425" y="342" width="90" height="12" fill="#ffffff"/>
+<text x="512" y="351" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="end">172.16.11.2/30</text>
+<rect x="209" y="324" width="54" height="12" fill="#ffffff"/>
+<text x="212" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b">ge-0/0/0</text>
+<rect x="209" y="342" width="90" height="12" fill="#ffffff"/>
+<text x="212" y="351" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72">172.16.11.1/30</text>
+<rect x="209" y="286" width="54" height="12" fill="#ffffff"/>
+<text x="212" y="295" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b">ge-0/0/1</text>
+<rect x="209" y="304" width="78" height="12" fill="#ffffff"/>
+<text x="212" y="313" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72">10.0.12.0/31</text>
+<rect x="461" y="138" width="54" height="12" fill="#ffffff"/>
+<text x="512" y="147" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="end">ge-0/0/0</text>
+<rect x="437" y="156" width="78" height="12" fill="#ffffff"/>
+<text x="512" y="165" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="end">10.0.12.1/31</text>
+<rect x="461" y="510" width="54" height="12" fill="#ffffff"/>
+<text x="512" y="519" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="end">ge-0/0/0</text>
+<rect x="425" y="528" width="90" height="12" fill="#ffffff"/>
+<text x="512" y="537" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="end">203.0.113.1/31</text>
+<rect x="209" y="362" width="54" height="12" fill="#ffffff"/>
+<text x="212" y="371" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b">ge-0/0/2</text>
+<rect x="705" y="324" width="54" height="12" fill="#ffffff"/>
+<text x="708" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b">ge-0/0/1</text>
+<rect x="705" y="342" width="90" height="12" fill="#ffffff"/>
+<text x="708" y="351" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72">172.16.12.2/30</text>
+<rect x="957" y="324" width="54" height="12" fill="#ffffff"/>
+<text x="1008" y="333" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="end">ge-0/0/0</text>
+<rect x="921" y="342" width="90" height="12" fill="#ffffff"/>
+<text x="1008" y="351" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="end">172.16.12.1/30</text>
+<rect x="705" y="138" width="54" height="12" fill="#ffffff"/>
+<text x="708" y="147" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b">ge-0/0/1</text>
+<rect x="705" y="156" width="78" height="12" fill="#ffffff"/>
+<text x="708" y="165" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72">10.0.23.0/31</text>
+<rect x="957" y="286" width="54" height="12" fill="#ffffff"/>
+<text x="1008" y="295" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="end">ge-0/0/1</text>
+<rect x="933" y="304" width="78" height="12" fill="#ffffff"/>
+<text x="1008" y="313" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="end">10.0.23.1/31</text>
+<rect x="705" y="510" width="54" height="12" fill="#ffffff"/>
+<text x="708" y="519" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b">ge-0/0/1</text>
+<rect x="705" y="528" width="90" height="12" fill="#ffffff"/>
+<text x="708" y="537" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72">203.0.113.0/31</text>
+<rect x="957" y="362" width="54" height="12" fill="#ffffff"/>
+<text x="1008" y="371" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#12233b" text-anchor="end">ge-0/0/2</text>
+<rect x="317" y="323" width="90" height="12" fill="#ffffff"/>
+<text x="362" y="332" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="middle">172.16.11.0/30</text>
+<rect x="323" y="211" width="78" height="12" fill="#ffffff"/>
+<text x="362" y="220" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="middle">10.0.12.0/31</text>
+<rect x="813" y="323" width="90" height="12" fill="#ffffff"/>
+<text x="858" y="332" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="middle">172.16.12.0/30</text>
+<rect x="819" y="211" width="78" height="12" fill="#ffffff"/>
+<text x="858" y="220" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10" fill="#4c5c72" text-anchor="middle">10.0.23.0/31</text>
+<rect x="24" y="624" width="26" height="16" rx="0" ry="0" fill="#e7eef8" stroke="#12233b" stroke-width="1.5"/>
+<text x="56" y="636" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" fill="#4c5c72">device you configure</text>
+<line x1="199" y1="632" x2="221" y2="632" stroke="#2b4058" stroke-width="1.5"/>
+<text x="227" y="636" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" fill="#4c5c72">link, with each end's interface and address and the shared subnet</text>
+</svg>

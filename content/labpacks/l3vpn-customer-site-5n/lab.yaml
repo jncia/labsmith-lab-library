@@ -1,0 +1,118 @@
+schemaVersion: 0
+id: l3vpn-customer-site-5n
+title: Bring a Customer Site Back onto the L3VPN and the Layer 2 Circuit
+summary: 'A five-node service provider floor is already built: an LDP/MPLS core, a
+  route reflector carrying VPN routes, and a second provider edge serving the same
+  customer. One provider edge has lost every customer-facing statement. Rebuild its
+  customer routing instance, then rebuild its layer 2 circuit, until the remote site''s
+  routes arrive and the pseudowire comes up.'
+labType: build
+level: Advanced
+certifications:
+- JNCIP-SP
+topics:
+- MPLS
+- LDP
+- L3VPN
+- MP-BGP VPNv4
+- VRF
+- Route Reflector
+- L2circuit
+estimatedMinutes: 45
+nodes:
+- id: pe1
+  kind: juniper_vjunosrouter
+  role: provider-edge
+- id: pe2
+  kind: juniper_vjunosrouter
+  role: provider-edge
+- id: p1
+  kind: juniper_vjunosrouter
+  role: provider-core-route-reflector
+- id: ce1
+  kind: juniper_vjunosrouter
+  role: dual-homed-customer-edge
+- id: ce2
+  kind: juniper_vjunosrouter
+  role: l2vpn-customer-edge
+requirements:
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Download the vJunos-router qcow2 from Juniper's software downloads
+      and package it as a containerlab vrnetlab image, or set VJUNOS_ROUTER_IMAGE
+      to the tag you already have.
+  minimumFreeMemoryGb: 28
+  minimumCores: 20
+stages:
+- id: stage-1-customer-routing-instance
+  title: Restore the customer routing instance on pe1
+  goal: pe1 must carry the customer's site in its own routing instance again. Give
+    it a VRF named CUST-A that attaches the customer-facing interface, peers with
+    the customer edge, and joins the VPN by route target, so that the site's routes
+    and the remote site's routes cross the provider core.
+  doneWhen:
+  - The CUST-A table on pe1 holds the remote customer site loopback, learned by BGP.
+  - The customer edge on the other end of pe1's access link exchanges its site prefix
+    with pe1.
+  - The provider core state that was already working is untouched.
+- id: stage-2-layer2-circuit
+  title: Restore the layer 2 circuit on pe1
+  goal: The second customer device hands pe1 a plain Ethernet segment that has to
+    be carried, not routed, to the far provider edge. Present pe1's access port as
+    a circuit and bind it to a pseudowire toward the remote provider edge so the two
+    customer ports become one segment.
+  doneWhen:
+  - pe1 reports the circuit to the remote provider edge as up on its access interface.
+  - The customer routing instance restored in the previous stage still holds the remote
+    site route.
+qualification:
+- contractVersion: labsmith.learner-labpack-qualification.v0
+  receiptId: l3vpn-customer-site-5n-2026-09-19-8ad72a96a6fb
+  labId: l3vpn-customer-site-5n
+  packetContentHash: 8ad72a96a6fbdc503ebd8c42920244346cbeb3ba406e5d360b404edf9f2f6238
+  date: '2026-09-19'
+  generatedAt: '2026-09-19T05:10:43+00:00'
+  status: passed
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Download the vJunos-router qcow2 from Juniper's software downloads
+      and package it as a containerlab vrnetlab image, or set VJUNOS_ROUTER_IMAGE
+      to the tag you already have.
+  toolVersions:
+    containerlab: 0.77.0
+    imageDigest: sha256:b343ea11ab9bfc9878632ba52cb910f5b147d018dc785bae337da9f7163da24d
+    labsmith: ec960f350f77d9a3d937fedaedb330c27d9534a9
+  cleanup:
+    topologyName: labpack-l3vpn-customer-site-5n-q0919a
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-09-19T05:06:38+00:00'
+    clean: true
+  learnerCleanup:
+    topologyName: labpack-l3vpn-customer-site-5n-q0919alear
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-09-19T05:10:43+00:00'
+    clean: true
+  totalSeconds: 701.112
+  issues: []
+  message: null
+  runs:
+  - name: start-state
+    status: passed
+    elapsedSeconds: 352.94
+  - name: reference-solution
+    status: passed
+    elapsedSeconds: 67.398
+  - name: reset
+    status: passed
+    elapsedSeconds: 30.608
+  - name: learner-start
+    status: passed
+    elapsedSeconds: 240.265

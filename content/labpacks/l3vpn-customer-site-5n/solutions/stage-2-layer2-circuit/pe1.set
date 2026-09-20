@@ -1,0 +1,3 @@
+set interfaces ge-0/0/2 encapsulation ethernet-ccc
+set interfaces ge-0/0/2 unit 0 family ccc
+set protocols l2circuit neighbor 10.255.0.3 interface ge-0/0/2.0 virtual-circuit-id 200

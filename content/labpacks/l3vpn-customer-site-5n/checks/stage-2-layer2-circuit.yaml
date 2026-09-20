@@ -1,0 +1,23 @@
+schemaVersion: 0
+checks:
+  - id: pe1-l2circuit-up
+    description: >-
+      pe1 reports the circuit to the remote provider edge as up, carrying virtual circuit 200.
+    hint: >-
+      A circuit needs three things to agree: the access port must be presented as a circuit rather
+      than a routed interface, both ends must use the same circuit identifier, and the remote end
+      must be reachable by the transport label path the core already provides.
+    device: pe1
+    type: l2circuit-up
+    neighbor: 10.255.0.3
+    vc_id: 200
+  - id: pe2-l2circuit-up
+    description: >-
+      The remote provider edge agrees: it reports its side of virtual circuit 200 toward pe1 as up.
+    hint: >-
+      A circuit is signalled by both ends. When the far end is still waiting, it says so in its own
+      connection status, and the legend in that output names what it is waiting for.
+    device: pe2
+    type: l2circuit-up
+    neighbor: 10.255.0.1
+    vc_id: 200

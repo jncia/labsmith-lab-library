@@ -18,19 +18,20 @@ export default function Home() {
             <div className="max-w-3xl space-y-4">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="outline" className="border-emerald-400/40 text-emerald-300">
-                  Public draft
+                  Verified on real Junos
                 </Badge>
+                <Badge variant="secondary">Free & runnable</Badge>
                 <Badge variant="secondary">Containerlab first</Badge>
-                <Badge variant="secondary">File-backed labs</Badge>
               </div>
               <div className="space-y-3">
                 <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
                   LabSmith Lab Library
                 </h1>
                 <p className="max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-                  A searchable catalog of runnable networking labs with topology
-                  files, per-device configurations, guided exercises, and
-                  LabSmith verification metadata.
+                  Runnable networking labs with topology files, per-device
+                  configurations, and workbook tasks with answers — every
+                  verified lab was deployed and checked on live virtual Junos
+                  devices before publishing.
                 </p>
               </div>
             </div>
@@ -46,9 +47,9 @@ export default function Home() {
               <CardContent className="flex items-center gap-3 p-4">
                 <Activity className="h-5 w-5 text-emerald-300" />
                 <div>
-                  <p className="text-sm font-medium">LabSmith generated</p>
+                  <p className="text-sm font-medium">Machine-verified, not hand-written</p>
                   <p className="text-xs text-muted-foreground">
-                    Structured scenarios, configs, and checks.
+                    Configs applied, state asserted, outputs captured live.
                   </p>
                 </div>
               </CardContent>

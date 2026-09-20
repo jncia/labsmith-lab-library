@@ -1,11 +1,46 @@
+import { readFileSync, readdirSync, existsSync, statSync } from "node:fs";
+import path from "node:path";
+import { parse } from "yaml";
+
+/**
+ * Content-driven lab loader.
+ *
+ * `content/labs/<slug>/` is the single source of truth. Each lab directory holds:
+ *   lab.yaml           — metadata, devices, verification, diagram, workbook tasks
+ *   topology.clab.yml  — runnable Containerlab topology (image via env var, never bundled)
+ *   configs/<dev>.set  — per-device starting configurations
+ *   guide.mdx          — optional human-readable companion (## Goal is surfaced)
+ *
+ * Everything is read at build time (static generation). Validation throws with a
+ * precise message so a malformed lab FAILS THE BUILD — that is the publish gate:
+ * nothing structurally broken can reach the public site.
+ */
+
 export type LabStatus = "Verified" | "Candidate" | "Planned";
+
+export type LabTask = {
+  id: string;
+  title: string;
+  why: string;
+  commands: string[];
+  expected: string;
+  answer?: {
+    explanation?: string;
+    commands?: string[];
+    output?: string;
+  };
+};
+
+export type LabDiagramNode = { id: string; role: string; x: number; y: number };
+export type LabDiagramLink = { from: string; to: string; label: string };
 
 export type Lab = {
   slug: string;
   title: string;
   summary: string;
+  goal?: string;
   status: LabStatus;
-  difficulty: "Intermediate" | "Advanced";
+  difficulty: string;
   vendor: string;
   nodeCount: number;
   topologyFamily: string;
@@ -14,474 +49,193 @@ export type Lab = {
   repositoryPath: string;
   topology: string;
   configs: { device: string; role: string; content: string }[];
-  exercise: { title: string; why: string; commands: string[]; expected: string }[];
+  tasks: LabTask[];
   verification: {
     lastRun: string;
     mode: string;
     assertions: string;
+    junosVersion?: string;
+    image?: string;
     notes: string[];
   };
   diagram: {
-    nodes: { id: string; role: string; x: number; y: number }[];
-    links: { from: string; to: string; label: string }[];
+    nodes: LabDiagramNode[];
+    links: LabDiagramLink[];
   };
 };
 
-const repoRoot = "https://github.com/jncia/labsmith-lab-library/tree/main/content/labs";
+const REPO_WEB_ROOT =
+  "https://github.com/jncia/labsmith-lab-library/tree/main/content/labs";
 
-export const labs: Lab[] = [
-  {
-    slug: "mpls-l3vpn-route-reflector-5n",
-    title: "MPLS L3VPN with Route Reflector Core",
-    summary:
-      "Five-node Junos service-provider floor with PE routers, a core route reflector, dual customer edges, VPNv4 control plane, LDP transport, and a guided import/export failure exercise.",
-    status: "Verified",
-    difficulty: "Advanced",
-    vendor: "Juniper vJunos-router",
-    nodeCount: 5,
-    topologyFamily: "sp-vpn-floor-5n",
-    technologies: ["MPLS", "L3VPN", "MP-BGP", "Route Reflector", "LDP", "VRF"],
-    scenarios: [
-      "VPNv4 route reflection",
-      "VRF target import/export",
-      "Remote customer loopback reachability",
-      "Broken route target repair",
-    ],
-    repositoryPath: `${repoRoot}/mpls-l3vpn-route-reflector-5n`,
-    topology: `name: mpls-l3vpn-rr-5n
-topology:
-  kinds:
-    juniper_vjunosrouter:
-      image: \${VJUNOS_ROUTER_IMAGE:=vrnetlab/juniper_vjunos-router:26.2R1.7}
-  nodes:
-    pe1:
-      kind: juniper_vjunosrouter
-      startup-config: configs/pe1.set
-    p1:
-      kind: juniper_vjunosrouter
-      startup-config: configs/p1.set
-    pe2:
-      kind: juniper_vjunosrouter
-      startup-config: configs/pe2.set
-    ce1:
-      kind: juniper_vjunosrouter
-      startup-config: configs/ce1.set
-    ce2:
-      kind: juniper_vjunosrouter
-      startup-config: configs/ce2.set
-  links:
-    - endpoints: ["ce1:eth1", "pe1:eth1"]
-    - endpoints: ["pe1:eth2", "p1:eth1"]
-    - endpoints: ["p1:eth2", "pe2:eth2"]
-    - endpoints: ["ce1:eth2", "pe2:eth1"]
-    - endpoints: ["ce2:eth1", "pe1:eth3"]
-    - endpoints: ["ce2:eth2", "pe2:eth3"]`,
-    configs: [
-      {
-        device: "pe1",
-        role: "provider edge",
-        content: `set system host-name pe1
-set interfaces lo0 unit 0 family inet address 10.255.0.1/32
-set interfaces ge-0/0/0 unit 0 family inet address 172.16.11.1/30
-set interfaces ge-0/0/1 unit 0 family inet address 10.0.12.0/31
-set protocols mpls interface ge-0/0/1.0
-set protocols ldp interface ge-0/0/1.0
-set protocols bgp group CORE type internal
-set protocols bgp group CORE local-address 10.255.0.1
-set protocols bgp group CORE family inet-vpn unicast
-set protocols bgp group CORE neighbor 10.255.0.2
-set routing-instances CUST-A instance-type vrf
-set routing-instances CUST-A route-distinguisher 10.255.0.1:100
-set routing-instances CUST-A vrf-target target:65000:100
-set routing-instances CUST-A interface ge-0/0/0.0`,
-      },
-      {
-        device: "p1",
-        role: "core route reflector",
-        content: `set system host-name p1
-set interfaces lo0 unit 0 family inet address 10.255.0.2/32
-set interfaces ge-0/0/0 unit 0 family inet address 10.0.12.1/31
-set interfaces ge-0/0/1 unit 0 family inet address 10.0.23.0/31
-set protocols mpls interface ge-0/0/0.0
-set protocols mpls interface ge-0/0/1.0
-set protocols ldp interface ge-0/0/0.0
-set protocols ldp interface ge-0/0/1.0
-set protocols bgp group PEERS type internal
-set protocols bgp group PEERS local-address 10.255.0.2
-set protocols bgp group PEERS family inet-vpn unicast
-set protocols bgp group PEERS cluster 10.255.0.2
-set protocols bgp group PEERS neighbor 10.255.0.1
-set protocols bgp group PEERS neighbor 10.255.0.3`,
-      },
-      {
-        device: "pe2",
-        role: "provider edge",
-        content: `set system host-name pe2
-set interfaces lo0 unit 0 family inet address 10.255.0.3/32
-set interfaces ge-0/0/0 unit 0 family inet address 172.16.12.1/30
-set interfaces ge-0/0/1 unit 0 family inet address 10.0.23.1/31
-set protocols mpls interface ge-0/0/1.0
-set protocols ldp interface ge-0/0/1.0
-set protocols bgp group CORE type internal
-set protocols bgp group CORE local-address 10.255.0.3
-set protocols bgp group CORE family inet-vpn unicast
-set protocols bgp group CORE neighbor 10.255.0.2
-set routing-instances CUST-A instance-type vrf
-set routing-instances CUST-A route-distinguisher 10.255.0.3:100
-set routing-instances CUST-A vrf-target target:65000:100
-set routing-instances CUST-A interface ge-0/0/0.0`,
-      },
-      {
-        device: "ce1",
-        role: "customer edge",
-        content: `set system host-name ce1
-set interfaces ge-0/0/0 unit 0 family inet address 172.16.11.2/30
-set interfaces ge-0/0/1 unit 0 family inet address 172.16.12.2/30
-set interfaces lo0 unit 0 family inet address 192.0.2.1/32
-set protocols bgp group PE type external
-set protocols bgp group PE peer-as 65000
-set protocols bgp group PE neighbor 172.16.11.1
-set protocols bgp group PE neighbor 172.16.12.1
-set routing-options autonomous-system 65101`,
-      },
-      {
-        device: "ce2",
-        role: "customer edge",
-        content: `set system host-name ce2
-set interfaces ge-0/0/0 unit 0 family inet address 203.0.113.0/31
-set interfaces ge-0/0/1 unit 0 family inet address 203.0.113.2/31
-set interfaces lo0 unit 0 family inet address 198.51.100.1/32`,
-      },
-    ],
-    exercise: [
-      {
-        title: "Confirm VPNv4 sessions terminate on the route reflector",
-        why: "The core route reflector should carry VPN routes without hosting a customer VRF.",
-        commands: [
-          "show bgp summary",
-          "show route table bgp.l3vpn.0",
-        ],
-        expected: "p1 has established BGP sessions to pe1 and pe2 and sees VPNv4 NLRI.",
-      },
-      {
-        title: "Break one VRF target import",
-        why: "Changing the route target demonstrates that VPN reachability depends on route-target membership, not just BGP session state.",
-        commands: [
-          "delete routing-instances CUST-A vrf-target target:65000:100",
-          "set routing-instances CUST-A vrf-target target:65000:999",
-          "commit check",
-          "commit",
-          "show route table CUST-A.inet.0 198.51.100.1/32 exact",
-        ],
-        expected: "The remote customer loopback disappears from the CUST-A table on the modified PE.",
-      },
-      {
-        title: "Restore the import target and verify traffic",
-        why: "The repair closes the loop between control-plane policy and customer reachability.",
-        commands: [
-          "delete routing-instances CUST-A vrf-target target:65000:999",
-          "set routing-instances CUST-A vrf-target target:65000:100",
-          "commit",
-          "show route table CUST-A.inet.0 198.51.100.1/32 exact",
-          "ping routing-instance CUST-A 198.51.100.1 count 3",
-        ],
-        expected: "The remote prefix returns and the routed ping succeeds.",
-      },
-    ],
+function contentRoot() {
+  return path.join(process.cwd(), "content", "labs");
+}
+
+function fail(slug: string, message: string): never {
+  throw new Error(`[lab-library] ${slug}: ${message}`);
+}
+
+function requireString(slug: string, value: unknown, field: string): string {
+  if (typeof value !== "string" || !value.trim()) {
+    fail(slug, `missing required string field "${field}"`);
+  }
+  return value;
+}
+
+function requireStringArray(slug: string, value: unknown, field: string): string[] {
+  if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
+    fail(slug, `field "${field}" must be a list of strings`);
+  }
+  return value as string[];
+}
+
+function normalizeStatus(slug: string, value: unknown): LabStatus {
+  const raw = String(value ?? "").toLowerCase();
+  if (raw === "verified") return "Verified";
+  if (raw === "candidate") return "Candidate";
+  if (raw === "planned") return "Planned";
+  fail(slug, `status must be verified | candidate | planned (got "${value}")`);
+}
+
+/**
+ * Deterministic left-to-right layout when lab.yaml omits node coordinates:
+ * customer/host nodes on the outside, edge nodes inboard, core in the center.
+ * Explicit x/y in lab.yaml always wins (used when a curated layout reads better).
+ */
+function autoLayout(nodes: Array<{ id: string; role: string; x?: number; y?: number }>): LabDiagramNode[] {
+  if (nodes.every((node) => typeof node.x === "number" && typeof node.y === "number")) {
+    return nodes as LabDiagramNode[];
+  }
+  const classify = (role: string) => {
+    const value = role.toLowerCase();
+    if (/host|customer|\bce\b|ce\d|client/.test(value)) return 0; // outermost
+    if (/\bpe\b|pe\d|leaf|edge|asbr/.test(value)) return 1; // inboard
+    return 2; // core / spine / rr
+  };
+  const groups: Record<number, typeof nodes> = { 0: [], 1: [], 2: [] };
+  for (const node of nodes) groups[classify(node.role)].push(node);
+
+  const width = 720;
+  const height = 360;
+  const placed: LabDiagramNode[] = [];
+  const columnsFor = (tier: number, index: number, count: number) => {
+    // Split each tier between left and right halves; center tier stays centered.
+    if (tier === 2) {
+      return { x: width / 2, y: 90 + (index + 1) * (height - 140) / (count + 1) };
+    }
+    const half = index < Math.ceil(count / 2) ? 0 : 1;
+    const perHalf = half === 0 ? Math.ceil(count / 2) : Math.floor(count / 2);
+    const slot = half === 0 ? index : index - Math.ceil(count / 2);
+    const inset = tier === 0 ? 92 : 236;
+    const x = half === 0 ? inset : width - inset;
+    const y = 70 + (slot + 1) * (height - 110) / (perHalf + 1);
+    return { x, y };
+  };
+  for (const tier of [0, 1, 2] as const) {
+    groups[tier].forEach((node, index) => {
+      const { x, y } = columnsFor(tier, index, groups[tier].length);
+      placed.push({ id: node.id, role: node.role, x: node.x ?? Math.round(x), y: node.y ?? Math.round(y) });
+    });
+  }
+  return placed;
+}
+
+function loadLab(slug: string): Lab {
+  const dir = path.join(contentRoot(), slug);
+  const yamlPath = path.join(dir, "lab.yaml");
+  if (!existsSync(yamlPath)) fail(slug, "lab.yaml is missing");
+  const data = parse(readFileSync(yamlPath, "utf8"));
+
+  const topologyPath = path.join(dir, "topology.clab.yml");
+  if (!existsSync(topologyPath)) fail(slug, "topology.clab.yml is missing");
+  const topology = readFileSync(topologyPath, "utf8").trimEnd();
+
+  const devices = Array.isArray(data.devices) ? data.devices : [];
+  if (devices.length === 0) fail(slug, "devices list is empty — declare each configured device with a role");
+  const configs = devices.map((device: { id?: string; role?: string }) => {
+    const id = requireString(slug, device?.id, "devices[].id");
+    const role = requireString(slug, device?.role, `devices[${id}].role`);
+    const configPath = path.join(dir, "configs", `${id}.set`);
+    if (!existsSync(configPath)) fail(slug, `configs/${id}.set is missing for declared device "${id}"`);
+    return { device: id, role, content: readFileSync(configPath, "utf8").trimEnd() };
+  });
+
+  const rawTasks = Array.isArray(data.tasks) ? data.tasks : [];
+  if (rawTasks.length === 0) fail(slug, "tasks list is empty — a workbook needs at least one task");
+  const tasks: LabTask[] = rawTasks.map((task: Record<string, unknown>, index: number) => ({
+    id: requireString(slug, task?.id ?? `${slug}-task-${index + 1}`, "tasks[].id"),
+    title: requireString(slug, task?.title, `tasks[${index}].title`),
+    why: requireString(slug, task?.why, `tasks[${index}].why`),
+    commands: requireStringArray(slug, task?.commands ?? [], `tasks[${index}].commands`),
+    expected: requireString(slug, task?.expected, `tasks[${index}].expected`),
+    answer:
+      task?.answer && typeof task.answer === "object"
+        ? {
+            explanation: (task.answer as Record<string, unknown>).explanation as string | undefined,
+            commands: (task.answer as Record<string, unknown>).commands as string[] | undefined,
+            output: (task.answer as Record<string, unknown>).output as string | undefined,
+          }
+        : undefined,
+  }));
+
+  const verification = data.verification ?? {};
+  const diagram = data.diagram ?? {};
+  const rawNodes = Array.isArray(diagram.nodes) ? diagram.nodes : [];
+  if (rawNodes.length === 0) fail(slug, "diagram.nodes is empty");
+
+  let goal: string | undefined;
+  const guidePath = path.join(dir, "guide.mdx");
+  if (existsSync(guidePath)) {
+    const guide = readFileSync(guidePath, "utf8");
+    const match = /##\s*Goal\s*\n+([\s\S]*?)(\n##\s|$)/.exec(guide);
+    goal = match?.[1]?.trim();
+  }
+
+  return {
+    slug,
+    title: requireString(slug, data.title, "title"),
+    summary: requireString(slug, data.summary, "summary"),
+    goal,
+    status: normalizeStatus(slug, data.status),
+    difficulty: requireString(slug, data.difficulty, "difficulty"),
+    vendor: requireString(slug, data.vendor, "vendor"),
+    nodeCount: Number(data.node_count) || rawNodes.length,
+    topologyFamily: requireString(slug, data.topology_family, "topology_family"),
+    technologies: requireStringArray(slug, data.technologies, "technologies"),
+    scenarios: requireStringArray(slug, data.scenarios ?? [], "scenarios"),
+    repositoryPath: `${REPO_WEB_ROOT}/${slug}`,
+    topology,
+    configs,
+    tasks,
     verification: {
-      lastRun: "2026-07-07",
-      mode: "LabSmith live proof seed",
-      assertions: "12 baseline assertions",
-      notes: [
-        "Uses the current LabSmith sp-vpn-floor-5n archetype as the first public seed.",
-        "Public files intentionally omit host details, credentials, image digests, and raw private logs.",
-      ],
+      lastRun: String(verification.last_run ?? "unverified"),
+      mode: String(verification.mode ?? "unverified"),
+      assertions: String(verification.assertions ?? "none recorded"),
+      junosVersion: verification.junos_version ? String(verification.junos_version) : undefined,
+      image: verification.image ? String(verification.image) : undefined,
+      notes: Array.isArray(verification.notes) ? verification.notes.map(String) : [],
     },
     diagram: {
-      nodes: [
-        { id: "ce1", role: "CE", x: 92, y: 120 },
-        { id: "pe1", role: "PE", x: 242, y: 120 },
-        { id: "p1", role: "core RR", x: 360, y: 188 },
-        { id: "pe2", role: "PE", x: 478, y: 120 },
-        { id: "ce2", role: "CE", x: 628, y: 120 },
-      ],
-      links: [
-        { from: "ce1", to: "pe1", label: "eBGP" },
-        { from: "pe1", to: "p1", label: "LDP/MPLS" },
-        { from: "p1", to: "pe2", label: "LDP/MPLS" },
-        { from: "pe2", to: "ce2", label: "VRF edge" },
-        { from: "ce1", to: "pe2", label: "dual home" },
-      ],
+      nodes: autoLayout(rawNodes),
+      links: Array.isArray(diagram.links) ? diagram.links : [],
     },
-  },
-  {
-    slug: "evpn-vxlan-anycast-gateway-5n",
-    title: "EVPN/VXLAN Anycast Gateway Fabric",
-    summary:
-      "Five-node fabric exercise showing an EVPN route-reflector spine, two leaf gateways, two hosts, symmetric IRB, and gateway MAC consistency checks.",
-    status: "Candidate",
-    difficulty: "Advanced",
-    vendor: "Juniper vJunos-switch",
-    nodeCount: 5,
-    topologyFamily: "evpn-irb-5n",
-    technologies: ["EVPN", "VXLAN", "Anycast Gateway", "MP-BGP", "IRB"],
-    scenarios: [
-      "Type-2 MAC/IP advertisement",
-      "Anycast default gateway",
-      "Leaf-to-leaf host mobility",
-      "Missing VNI repair",
-    ],
-    repositoryPath: `${repoRoot}/evpn-vxlan-anycast-gateway-5n`,
-    topology: `name: evpn-vxlan-anycast-5n
-topology:
-  kinds:
-    juniper_vjunosswitch:
-      image: \${VJUNOS_SWITCH_IMAGE:=vrnetlab/juniper_vjunos-switch:26.2R1.7}
-  nodes:
-    spine1:
-      kind: juniper_vjunosswitch
-      startup-config: configs/spine1.set
-    leaf1:
-      kind: juniper_vjunosswitch
-      startup-config: configs/leaf1.set
-    leaf2:
-      kind: juniper_vjunosswitch
-      startup-config: configs/leaf2.set
-    host1:
-      kind: linux
-      image: alpine:latest
-    host2:
-      kind: linux
-      image: alpine:latest
-  links:
-    - endpoints: ["spine1:eth1", "leaf1:eth1"]
-    - endpoints: ["spine1:eth2", "leaf2:eth1"]
-    - endpoints: ["leaf1:eth2", "host1:eth1"]
-    - endpoints: ["leaf2:eth2", "host2:eth1"]`,
-    configs: [
-      {
-        device: "spine1",
-        role: "EVPN route reflector",
-        content: `set system host-name spine1
-set interfaces lo0 unit 0 family inet address 10.10.0.1/32
-set protocols bgp group LEAFS type internal
-set protocols bgp group LEAFS family evpn signaling
-set protocols bgp group LEAFS cluster 10.10.0.1
-set protocols bgp group LEAFS neighbor 10.10.0.11
-set protocols bgp group LEAFS neighbor 10.10.0.12`,
-      },
-      {
-        device: "leaf1",
-        role: "VXLAN leaf gateway",
-        content: `set system host-name leaf1
-set interfaces lo0 unit 0 family inet address 10.10.0.11/32
-set switch-options vtep-source-interface lo0.0
-set vlans BLUE vlan-id 100
-set vlans BLUE vxlan vni 10100
-set interfaces irb unit 100 family inet address 10.100.0.1/24
-set routing-instances EVPN protocols evpn encapsulation vxlan
-set routing-instances EVPN protocols evpn extended-vni-list 10100`,
-      },
-      {
-        device: "leaf2",
-        role: "VXLAN leaf gateway",
-        content: `set system host-name leaf2
-set interfaces lo0 unit 0 family inet address 10.10.0.12/32
-set switch-options vtep-source-interface lo0.0
-set vlans BLUE vlan-id 100
-set vlans BLUE vxlan vni 10100
-set interfaces irb unit 100 family inet address 10.100.0.1/24
-set routing-instances EVPN protocols evpn encapsulation vxlan
-set routing-instances EVPN protocols evpn extended-vni-list 10100`,
-      },
-    ],
-    exercise: [
-      {
-        title: "Verify EVPN control-plane reachability",
-        why: "Leafs should exchange MAC/IP routes through the spine route reflector before any host test matters.",
-        commands: ["show bgp summary", "show evpn database"],
-        expected: "Both leafs have an established EVPN session and learn remote MAC/IP entries.",
-      },
-      {
-        title: "Remove the VNI from one leaf",
-        why: "A missing VNI is a common fabric-side error that leaves BGP healthy while data-plane learning fails.",
-        commands: [
-          "delete vlans BLUE vxlan vni 10100",
-          "commit check",
-          "commit",
-          "show evpn database extensive",
-        ],
-        expected: "Remote BLUE entries stop resolving through the affected leaf.",
-      },
-      {
-        title: "Restore the VNI and prove host reachability",
-        why: "The repair demonstrates the relationship between VLAN, VNI, and EVPN route install.",
-        commands: [
-          "set vlans BLUE vxlan vni 10100",
-          "commit",
-          "show evpn database",
-          "ping 10.100.0.20 count 3",
-        ],
-        expected: "The VNI returns and host-to-host reachability is restored.",
-      },
-    ],
-    verification: {
-      lastRun: "pending",
-      mode: "candidate spec",
-      assertions: "planned EVPN assertions",
-      notes: [
-        "Included to exercise the catalog design for EVPN/VXLAN discovery.",
-        "Needs LabSmith live verification before being marked verified.",
-      ],
-    },
-    diagram: {
-      nodes: [
-        { id: "host1", role: "host", x: 120, y: 250 },
-        { id: "leaf1", role: "leaf", x: 240, y: 175 },
-        { id: "spine1", role: "RR", x: 360, y: 90 },
-        { id: "leaf2", role: "leaf", x: 480, y: 175 },
-        { id: "host2", role: "host", x: 600, y: 250 },
-      ],
-      links: [
-        { from: "host1", to: "leaf1", label: "VLAN 100" },
-        { from: "leaf1", to: "spine1", label: "EVPN" },
-        { from: "spine1", to: "leaf2", label: "EVPN" },
-        { from: "leaf2", to: "host2", label: "VLAN 100" },
-      ],
-    },
-  },
-  {
-    slug: "interprovider-option-b-6n",
-    title: "Inter-provider MPLS VPN Option B",
-    summary:
-      "Six-node inter-provider scenario with two ASBRs exchanging VPNv4 routes, separate provider cores, and a guided failure around next-hop reachability.",
-    status: "Planned",
-    difficulty: "Advanced",
-    vendor: "Juniper vJunos-router",
-    nodeCount: 6,
-    topologyFamily: "interprovider-option-b-6n",
-    technologies: ["MPLS", "Inter-provider", "Option B", "MP-BGP", "L3VPN"],
-    scenarios: [
-      "ASBR-to-ASBR VPNv4 exchange",
-      "Next-hop-self behavior",
-      "Provider boundary troubleshooting",
-      "Route-target preservation",
-    ],
-    repositoryPath: `${repoRoot}/interprovider-option-b-6n`,
-    topology: `name: interprovider-option-b-6n
-topology:
-  kinds:
-    juniper_vjunosrouter:
-      image: \${VJUNOS_ROUTER_IMAGE:=vrnetlab/juniper_vjunos-router:26.2R1.7}
-  nodes:
-    ce-a:
-      kind: juniper_vjunosrouter
-      startup-config: configs/ce-a.set
-    pe-a:
-      kind: juniper_vjunosrouter
-      startup-config: configs/pe-a.set
-    asbr-a:
-      kind: juniper_vjunosrouter
-      startup-config: configs/asbr-a.set
-    asbr-b:
-      kind: juniper_vjunosrouter
-      startup-config: configs/asbr-b.set
-    pe-b:
-      kind: juniper_vjunosrouter
-      startup-config: configs/pe-b.set
-    ce-b:
-      kind: juniper_vjunosrouter
-      startup-config: configs/ce-b.set
-  links:
-    - endpoints: ["ce-a:eth1", "pe-a:eth1"]
-    - endpoints: ["pe-a:eth2", "asbr-a:eth1"]
-    - endpoints: ["asbr-a:eth2", "asbr-b:eth2"]
-    - endpoints: ["asbr-b:eth1", "pe-b:eth2"]
-    - endpoints: ["pe-b:eth1", "ce-b:eth1"]`,
-    configs: [
-      {
-        device: "asbr-a",
-        role: "provider A ASBR",
-        content: `set system host-name asbr-a
-set interfaces lo0 unit 0 family inet address 10.1.0.3/32
-set interfaces ge-0/0/1 unit 0 family inet address 10.12.0.0/31
-set protocols bgp group ASBR-B type external
-set protocols bgp group ASBR-B family inet-vpn unicast
-set protocols bgp group ASBR-B peer-as 65200
-set protocols bgp group ASBR-B neighbor 10.12.0.1
-set routing-options autonomous-system 65100`,
-      },
-      {
-        device: "asbr-b",
-        role: "provider B ASBR",
-        content: `set system host-name asbr-b
-set interfaces lo0 unit 0 family inet address 10.2.0.3/32
-set interfaces ge-0/0/1 unit 0 family inet address 10.12.0.1/31
-set protocols bgp group ASBR-A type external
-set protocols bgp group ASBR-A family inet-vpn unicast
-set protocols bgp group ASBR-A peer-as 65100
-set protocols bgp group ASBR-A neighbor 10.12.0.0
-set routing-options autonomous-system 65200`,
-      },
-    ],
-    exercise: [
-      {
-        title: "Confirm VPNv4 exchange across the AS boundary",
-        why: "Option B keeps VPN labels and VPNv4 routes at the ASBR boundary instead of back-to-back VRFs.",
-        commands: ["show bgp summary", "show route table bgp.l3vpn.0"],
-        expected: "Each ASBR sees VPNv4 routes from the other provider.",
-      },
-      {
-        title: "Break next-hop reachability",
-        why: "This separates BGP route exchange from transport resolution across the provider edge.",
-        commands: [
-          "delete protocols bgp group ASBR-B next-hop-self",
-          "commit check",
-          "commit",
-          "show route table bgp.l3vpn.0 hidden extensive",
-        ],
-        expected: "VPNv4 routes remain present but hidden or unresolved.",
-      },
-      {
-        title: "Restore next-hop handling and verify CE reachability",
-        why: "The repair shows which device owns inter-AS transport correctness.",
-        commands: [
-          "set protocols bgp group ASBR-B next-hop-self",
-          "commit",
-          "show route table CUST-A.inet.0",
-          "ping routing-instance CUST-A 198.51.100.1 count 3",
-        ],
-        expected: "The VPN route resolves and customer reachability returns.",
-      },
-    ],
-    verification: {
-      lastRun: "pending",
-      mode: "planned archetype",
-      assertions: "not yet pinned",
-      notes: [
-        "Included to reserve the six-node inter-provider pattern.",
-        "Needs a dedicated LabSmith archetype and live verification.",
-      ],
-    },
-    diagram: {
-      nodes: [
-        { id: "ce-a", role: "CE", x: 80, y: 180 },
-        { id: "pe-a", role: "PE", x: 200, y: 180 },
-        { id: "asbr-a", role: "ASBR", x: 320, y: 180 },
-        { id: "asbr-b", role: "ASBR", x: 440, y: 180 },
-        { id: "pe-b", role: "PE", x: 560, y: 180 },
-        { id: "ce-b", role: "CE", x: 680, y: 180 },
-      ],
-      links: [
-        { from: "ce-a", to: "pe-a", label: "VRF" },
-        { from: "pe-a", to: "asbr-a", label: "AS 65100" },
-        { from: "asbr-a", to: "asbr-b", label: "VPNv4 eBGP" },
-        { from: "asbr-b", to: "pe-b", label: "AS 65200" },
-        { from: "pe-b", to: "ce-b", label: "VRF" },
-      ],
-    },
-  },
-];
+  };
+}
+
+function loadAllLabs(): Lab[] {
+  const root = contentRoot();
+  if (!existsSync(root)) return [];
+  return readdirSync(root)
+    .filter((entry) => statSync(path.join(root, entry)).isDirectory())
+    .sort()
+    .map(loadLab)
+    .sort((a, b) => {
+      const rank = { Verified: 0, Candidate: 1, Planned: 2 } as const;
+      return rank[a.status] - rank[b.status] || a.title.localeCompare(b.title);
+    });
+}
+
+export const labs: Lab[] = loadAllLabs();
 
 export function getLab(slug: string) {
   return labs.find((lab) => lab.slug === slug);
