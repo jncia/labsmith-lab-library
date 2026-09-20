@@ -23,19 +23,19 @@ time.
 
 ## Before you start
 
-Host requirements: containerlab, and enough room for five vJunos-router nodes. Each node wants
-roughly 5 GB of free memory and 4 cores, so budget about 28 GB free memory and 20 cores.
+This lab wants a machine with about 28 GB of free memory and 20 cores: five routers, each of
+which is a virtual machine holding roughly 5 GB and 4 cores for as long as the lab is up.
+`labpack doctor` compares that with the machine you point it at and says `no` rather than
+letting you find out the slow way.
 
-```bash
-export VJUNOS_ROUTER_IMAGE=<your vjunos-router image tag>   # only if yours differs
-containerlab deploy -t topology.clab.yml
-```
+Each router takes several minutes to boot and load its starting state, so expect the lab to
+take a few minutes to come up. `labpack start` waits for all of it, then proves the lab really
+started in the state this exercise expects — the baseline checks in `checks/baseline.yaml` are
+that state written down, and they are the definition of "the lab is ready". Do not start work
+until it says so.
 
-vJunos takes several minutes per node to finish booting and to load its startup configuration. Log
-in to each router over SSH at the management address containerlab prints, with the image's default
-credentials. Do not start work until `p1` shows its provider sessions up — the packaged baseline
-checks in `checks/baseline.yaml` describe exactly that state, and they are the definition of "the
-lab is ready".
+The next section has every command, including the ones for getting into a router and for
+checking your work. You are never asked to type an address or a sign-in.
 
 The start state is in `configs/` twice, and both files say the same thing. `configs/<node>.cfg`
 is what the topology hands each router at boot, in the hierarchical format `show configuration`
@@ -43,27 +43,75 @@ prints; leave those files alone. `configs/<node>.set` is the same start state wr
 statements, so you can read what each router starts with, and paste any part of it back, without
 deploying anything.
 
+## Working with this lab
+
+<!-- labpack:generated working-with-this-lab -->
+
+This lab comes with a launcher that runs it for you. Every command below is run from this directory, and none of them asks you to type a sign-in.
+
+| To do this | Run this |
+| --- | --- |
+| Set up the machine the labs run on, once | `labpack setup` |
+| Check that machine against what this lab needs | `labpack doctor` |
+| See which node images this lab needs | `labpack images` |
+| Start the lab and wait until it is ready | `labpack start` |
+| Open a session on one of its devices | `labpack connect pe1` |
+| See whether a stage's outcomes have been reached | `labpack check stage-1-customer-routing-instance` |
+| Ask for the author's hint | `labpack hint stage-1-customer-routing-instance` |
+| Put every device back to the starting state | `labpack reset` |
+| Jump to the start of a stage | `labpack goto stage-1-customer-routing-instance` |
+| See a stage's answer | `labpack solution stage-1-customer-routing-instance` |
+| Shut the lab down and prove nothing is left | `labpack down` |
+
+The first time, on a machine that has never run one of these labs, work through `labpack setup`: it asks where the labs should run, sets up the way in, checks the machine against what this lab needs, and walks through any node image that is missing. After that it is remembered and no later command needs to be told again.
+
+The nodes of this lab are `pe1`, `pe2`, `p1`, `ce1` and `ce2`. Some of them may be fixtures rather than devices you work on; the drawing below says which.
+
+This lab's stages are `stage-1-customer-routing-instance` and `stage-2-layer2-circuit`. Put the one you are working on after `labpack check`, `labpack hint`, `labpack goto` and `labpack solution`.
+
+`labpack goto` and `labpack solution` need the full download. The student download carries no answers, and those two commands say so rather than guess.
+
+You can also run this lab with nothing but the container runtime. `topology.clab.yml` is a plain topology file, every node boots its own starting state from a file under `configs/`, and each file under `checks/` states one outcome as data: which device to ask, what to ask it, and what the answer has to be. So you can read a check and look at the same outcome yourself.
+
+<!-- /labpack:generated working-with-this-lab -->
+
 ## Topology
 
-```text
-ce1 ge-0/0/0 ---- ge-0/0/0 pe1 ge-0/0/1 ---- ge-0/0/0 p1 ge-0/0/1 ---- ge-0/0/1 pe2 ge-0/0/0 ---- ge-0/0/1 ce1
-                           pe1 ge-0/0/2                                         pe2 ge-0/0/2
-                                |                                                    |
-                        ce2 ge-0/0/0                                          ce2 ge-0/0/1
-```
+<!-- labpack:generated topology -->
 
-Links, in the order the topology file declares them:
+![The nodes of this lab and the links between them](diagram.svg)
 
-```text
-ce1 ge-0/0/0 - pe1 ge-0/0/0
-pe1 ge-0/0/1 - p1  ge-0/0/0
-ce2 ge-0/0/0 - pe1 ge-0/0/2
-ce1 ge-0/0/1 - pe2 ge-0/0/0
-p1  ge-0/0/1 - pe2 ge-0/0/1
-ce2 ge-0/0/1 - pe2 ge-0/0/2
-```
+| Node | Its part in this network |
+| --- | --- |
+| pe1 | provider-edge |
+| pe2 | provider-edge |
+| p1 | provider-core-route-reflector |
+| ce1 | dual-homed-customer-edge |
+| ce2 | l2vpn-customer-edge |
 
-`diagram.svg` is not shipped with this packet; the link list above is the reference.
+| Node | Interface | Faces | Address |
+| --- | --- | --- | --- |
+| pe1 | ge-0/0/0 | ce1 | 172.16.11.1/30 |
+| pe1 | ge-0/0/1 | p1 | 10.0.12.0/31 |
+| pe1 | ge-0/0/2 | ce2 | — |
+| pe1 | lo0.0 | no link | 10.255.0.1/32 |
+| pe2 | ge-0/0/0 | ce1 | 172.16.12.1/30 |
+| pe2 | ge-0/0/1 | p1 | 10.0.23.1/31 |
+| pe2 | ge-0/0/2 | ce2 | — |
+| pe2 | lo0.0 | no link | 10.255.0.3/32 |
+| p1 | ge-0/0/0 | pe1 | 10.0.12.1/31 |
+| p1 | ge-0/0/1 | pe2 | 10.0.23.0/31 |
+| p1 | lo0.0 | no link | 10.255.0.2/32 |
+| ce1 | ge-0/0/0 | pe1 | 172.16.11.2/30 |
+| ce1 | ge-0/0/1 | pe2 | 172.16.12.2/30 |
+| ce1 | lo0.1 | no link | 192.0.2.1/32 |
+| ce1 | lo0.2 | no link | 198.51.100.1/32 |
+| ce2 | ge-0/0/0 | pe1 | 203.0.113.1/31 |
+| ce2 | ge-0/0/1 | pe2 | 203.0.113.0/31 |
+
+The drawing and the tables above are the whole of the wiring: every node, every link, the interface each link is on at both of its ends, and the address each of them starts with. These are the interface names to use, and nothing in this lab needs any other interface. An interface with no address yet is shown without one.
+
+<!-- /labpack:generated topology -->
 
 ## Addressing
 
@@ -147,6 +195,12 @@ the outcome, not the configuration, so any correct way of reaching it passes.
 **If you get stuck.** BGP sessions coming up is not the same thing as VPN routes arriving. Those
 are two independent agreements, and only one of them is about route targets.
 
+<!-- labpack:generated check-your-work-stage-1-customer-routing-instance -->
+
+**Check your work.** `labpack check stage-1-customer-routing-instance`. Stuck? `labpack hint stage-1-customer-routing-instance` gives you the author's hint for whichever outcome is not met yet.
+
+<!-- /labpack:generated check-your-work-stage-1-customer-routing-instance -->
+
 ---
 
 ## Stage 2 — Restore the layer 2 circuit on pe1
@@ -170,6 +224,12 @@ The packaged check for this stage is `checks/stage-2-layer2-circuit.yaml`.
 and a circuit will not come up if only one of the two ends has been told what it is. The remote end
 of a pseudowire is identified by a loopback address, not by a link address.
 
+<!-- labpack:generated check-your-work-stage-2-layer2-circuit -->
+
+**Check your work.** `labpack check stage-2-layer2-circuit`. Stuck? `labpack hint stage-2-layer2-circuit` gives you the author's hint for whichever outcome is not met yet.
+
+<!-- /labpack:generated check-your-work-stage-2-layer2-circuit -->
+
 ---
 
 ## Checking your work
@@ -183,8 +243,10 @@ anything.
 ## Tearing down
 
 ```bash
-containerlab destroy -t topology.clab.yml --cleanup
+labpack down
 ```
 
-Redeploying gives you the start state again, because the start state is what each router is
-handed at boot from `configs/<node>.cfg`.
+That removes the lab and proves nothing of it is left on the machine. Starting it again gives
+you the start state back, because the start state is what each router is handed at boot from
+`configs/<node>.cfg`. To get back to the start state without taking the lab down, use
+`labpack reset`.
