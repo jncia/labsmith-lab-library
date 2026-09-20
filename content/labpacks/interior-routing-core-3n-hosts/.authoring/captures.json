@@ -1,0 +1,89 @@
+{
+  "baseline": [
+    {
+      "checkId": "b-r1-if",
+      "command": "show interfaces ge-0/0/0 terse",
+      "node": "r1",
+      "output": "Interface Admin Link Proto Local Remote ge-0/0/0 up up ge-0/0/0.0 up up inet <private-address>/30 multiservice"
+    },
+    {
+      "checkId": "b-r2-if0",
+      "command": "show interfaces ge-0/0/0 terse",
+      "node": "r2",
+      "output": "Interface Admin Link Proto Local Remote ge-0/0/0 up up ge-0/0/0.0 up up inet <private-address>/30 multiservice"
+    },
+    {
+      "checkId": "b-r2-if1",
+      "command": "show interfaces ge-0/0/1 terse",
+      "node": "r2",
+      "output": "Interface Admin Link Proto Local Remote ge-0/0/1 up up ge-0/0/1.0 up up inet <private-address>/30 multiservice"
+    },
+    {
+      "checkId": "b-r3-if",
+      "command": "show interfaces ge-0/0/0 terse",
+      "node": "r3",
+      "output": "Interface Admin Link Proto Local Remote ge-0/0/0 up up ge-0/0/0.0 up up inet <private-address>/30 multiservice"
+    },
+    {
+      "checkId": "b-r1-nbr",
+      "command": "ping <private-address> count 3",
+      "node": "r1",
+      "output": "PING <private-address> (<private-address>): 56 data bytes <counter> bytes from <private-address>: icmp_seq=0 ttl=64 time=1.597 ms <counter> bytes from <private-address>: icmp_seq=1 ttl=64 time=1.745 ms <counter> bytes from <private-address>: icmp_seq=2 ttl=64 time=1.766 ms --- <private-address> ping statistics --- <counter> packets transmitted, <counter> packets received, 0% packet loss round-trip min/avg/max/stddev = 1.597/1.703/1.766/0.075 ms"
+    },
+    {
+      "checkId": "b-r3-nbr",
+      "command": "ping <private-address> count 3",
+      "node": "r3",
+      "output": "PING <private-address> (<private-address>): 56 data bytes <counter> bytes from <private-address>: icmp_seq=0 ttl=64 time=2.215 ms <counter> bytes from <private-address>: icmp_seq=1 ttl=64 time=2.172 ms <counter> bytes from <private-address>: icmp_seq=2 ttl=64 time=2.668 ms --- <private-address> ping statistics --- <counter> packets transmitted, <counter> packets received, 0% packet loss round-trip min/avg/max/stddev = 2.172/2.352/2.668/0.224 ms"
+    }
+  ],
+  "receiptId": "interior-routing-core-3n-2026-09-19-30edfd3164d2",
+  "stages": {
+    "s1": [
+      {
+        "checkId": "s1-r1-link23",
+        "command": "show route table inet.0 <private-address>/30 exact",
+        "node": "r1",
+        "output": "inet.0: 5 destinations, 5 routes (5 active, 0 holddown, 0 hidden) + = Active Route, - = Last Active, * = Both <private-address>/30 *[OSPF/10] <age>, metric 2 > to <private-address> via ge-0/0/0.0"
+      },
+      {
+        "checkId": "s1-r3-link12",
+        "command": "show route table inet.0 <private-address>/30 exact",
+        "node": "r3",
+        "output": "inet.0: 5 destinations, 5 routes (5 active, 0 holddown, 0 hidden) + = Active Route, - = Last Active, * = Both <private-address>/30 *[OSPF/10] <age>, metric 2 > to <private-address> via ge-0/0/0.0"
+      }
+    ],
+    "s2": [
+      {
+        "checkId": "s2-r1-lo2",
+        "command": "show route table inet.0 <private-address>/32 exact",
+        "node": "r1",
+        "output": "inet.0: 7 destinations, 7 routes (7 active, 0 holddown, 0 hidden) + = Active Route, - = Last Active, * = Both <private-address>/32 *[OSPF/10] <age>, metric 1 > to <private-address> via ge-0/0/0.0"
+      },
+      {
+        "checkId": "s2-r1-lo3",
+        "command": "show route table inet.0 <private-address>/32 exact",
+        "node": "r1",
+        "output": "inet.0: 7 destinations, 7 routes (7 active, 0 holddown, 0 hidden) + = Active Route, - = Last Active, * = Both <private-address>/32 *[OSPF/10] <age>, metric 2 > to <private-address> via ge-0/0/0.0"
+      },
+      {
+        "checkId": "s2-r3-lo1",
+        "command": "show route table inet.0 <private-address>/32 exact",
+        "node": "r3",
+        "output": "inet.0: 7 destinations, 7 routes (7 active, 0 holddown, 0 hidden) + = Active Route, - = Last Active, * = Both <private-address>/32 *[OSPF/10] <age>, metric 2 > to <private-address> via ge-0/0/0.0"
+      },
+      {
+        "checkId": "s2-r1-ping",
+        "command": "ping <private-address> count 3",
+        "node": "r1",
+        "output": "PING <private-address> (<private-address>): 56 data bytes <counter> bytes from <private-address>: icmp_seq=0 ttl=63 time=13.747 ms <counter> bytes from <private-address>: icmp_seq=1 ttl=63 time=4.916 ms <counter> bytes from <private-address>: icmp_seq=2 ttl=63 time=3.133 ms --- <private-address> ping statistics --- <counter> packets transmitted, <counter> packets received, 0% packet loss round-trip min/avg/max/stddev = 3.133/7.265/13.747/4.641 ms"
+      },
+      {
+        "checkId": "s2-r3-ping",
+        "command": "ping <private-address> count 3",
+        "node": "r3",
+        "output": "PING <private-address> (<private-address>): 56 data bytes <counter> bytes from <private-address>: icmp_seq=0 ttl=63 time=4.231 ms <counter> bytes from <private-address>: icmp_seq=1 ttl=63 time=2.566 ms <counter> bytes from <private-address>: icmp_seq=2 ttl=63 time=2.371 ms --- <private-address> ping statistics --- <counter> packets transmitted, <counter> packets received, 0% packet loss round-trip min/avg/max/stddev = 2.371/3.056/4.231/0.835 ms"
+      }
+    ]
+  }
+}

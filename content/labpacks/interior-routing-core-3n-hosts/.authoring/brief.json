@@ -1,0 +1,71 @@
+{
+  "blueprint": {
+    "examCode": "PROOF1-ROUTING",
+    "objectives": [
+      "BP-LINK-STATE-AREA",
+      "BP-LOOPBACK-REACHABILITY"
+    ]
+  },
+  "certifications": [
+    "Interior routing, seed input for the authoring proof"
+  ],
+  "estimatedMinutes": 35,
+  "id": "interior-routing-core-3n",
+  "labType": "build",
+  "learnerOutcome": "The learner can bring a set of directly connected routers into one link-state routing area, confirm from the routing table that the protocol itself installed the routes, and confirm that the two ends of the path can reach each other loopback to loopback.",
+  "level": "Intermediate",
+  "observableOutcomes": [
+    "A route for another router's loopback address is present and was learned by the routing protocol.",
+    "One end of the line can reach the other end's loopback address from its own loopback address.",
+    "The interfaces that carry the path stay up throughout."
+  ],
+  "rationale": "It is the smallest exercise that still has a real routed path: two stages, three routers, and outcomes that the existing check vocabulary can observe with route presence by protocol and a ping between loopbacks. Nothing in it overlaps the existing packet, which is a five-node provider floor. As the first lab through the loop it is chosen for how cheaply it fails, not for how much it teaches.",
+  "scenario": "Three routers sit in a line and carry a small core. Every physical link between them is already addressed and up, and every router already has its own loopback address, but nothing shares those loopbacks: each router can reach only its own neighbours. The team wants the core to learn every loopback from the routing protocol rather than from static configuration, and then wants the two ends of the line to be able to reach each other.",
+  "schemaVersion": 0,
+  "stageSketch": [
+    {
+      "achieves": "Every router learns the other routers' loopback addresses from the routing protocol rather than from static configuration.",
+      "title": "Bring up the routing area"
+    },
+    {
+      "achieves": "The two ends of the line can reach each other loopback to loopback across the middle router.",
+      "title": "Prove end-to-end reachability"
+    }
+  ],
+  "startStateSketch": "Three routers in a line. Every interface between them is addressed and up, every router has its own loopback address configured, and no routing protocol is running anywhere. Each router can reach its directly connected neighbours and nothing further.",
+  "title": "Bring a Three-Router Core onto a Single Link-State Area",
+  "topics": [
+    "Interior routing",
+    "Link-state protocol",
+    "Loopback reachability"
+  ],
+  "topology": {
+    "links": [
+      {
+        "a": "r1",
+        "b": "r2"
+      },
+      {
+        "a": "r2",
+        "b": "r3"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "r1",
+        "kind": "vjunos-router",
+        "role": "one end of the line"
+      },
+      {
+        "id": "r2",
+        "kind": "vjunos-router",
+        "role": "the middle router the path crosses"
+      },
+      {
+        "id": "r3",
+        "kind": "vjunos-router",
+        "role": "the other end of the line"
+      }
+    ]
+  }
+}

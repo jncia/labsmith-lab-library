@@ -1,0 +1,62 @@
+name: interior-routing-core-3n-hosts
+topology:
+  kinds:
+    juniper_vjunosrouter:
+      image: ${VJUNOS_ROUTER_IMAGE:=vrnetlab/juniper_vjunos-router:26.2R1.7}
+  nodes:
+    r1:
+      kind: juniper_vjunosrouter
+      startup-config: configs/r1.cfg
+    r2:
+      kind: juniper_vjunosrouter
+      startup-config: configs/r2.cfg
+    r3:
+      kind: juniper_vjunosrouter
+      startup-config: configs/r3.cfg
+    h1:
+      kind: linux
+      image: ${LINUX_HOST_IMAGE:=ghcr.io/hellt/network-multitool@sha256:a8d96c19e593e227d7b16d320a04256ba00434028f0adb9f7da206bf098c7140}
+      exec:
+      - ip link set eth1 up
+      - ip addr add 10.10.1.11/24 dev eth1
+      - ip route replace default via 10.10.1.1
+      - touch /run/labpack-ready
+      healthcheck:
+        test:
+        - CMD
+        - test
+        - -f
+        - /run/labpack-ready
+        interval: 2
+        retries: 30
+        start-period: 1
+    h2:
+      kind: linux
+      image: ${LINUX_HOST_IMAGE:=ghcr.io/hellt/network-multitool@sha256:a8d96c19e593e227d7b16d320a04256ba00434028f0adb9f7da206bf098c7140}
+      exec:
+      - ip link set eth1 up
+      - ip addr add 10.10.3.11/24 dev eth1
+      - ip route replace default via 10.10.3.1
+      - touch /run/labpack-ready
+      healthcheck:
+        test:
+        - CMD
+        - test
+        - -f
+        - /run/labpack-ready
+        interval: 2
+        retries: 30
+        start-period: 1
+  links:
+  - endpoints:
+    - r1:eth1
+    - r2:eth1
+  - endpoints:
+    - r2:eth2
+    - r3:eth1
+  - endpoints:
+    - r1:eth2
+    - h1:eth1
+  - endpoints:
+    - r3:eth2
+    - h2:eth1

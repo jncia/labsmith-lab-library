@@ -1,0 +1,141 @@
+schemaVersion: 0
+id: interior-routing-core-3n-hosts
+title: Bring a Three-Router Core onto One Link-State Area, with a User at Each End
+summary: Three routers in a line, r1 - r2 - r3, with an end host behind r1 and another
+  behind r3. The links and loopbacks are addressed and the host-facing ports are addressed,
+  but there is no routing protocol, so neither user can reach the other. You bring
+  all three routers into one OSPF area 0.0.0.0 and advertise the two user subnets
+  with them, then bring the loopbacks in and prove the two ends reach each other.
+labType: build
+level: Intermediate
+certifications:
+- Interior routing, seed input for the authoring proof
+topics:
+- Interior routing
+- Link-state protocol
+- Loopback reachability
+estimatedMinutes: 45
+nodes:
+- id: r1
+  kind: juniper_vjunosrouter
+  role: one end of the line
+- id: r2
+  kind: juniper_vjunosrouter
+  role: the middle router the path crosses
+- id: r3
+  kind: juniper_vjunosrouter
+  role: the other end of the line
+- id: h1
+  kind: linux
+  role: a user's machine behind r1
+  linux:
+    mode: host
+    interfaces:
+    - link: eth1
+      ipv4: 10.10.1.11/24
+    routes:
+    - to: default
+      via: 10.10.1.1
+- id: h2
+  kind: linux
+  role: a user's machine behind r3
+  linux:
+    mode: host
+    interfaces:
+    - link: eth1
+      ipv4: 10.10.3.11/24
+    routes:
+    - to: default
+      via: 10.10.3.1
+requirements:
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  - kind: linux
+    version: sha256:a8d96c19e593e227d7b16d320a04256ba00434028f0adb9f7da206bf098c7140
+    obtainFrom: 'Nothing: the container runtime fetches this public image the first
+      time the lab starts, at the exact digest the topology pins.'
+    source: pull
+  minimumFreeMemoryGb: 18
+  minimumCores: 12
+stages:
+- id: s1
+  title: Bring up the routing area
+  goal: 'Make r1, r2 and r3 exchange routing information over their point-to-point
+    links, all in one OSPF area, 0.0.0.0, and advertise the two user subnets in the
+    same area so that each end learns the other user''s subnet from the protocol rather
+    than from a static entry. Do not disturb any interface or any address, and do
+    not configure the end hosts: they are already addressed and already point at their
+    own router.'
+  doneWhen:
+  - r1 has a route to 10.0.23.0/30 whose protocol is OSPF, with r2 as the next hop.
+  - r3 has a route to 10.0.12.0/30 whose protocol is OSPF, with r2 as the next hop.
+  - r1 has an OSPF route to 10.10.3.0/24 and r3 has an OSPF route to 10.10.1.0/24.
+  - The user behind r1 can reach the user behind r3, and the other way round.
+  - The link interfaces on all three routers are still up.
+- id: s2
+  title: Prove end-to-end reachability
+  goal: Make every router's loopback part of the same routing area so that the loopbacks
+    are learned from the protocol, and the two ends of the line can reach each other's
+    loopback across r2. Keep the single area and the two user subnets from stage 1,
+    and do not add static routes.
+  doneWhen:
+  - r1 has OSPF routes to 10.255.0.2/32 and to 10.255.0.3/32.
+  - r3 has an OSPF route to 10.255.0.1/32.
+  - r1 can ping 10.255.0.3 and r3 can ping 10.255.0.1, with no packet loss.
+  - The link interfaces are still up.
+qualification:
+- contractVersion: labsmith.learner-labpack-qualification.v0
+  receiptId: interior-routing-core-3n-hosts-2026-09-20-804814816c14
+  labId: interior-routing-core-3n-hosts
+  packetContentHash: 804814816c145af5a676caf43b82428882a492978c47b8be2a86a28682dcc700
+  date: '2026-09-20'
+  generatedAt: '2026-09-20T20:33:57+00:00'
+  status: passed
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  - kind: linux
+    version: sha256:a8d96c19e593e227d7b16d320a04256ba00434028f0adb9f7da206bf098c7140
+    obtainFrom: 'Nothing: the container runtime fetches this public image the first
+      time the lab starts, at the exact digest the topology pins.'
+  toolVersions:
+    containerlab: 0.77.0
+    imageDigest: sha256:b343ea11ab9bfc9878632ba52cb910f5b147d018dc785bae337da9f7163da24d
+    labsmith: 86847a16c65909e20050382f408cfdf8aab161c4
+  cleanup:
+    topologyName: labpack-interior-routing-core-3n-hosts-m4i1qual2
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-09-20T20:29:28+00:00'
+    clean: true
+  learnerCleanup:
+    topologyName: labpack-interior-routing-core-3n-hosts-m4i1qual2l
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-09-20T20:33:57+00:00'
+    clean: true
+  totalSeconds: 811.065
+  issues: []
+  message: null
+  runs:
+  - name: start-state
+    status: passed
+    elapsedSeconds: 302.757
+  - name: reference-solution
+    status: passed
+    elapsedSeconds: 150.452
+  - name: reset
+    status: passed
+    elapsedSeconds: 83.921
+  - name: learner-start
+    status: passed
+    elapsedSeconds: 264.605

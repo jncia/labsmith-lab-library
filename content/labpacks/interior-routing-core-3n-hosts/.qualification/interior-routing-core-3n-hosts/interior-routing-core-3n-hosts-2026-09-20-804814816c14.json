@@ -1,0 +1,1985 @@
+{
+  "cleanup": {
+    "clean": true,
+    "containersRemaining": 0,
+    "destroyReturncode": 0,
+    "managementBridgeAbsent": true,
+    "managementNetworksRemaining": 0,
+    "topologyName": "labpack-interior-routing-core-3n-hosts-m4i1qual2",
+    "verifiedAt": "2026-09-20T20:29:28+00:00"
+  },
+  "contractVersion": "labsmith.learner-labpack-qualification.v0",
+  "date": "2026-09-20",
+  "generatedAt": "2026-09-20T20:33:57+00:00",
+  "images": [
+    {
+      "kind": "juniper_vjunosrouter",
+      "obtainFrom": "Build the container image from the vendor's virtual router release with vrnetlab, then load it on the lab host.",
+      "version": "26.2R1.7"
+    },
+    {
+      "kind": "linux",
+      "obtainFrom": "Nothing: the container runtime fetches this public image the first time the lab starts, at the exact digest the topology pins.",
+      "version": "sha256:a8d96c19e593e227d7b16d320a04256ba00434028f0adb9f7da206bf098c7140"
+    }
+  ],
+  "issues": [],
+  "labId": "interior-routing-core-3n-hosts",
+  "learnerCleanup": {
+    "clean": true,
+    "containersRemaining": 0,
+    "destroyReturncode": 0,
+    "managementBridgeAbsent": true,
+    "managementNetworksRemaining": 0,
+    "topologyName": "labpack-interior-routing-core-3n-hosts-m4i1qual2l",
+    "verifiedAt": "2026-09-20T20:33:57+00:00"
+  },
+  "message": null,
+  "packetContentHash": "804814816c145af5a676caf43b82428882a492978c47b8be2a86a28682dcc700",
+  "receiptId": "interior-routing-core-3n-hosts-2026-09-20-804814816c14",
+  "runs": [
+    {
+      "baseline": {
+        "checks": [
+          {
+            "attempts": 1,
+            "command": "show interfaces ge-0/0/0 terse | display json",
+            "description": "r1 ge-0/0/0 is up",
+            "device": "r1",
+            "elapsedSeconds": 0.577,
+            "error": null,
+            "expected": {
+              "interface": "ge-0/0/0",
+              "type": "interface-up"
+            },
+            "hint": null,
+            "id": "b-r1-if",
+            "metExpectation": true,
+            "passed": true,
+            "type": "interface-up"
+          },
+          {
+            "attempts": 1,
+            "command": "show interfaces ge-0/0/0 terse | display json",
+            "description": "r2 ge-0/0/0 is up",
+            "device": "r2",
+            "elapsedSeconds": 1.184,
+            "error": null,
+            "expected": {
+              "interface": "ge-0/0/0",
+              "type": "interface-up"
+            },
+            "hint": null,
+            "id": "b-r2-if0",
+            "metExpectation": true,
+            "passed": true,
+            "type": "interface-up"
+          },
+          {
+            "attempts": 1,
+            "command": "show interfaces ge-0/0/1 terse | display json",
+            "description": "r2 ge-0/0/1 is up",
+            "device": "r2",
+            "elapsedSeconds": 1.728,
+            "error": null,
+            "expected": {
+              "interface": "ge-0/0/1",
+              "type": "interface-up"
+            },
+            "hint": null,
+            "id": "b-r2-if1",
+            "metExpectation": true,
+            "passed": true,
+            "type": "interface-up"
+          },
+          {
+            "attempts": 1,
+            "command": "show interfaces ge-0/0/0 terse | display json",
+            "description": "r3 ge-0/0/0 is up",
+            "device": "r3",
+            "elapsedSeconds": 2.308,
+            "error": null,
+            "expected": {
+              "interface": "ge-0/0/0",
+              "type": "interface-up"
+            },
+            "hint": null,
+            "id": "b-r3-if",
+            "metExpectation": true,
+            "passed": true,
+            "type": "interface-up"
+          },
+          {
+            "attempts": 1,
+            "command": "ping 10.0.12.2 count 3 | display json",
+            "description": "r1 reaches r2 on the r1-r2 link",
+            "device": "r1",
+            "elapsedSeconds": 4.833,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "min_success_rate": 1,
+              "target": "10.0.12.2",
+              "type": "ping"
+            },
+            "hint": null,
+            "id": "b-r1-nbr",
+            "metExpectation": true,
+            "passed": true,
+            "type": "ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping 10.0.23.1 count 3 | display json",
+            "description": "r3 reaches r2 on the r2-r3 link",
+            "device": "r3",
+            "elapsedSeconds": 7.401,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "min_success_rate": 1,
+              "target": "10.0.23.1",
+              "type": "ping"
+            },
+            "hint": null,
+            "id": "b-r3-nbr",
+            "metExpectation": true,
+            "passed": true,
+            "type": "ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.1",
+            "description": "h1 reaches its own router",
+            "device": "h1",
+            "elapsedSeconds": 9.968,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "min_success_rate": 1,
+              "source_interface": "eth1",
+              "target": "10.10.1.1",
+              "type": "host-ping"
+            },
+            "hint": null,
+            "id": "b-h1-gw",
+            "metExpectation": true,
+            "passed": true,
+            "type": "host-ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.11",
+            "description": "h1 cannot reach h2 yet",
+            "device": "h1",
+            "elapsedSeconds": 12.521,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "negate": true,
+              "source_interface": "eth1",
+              "target": "10.10.3.11",
+              "type": "host-ping"
+            },
+            "hint": null,
+            "id": "b-h1-no-h2",
+            "metExpectation": true,
+            "passed": true,
+            "type": "host-ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.1",
+            "description": "h2 reaches its own router",
+            "device": "h2",
+            "elapsedSeconds": 15.086,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "min_success_rate": 1,
+              "source_interface": "eth1",
+              "target": "10.10.3.1",
+              "type": "host-ping"
+            },
+            "hint": null,
+            "id": "b-h2-gw",
+            "metExpectation": true,
+            "passed": true,
+            "type": "host-ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.11",
+            "description": "h2 cannot reach h1 yet",
+            "device": "h2",
+            "elapsedSeconds": 17.718,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "negate": true,
+              "source_interface": "eth1",
+              "target": "10.10.1.11",
+              "type": "host-ping"
+            },
+            "hint": null,
+            "id": "b-h2-no-h1",
+            "metExpectation": true,
+            "passed": true,
+            "type": "host-ping"
+          }
+        ],
+        "deadlineSeconds": 600,
+        "elapsedSeconds": 17.718,
+        "expect": "pass",
+        "intervalSeconds": 15,
+        "label": "baseline",
+        "polls": 1,
+        "satisfied": true
+      },
+      "elapsedSeconds": 302.757,
+      "issues": [],
+      "message": null,
+      "name": "start-state",
+      "stageExpectations": [
+        {
+          "checks": [
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.0.23.0/30 exact | display json",
+              "description": "r1 has the r2-r3 link subnet learned by OSPF",
+              "device": "r1",
+              "elapsedSeconds": 0.507,
+              "error": null,
+              "expected": {
+                "prefix": "10.0.23.0/30",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s1-r1-link23",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.0.12.0/30 exact | display json",
+              "description": "r3 has the r1-r2 link subnet learned by OSPF",
+              "device": "r3",
+              "elapsedSeconds": 1.074,
+              "error": null,
+              "expected": {
+                "prefix": "10.0.12.0/30",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s1-r3-link12",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.10.3.0/24 exact | display json",
+              "description": "r1 learns the far user subnet by OSPF",
+              "device": "r1",
+              "elapsedSeconds": 1.531,
+              "error": null,
+              "expected": {
+                "prefix": "10.10.3.0/24",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s1-r1-user-subnet",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.10.1.0/24 exact | display json",
+              "description": "r3 learns the near user subnet by OSPF",
+              "device": "r3",
+              "elapsedSeconds": 2.011,
+              "error": null,
+              "expected": {
+                "prefix": "10.10.1.0/24",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s1-r3-user-subnet",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.11",
+              "description": "h1 reaches h2",
+              "device": "h1",
+              "elapsedSeconds": 4.602,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1,
+                "source_interface": "eth1",
+                "target": "10.10.3.11",
+                "type": "host-ping"
+              },
+              "hint": null,
+              "id": "s1-h1-reaches-h2",
+              "metExpectation": true,
+              "passed": false,
+              "type": "host-ping"
+            },
+            {
+              "attempts": 1,
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.11",
+              "description": "h2 reaches h1",
+              "device": "h2",
+              "elapsedSeconds": 7.222,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1,
+                "source_interface": "eth1",
+                "target": "10.10.1.11",
+                "type": "host-ping"
+              },
+              "hint": null,
+              "id": "s1-h2-reaches-h1",
+              "metExpectation": true,
+              "passed": false,
+              "type": "host-ping"
+            }
+          ],
+          "deadlineSeconds": 600,
+          "elapsedSeconds": 7.223,
+          "expect": "fail",
+          "intervalSeconds": 15,
+          "label": "s1",
+          "polls": 1,
+          "satisfied": true
+        },
+        {
+          "checks": [
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.255.0.2/32 exact | display json",
+              "description": "r1 learns r2's loopback by OSPF",
+              "device": "r1",
+              "elapsedSeconds": 0.512,
+              "error": null,
+              "expected": {
+                "prefix": "10.255.0.2/32",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s2-r1-lo2",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.255.0.3/32 exact | display json",
+              "description": "r1 learns r3's loopback by OSPF",
+              "device": "r1",
+              "elapsedSeconds": 1.012,
+              "error": null,
+              "expected": {
+                "prefix": "10.255.0.3/32",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s2-r1-lo3",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.255.0.1/32 exact | display json",
+              "description": "r3 learns r1's loopback by OSPF",
+              "device": "r3",
+              "elapsedSeconds": 1.489,
+              "error": null,
+              "expected": {
+                "prefix": "10.255.0.1/32",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s2-r3-lo1",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "ping 10.255.0.3 count 3 | display json",
+              "description": "r1 reaches r3's loopback",
+              "device": "r1",
+              "elapsedSeconds": 14.004,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1,
+                "target": "10.255.0.3",
+                "type": "ping"
+              },
+              "hint": null,
+              "id": "s2-r1-ping",
+              "metExpectation": true,
+              "passed": false,
+              "type": "ping"
+            },
+            {
+              "attempts": 1,
+              "command": "ping 10.255.0.1 count 3 | display json",
+              "description": "r3 reaches r1's loopback",
+              "device": "r3",
+              "elapsedSeconds": 26.541,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1,
+                "target": "10.255.0.1",
+                "type": "ping"
+              },
+              "hint": null,
+              "id": "s2-r3-ping",
+              "metExpectation": true,
+              "passed": false,
+              "type": "ping"
+            }
+          ],
+          "deadlineSeconds": 600,
+          "elapsedSeconds": 26.541,
+          "expect": "fail",
+          "intervalSeconds": 15,
+          "label": "s2",
+          "polls": 1,
+          "satisfied": true
+        }
+      ],
+      "stages": [],
+      "status": "passed"
+    },
+    {
+      "baseline": null,
+      "elapsedSeconds": 150.452,
+      "issues": [],
+      "message": null,
+      "name": "reference-solution",
+      "stageExpectations": [],
+      "stages": [
+        {
+          "appliedNodes": [
+            "r1",
+            "r2",
+            "r3"
+          ],
+          "captureCount": 16,
+          "captures": [
+            {
+              "checkId": "s1-r1-link23",
+              "command": "show route table inet.0 10.0.23.0/30 exact",
+              "displayOutput": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.0.23.0/30       *[OSPF/10] 00:00:27, metric 2\n                    >  to 10.0.12.2 via ge-0/0/0.0",
+              "node": "r1",
+              "output": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.0.23.0/30       *[OSPF/10] <age>, metric 2\n                    >  to 10.0.12.2 via ge-0/0/0.0\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "s1-r3-link12",
+              "command": "show route table inet.0 10.0.12.0/30 exact",
+              "displayOutput": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.0.12.0/30       *[OSPF/10] 00:00:21, metric 2\n                    >  to 10.0.23.1 via ge-0/0/0.0",
+              "node": "r3",
+              "output": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.0.12.0/30       *[OSPF/10] <age>, metric 2\n                    >  to 10.0.23.1 via ge-0/0/0.0\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "s1-r1-user-subnet",
+              "command": "show route table inet.0 10.10.3.0/24 exact",
+              "displayOutput": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.10.3.0/24       *[OSPF/10] 00:00:23, metric 3\n                    >  to 10.0.12.2 via ge-0/0/0.0",
+              "node": "r1",
+              "output": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.10.3.0/24       *[OSPF/10] <age>, metric 3\n                    >  to 10.0.12.2 via ge-0/0/0.0\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "s1-r3-user-subnet",
+              "command": "show route table inet.0 10.10.1.0/24 exact",
+              "displayOutput": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.10.1.0/24       *[OSPF/10] 00:00:22, metric 3\n                    >  to 10.0.23.1 via ge-0/0/0.0",
+              "node": "r3",
+              "output": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.10.1.0/24       *[OSPF/10] <age>, metric 3\n                    >  to 10.0.23.1 via ge-0/0/0.0\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "s1-h1-reaches-h2",
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.11",
+              "displayOutput": "PING 10.10.3.11 (10.10.3.11) from 10.10.1.11 eth1: 56(84) bytes of data.\n\n--- 10.10.3.11 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2003ms\nrtt min/avg/max/mdev = 1.922/2.432/3.118/0.503 ms",
+              "node": "h1",
+              "output": "PING 10.10.3.11 (10.10.3.11) from 10.10.1.11 eth1: 56(84) bytes of data.\n\n--- 10.10.3.11 ping statistics ---\n<counter> packets transmitted, 3 received, 0% packet loss, time 2003ms\nrtt min/avg/max/mdev = 1.922/2.432/3.118/0.503 ms\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "s1-h2-reaches-h1",
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.11",
+              "displayOutput": "PING 10.10.1.11 (10.10.1.11) from 10.10.3.11 eth1: 56(84) bytes of data.\n\n--- 10.10.1.11 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2003ms\nrtt min/avg/max/mdev = 2.091/2.252/2.458/0.153 ms",
+              "node": "h2",
+              "output": "PING 10.10.1.11 (10.10.1.11) from 10.10.3.11 eth1: 56(84) bytes of data.\n\n--- 10.10.1.11 ping statistics ---\n<counter> packets transmitted, 3 received, 0% packet loss, time 2003ms\nrtt min/avg/max/mdev = 2.091/2.252/2.458/0.153 ms\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "b-r1-if",
+              "command": "show interfaces ge-0/0/0 terse",
+              "displayOutput": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.12.1/30\n                                   multiservice",
+              "node": "r1",
+              "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.12.1/30\n                                   multiservice\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "b-r2-if0",
+              "command": "show interfaces ge-0/0/0 terse",
+              "displayOutput": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.12.2/30\n                                   multiservice",
+              "node": "r2",
+              "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.12.2/30\n                                   multiservice\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "b-r2-if1",
+              "command": "show interfaces ge-0/0/1 terse",
+              "displayOutput": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/1                up    up\nge-0/0/1.0              up    up   inet     10.0.23.1/30\n                                   multiservice",
+              "node": "r2",
+              "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/1                up    up\nge-0/0/1.0              up    up   inet     10.0.23.1/30\n                                   multiservice\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "b-r3-if",
+              "command": "show interfaces ge-0/0/0 terse",
+              "displayOutput": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.23.2/30\n                                   multiservice",
+              "node": "r3",
+              "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.23.2/30\n                                   multiservice\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "b-r1-nbr",
+              "command": "ping 10.0.12.2 count 3",
+              "displayOutput": "PING 10.0.12.2 (10.0.12.2): 56 data bytes\n64 bytes from 10.0.12.2: icmp_seq=0 ttl=64 time=1.796 ms\n64 bytes from 10.0.12.2: icmp_seq=1 ttl=64 time=5.591 ms\n64 bytes from 10.0.12.2: icmp_seq=2 ttl=64 time=1.957 ms\n\n--- 10.0.12.2 ping statistics ---\n3 packets transmitted, 3 packets received, 0% packet loss\nround-trip min/avg/max/stddev = 1.796/3.115/5.591/1.752 ms",
+              "node": "r1",
+              "output": "PING 10.0.12.2 (10.0.12.2): 56 data bytes\n<counter> bytes from 10.0.12.2: icmp_seq=0 ttl=64 time=1.796 ms\n<counter> bytes from 10.0.12.2: icmp_seq=1 ttl=64 time=5.591 ms\n<counter> bytes from 10.0.12.2: icmp_seq=2 ttl=64 time=1.957 ms\n\n--- 10.0.12.2 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 1.796/3.115/5.591/1.752 ms\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "b-r3-nbr",
+              "command": "ping 10.0.23.1 count 3",
+              "displayOutput": "PING 10.0.23.1 (10.0.23.1): 56 data bytes\n64 bytes from 10.0.23.1: icmp_seq=0 ttl=64 time=1.594 ms\n64 bytes from 10.0.23.1: icmp_seq=1 ttl=64 time=1.950 ms\n64 bytes from 10.0.23.1: icmp_seq=2 ttl=64 time=1.769 ms\n\n--- 10.0.23.1 ping statistics ---\n3 packets transmitted, 3 packets received, 0% packet loss\nround-trip min/avg/max/stddev = 1.594/1.771/1.950/0.145 ms",
+              "node": "r3",
+              "output": "PING 10.0.23.1 (10.0.23.1): 56 data bytes\n<counter> bytes from 10.0.23.1: icmp_seq=0 ttl=64 time=1.594 ms\n<counter> bytes from 10.0.23.1: icmp_seq=1 ttl=64 time=1.950 ms\n<counter> bytes from 10.0.23.1: icmp_seq=2 ttl=64 time=1.769 ms\n\n--- 10.0.23.1 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 1.594/1.771/1.950/0.145 ms\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "b-h1-gw",
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.1",
+              "displayOutput": "PING 10.10.1.1 (10.10.1.1) from 10.10.1.11 eth1: 56(84) bytes of data.\n\n--- 10.10.1.1 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2055ms\nrtt min/avg/max/mdev = 0.318/0.497/0.717/0.165 ms",
+              "node": "h1",
+              "output": "PING 10.10.1.1 (10.10.1.1) from 10.10.1.11 eth1: 56(84) bytes of data.\n\n--- 10.10.1.1 ping statistics ---\n<counter> packets transmitted, 3 received, 0% packet loss, time 2055ms\nrtt min/avg/max/mdev = 0.318/0.497/0.717/0.165 ms\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "b-h1-no-h2",
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.11",
+              "displayOutput": "PING 10.10.3.11 (10.10.3.11) from 10.10.1.11 eth1: 56(84) bytes of data.\n\n--- 10.10.3.11 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2002ms\nrtt min/avg/max/mdev = 1.981/2.142/2.229/0.114 ms",
+              "node": "h1",
+              "output": "PING 10.10.3.11 (10.10.3.11) from 10.10.1.11 eth1: 56(84) bytes of data.\n\n--- 10.10.3.11 ping statistics ---\n<counter> packets transmitted, 3 received, 0% packet loss, time 2002ms\nrtt min/avg/max/mdev = 1.981/2.142/2.229/0.114 ms\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "b-h2-gw",
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.1",
+              "displayOutput": "PING 10.10.3.1 (10.10.3.1) from 10.10.3.11 eth1: 56(84) bytes of data.\n\n--- 10.10.3.1 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2042ms\nrtt min/avg/max/mdev = 0.334/0.434/0.534/0.081 ms",
+              "node": "h2",
+              "output": "PING 10.10.3.1 (10.10.3.1) from 10.10.3.11 eth1: 56(84) bytes of data.\n\n--- 10.10.3.1 ping statistics ---\n<counter> packets transmitted, 3 received, 0% packet loss, time 2042ms\nrtt min/avg/max/mdev = 0.334/0.434/0.534/0.081 ms\n",
+              "stageId": "s1"
+            },
+            {
+              "checkId": "b-h2-no-h1",
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.11",
+              "displayOutput": "PING 10.10.1.11 (10.10.1.11) from 10.10.3.11 eth1: 56(84) bytes of data.\n\n--- 10.10.1.11 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2003ms\nrtt min/avg/max/mdev = 1.900/2.530/3.676/0.811 ms",
+              "node": "h2",
+              "output": "PING 10.10.1.11 (10.10.1.11) from 10.10.3.11 eth1: 56(84) bytes of data.\n\n--- 10.10.1.11 ping statistics ---\n<counter> packets transmitted, 3 received, 0% packet loss, time 2003ms\nrtt min/avg/max/mdev = 1.900/2.530/3.676/0.811 ms\n",
+              "stageId": "s1"
+            }
+          ],
+          "elapsedSeconds": 70.83,
+          "passed": true,
+          "regressions": [],
+          "stageId": "s1",
+          "target": {
+            "checks": [
+              {
+                "attempts": 2,
+                "command": "show route table inet.0 10.0.23.0/30 exact | display json",
+                "description": "r1 has the r2-r3 link subnet learned by OSPF",
+                "device": "r1",
+                "elapsedSeconds": 22.665,
+                "error": null,
+                "expected": {
+                  "prefix": "10.0.23.0/30",
+                  "protocol": "OSPF",
+                  "type": "route-exists"
+                },
+                "hint": null,
+                "id": "s1-r1-link23",
+                "metExpectation": true,
+                "passed": true,
+                "type": "route-exists"
+              },
+              {
+                "attempts": 2,
+                "command": "show route table inet.0 10.0.12.0/30 exact | display json",
+                "description": "r3 has the r1-r2 link subnet learned by OSPF",
+                "device": "r3",
+                "elapsedSeconds": 23.21,
+                "error": null,
+                "expected": {
+                  "prefix": "10.0.12.0/30",
+                  "protocol": "OSPF",
+                  "type": "route-exists"
+                },
+                "hint": null,
+                "id": "s1-r3-link12",
+                "metExpectation": true,
+                "passed": true,
+                "type": "route-exists"
+              },
+              {
+                "attempts": 2,
+                "command": "show route table inet.0 10.10.3.0/24 exact | display json",
+                "description": "r1 learns the far user subnet by OSPF",
+                "device": "r1",
+                "elapsedSeconds": 23.614,
+                "error": null,
+                "expected": {
+                  "prefix": "10.10.3.0/24",
+                  "protocol": "OSPF",
+                  "type": "route-exists"
+                },
+                "hint": null,
+                "id": "s1-r1-user-subnet",
+                "metExpectation": true,
+                "passed": true,
+                "type": "route-exists"
+              },
+              {
+                "attempts": 2,
+                "command": "show route table inet.0 10.10.1.0/24 exact | display json",
+                "description": "r3 learns the near user subnet by OSPF",
+                "device": "r3",
+                "elapsedSeconds": 24.128,
+                "error": null,
+                "expected": {
+                  "prefix": "10.10.1.0/24",
+                  "protocol": "OSPF",
+                  "type": "route-exists"
+                },
+                "hint": null,
+                "id": "s1-r3-user-subnet",
+                "metExpectation": true,
+                "passed": true,
+                "type": "route-exists"
+              },
+              {
+                "attempts": 2,
+                "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.11",
+                "description": "h1 reaches h2",
+                "device": "h1",
+                "elapsedSeconds": 26.685,
+                "error": null,
+                "expected": {
+                  "count": 3,
+                  "min_success_rate": 1,
+                  "source_interface": "eth1",
+                  "target": "10.10.3.11",
+                  "type": "host-ping"
+                },
+                "hint": null,
+                "id": "s1-h1-reaches-h2",
+                "metExpectation": true,
+                "passed": true,
+                "type": "host-ping"
+              },
+              {
+                "attempts": 2,
+                "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.11",
+                "description": "h2 reaches h1",
+                "device": "h2",
+                "elapsedSeconds": 29.26,
+                "error": null,
+                "expected": {
+                  "count": 3,
+                  "min_success_rate": 1,
+                  "source_interface": "eth1",
+                  "target": "10.10.1.11",
+                  "type": "host-ping"
+                },
+                "hint": null,
+                "id": "s1-h2-reaches-h1",
+                "metExpectation": true,
+                "passed": true,
+                "type": "host-ping"
+              }
+            ],
+            "deadlineSeconds": 600,
+            "elapsedSeconds": 29.26,
+            "expect": "pass",
+            "intervalSeconds": 15,
+            "label": "s1",
+            "polls": 2,
+            "satisfied": true
+          }
+        },
+        {
+          "appliedNodes": [
+            "r1",
+            "r2",
+            "r3"
+          ],
+          "captureCount": 15,
+          "captures": [
+            {
+              "checkId": "s2-r1-lo2",
+              "command": "show route table inet.0 10.255.0.2/32 exact",
+              "displayOutput": "inet.0: 10 destinations, 10 routes (10 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.255.0.2/32      *[OSPF/10] 00:00:45, metric 1\n                    >  to 10.0.12.2 via ge-0/0/0.0",
+              "node": "r1",
+              "output": "inet.0: 10 destinations, 10 routes (10 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.255.0.2/32      *[OSPF/10] <age>, metric 1\n                    >  to 10.0.12.2 via ge-0/0/0.0\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "s2-r1-lo3",
+              "command": "show route table inet.0 10.255.0.3/32 exact",
+              "displayOutput": "inet.0: 10 destinations, 10 routes (10 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.255.0.3/32      *[OSPF/10] 00:00:39, metric 2\n                    >  to 10.0.12.2 via ge-0/0/0.0",
+              "node": "r1",
+              "output": "inet.0: 10 destinations, 10 routes (10 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.255.0.3/32      *[OSPF/10] <age>, metric 2\n                    >  to 10.0.12.2 via ge-0/0/0.0\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "s2-r3-lo1",
+              "command": "show route table inet.0 10.255.0.1/32 exact",
+              "displayOutput": "inet.0: 10 destinations, 10 routes (10 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.255.0.1/32      *[OSPF/10] 00:00:48, metric 2\n                    >  to 10.0.23.1 via ge-0/0/0.0",
+              "node": "r3",
+              "output": "inet.0: 10 destinations, 10 routes (10 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n10.255.0.1/32      *[OSPF/10] <age>, metric 2\n                    >  to 10.0.23.1 via ge-0/0/0.0\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "s2-r1-ping",
+              "command": "ping 10.255.0.3 count 3",
+              "displayOutput": "PING 10.255.0.3 (10.255.0.3): 56 data bytes\n64 bytes from 10.255.0.3: icmp_seq=0 ttl=63 time=2.305 ms\n64 bytes from 10.255.0.3: icmp_seq=1 ttl=63 time=2.785 ms\n64 bytes from 10.255.0.3: icmp_seq=2 ttl=63 time=2.457 ms\n\n--- 10.255.0.3 ping statistics ---\n3 packets transmitted, 3 packets received, 0% packet loss\nround-trip min/avg/max/stddev = 2.305/2.516/2.785/0.200 ms",
+              "node": "r1",
+              "output": "PING 10.255.0.3 (10.255.0.3): 56 data bytes\n<counter> bytes from 10.255.0.3: icmp_seq=0 ttl=63 time=2.305 ms\n<counter> bytes from 10.255.0.3: icmp_seq=1 ttl=63 time=2.785 ms\n<counter> bytes from 10.255.0.3: icmp_seq=2 ttl=63 time=2.457 ms\n\n--- 10.255.0.3 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 2.305/2.516/2.785/0.200 ms\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "s2-r3-ping",
+              "command": "ping 10.255.0.1 count 3",
+              "displayOutput": "PING 10.255.0.1 (10.255.0.1): 56 data bytes\n64 bytes from 10.255.0.1: icmp_seq=0 ttl=63 time=2.604 ms\n64 bytes from 10.255.0.1: icmp_seq=1 ttl=63 time=2.788 ms\n64 bytes from 10.255.0.1: icmp_seq=2 ttl=63 time=3.532 ms\n\n--- 10.255.0.1 ping statistics ---\n3 packets transmitted, 3 packets received, 0% packet loss\nround-trip min/avg/max/stddev = 2.604/2.975/3.532/0.401 ms",
+              "node": "r3",
+              "output": "PING 10.255.0.1 (10.255.0.1): 56 data bytes\n<counter> bytes from 10.255.0.1: icmp_seq=0 ttl=63 time=2.604 ms\n<counter> bytes from 10.255.0.1: icmp_seq=1 ttl=63 time=2.788 ms\n<counter> bytes from 10.255.0.1: icmp_seq=2 ttl=63 time=3.532 ms\n\n--- 10.255.0.1 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 2.604/2.975/3.532/0.401 ms\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "b-r1-if",
+              "command": "show interfaces ge-0/0/0 terse",
+              "displayOutput": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.12.1/30\n                                   multiservice",
+              "node": "r1",
+              "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.12.1/30\n                                   multiservice\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "b-r2-if0",
+              "command": "show interfaces ge-0/0/0 terse",
+              "displayOutput": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.12.2/30\n                                   multiservice",
+              "node": "r2",
+              "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.12.2/30\n                                   multiservice\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "b-r2-if1",
+              "command": "show interfaces ge-0/0/1 terse",
+              "displayOutput": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/1                up    up\nge-0/0/1.0              up    up   inet     10.0.23.1/30\n                                   multiservice",
+              "node": "r2",
+              "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/1                up    up\nge-0/0/1.0              up    up   inet     10.0.23.1/30\n                                   multiservice\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "b-r3-if",
+              "command": "show interfaces ge-0/0/0 terse",
+              "displayOutput": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.23.2/30\n                                   multiservice",
+              "node": "r3",
+              "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     10.0.23.2/30\n                                   multiservice\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "b-r1-nbr",
+              "command": "ping 10.0.12.2 count 3",
+              "displayOutput": "PING 10.0.12.2 (10.0.12.2): 56 data bytes\n64 bytes from 10.0.12.2: icmp_seq=0 ttl=64 time=2.075 ms\n64 bytes from 10.0.12.2: icmp_seq=1 ttl=64 time=1.828 ms\n64 bytes from 10.0.12.2: icmp_seq=2 ttl=64 time=1.979 ms\n\n--- 10.0.12.2 ping statistics ---\n3 packets transmitted, 3 packets received, 0% packet loss\nround-trip min/avg/max/stddev = 1.828/1.961/2.075/0.102 ms",
+              "node": "r1",
+              "output": "PING 10.0.12.2 (10.0.12.2): 56 data bytes\n<counter> bytes from 10.0.12.2: icmp_seq=0 ttl=64 time=2.075 ms\n<counter> bytes from 10.0.12.2: icmp_seq=1 ttl=64 time=1.828 ms\n<counter> bytes from 10.0.12.2: icmp_seq=2 ttl=64 time=1.979 ms\n\n--- 10.0.12.2 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 1.828/1.961/2.075/0.102 ms\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "b-r3-nbr",
+              "command": "ping 10.0.23.1 count 3",
+              "displayOutput": "PING 10.0.23.1 (10.0.23.1): 56 data bytes\n64 bytes from 10.0.23.1: icmp_seq=0 ttl=64 time=1.770 ms\n64 bytes from 10.0.23.1: icmp_seq=1 ttl=64 time=1.931 ms\n64 bytes from 10.0.23.1: icmp_seq=2 ttl=64 time=3.990 ms\n\n--- 10.0.23.1 ping statistics ---\n3 packets transmitted, 3 packets received, 0% packet loss\nround-trip min/avg/max/stddev = 1.770/2.564/3.990/1.011 ms",
+              "node": "r3",
+              "output": "PING 10.0.23.1 (10.0.23.1): 56 data bytes\n<counter> bytes from 10.0.23.1: icmp_seq=0 ttl=64 time=1.770 ms\n<counter> bytes from 10.0.23.1: icmp_seq=1 ttl=64 time=1.931 ms\n<counter> bytes from 10.0.23.1: icmp_seq=2 ttl=64 time=3.990 ms\n\n--- 10.0.23.1 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 1.770/2.564/3.990/1.011 ms\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "b-h1-gw",
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.1",
+              "displayOutput": "PING 10.10.1.1 (10.10.1.1) from 10.10.1.11 eth1: 56(84) bytes of data.\n\n--- 10.10.1.1 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2080ms\nrtt min/avg/max/mdev = 0.266/0.388/0.494/0.093 ms",
+              "node": "h1",
+              "output": "PING 10.10.1.1 (10.10.1.1) from 10.10.1.11 eth1: 56(84) bytes of data.\n\n--- 10.10.1.1 ping statistics ---\n<counter> packets transmitted, 3 received, 0% packet loss, time 2080ms\nrtt min/avg/max/mdev = 0.266/0.388/0.494/0.093 ms\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "b-h1-no-h2",
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.11",
+              "displayOutput": "PING 10.10.3.11 (10.10.3.11) from 10.10.1.11 eth1: 56(84) bytes of data.\n\n--- 10.10.3.11 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2002ms\nrtt min/avg/max/mdev = 2.001/2.287/2.581/0.236 ms",
+              "node": "h1",
+              "output": "PING 10.10.3.11 (10.10.3.11) from 10.10.1.11 eth1: 56(84) bytes of data.\n\n--- 10.10.3.11 ping statistics ---\n<counter> packets transmitted, 3 received, 0% packet loss, time 2002ms\nrtt min/avg/max/mdev = 2.001/2.287/2.581/0.236 ms\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "b-h2-gw",
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.1",
+              "displayOutput": "PING 10.10.3.1 (10.10.3.1) from 10.10.3.11 eth1: 56(84) bytes of data.\n\n--- 10.10.3.1 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2083ms\nrtt min/avg/max/mdev = 0.407/0.447/0.504/0.041 ms",
+              "node": "h2",
+              "output": "PING 10.10.3.1 (10.10.3.1) from 10.10.3.11 eth1: 56(84) bytes of data.\n\n--- 10.10.3.1 ping statistics ---\n<counter> packets transmitted, 3 received, 0% packet loss, time 2083ms\nrtt min/avg/max/mdev = 0.407/0.447/0.504/0.041 ms\n",
+              "stageId": "s2"
+            },
+            {
+              "checkId": "b-h2-no-h1",
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.11",
+              "displayOutput": "PING 10.10.1.11 (10.10.1.11) from 10.10.3.11 eth1: 56(84) bytes of data.\n\n--- 10.10.1.11 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2002ms\nrtt min/avg/max/mdev = 2.239/2.314/2.371/0.055 ms",
+              "node": "h2",
+              "output": "PING 10.10.1.11 (10.10.1.11) from 10.10.3.11 eth1: 56(84) bytes of data.\n\n--- 10.10.1.11 ping statistics ---\n<counter> packets transmitted, 3 received, 0% packet loss, time 2002ms\nrtt min/avg/max/mdev = 2.239/2.314/2.371/0.055 ms\n",
+              "stageId": "s2"
+            }
+          ],
+          "elapsedSeconds": 79.622,
+          "passed": true,
+          "regressions": [
+            {
+              "checks": [
+                {
+                  "attempts": 1,
+                  "command": "show route table inet.0 10.0.23.0/30 exact | display json",
+                  "description": "r1 has the r2-r3 link subnet learned by OSPF",
+                  "device": "r1",
+                  "elapsedSeconds": 0.477,
+                  "error": null,
+                  "expected": {
+                    "prefix": "10.0.23.0/30",
+                    "protocol": "OSPF",
+                    "type": "route-exists"
+                  },
+                  "hint": null,
+                  "id": "s1-r1-link23",
+                  "metExpectation": true,
+                  "passed": true,
+                  "type": "route-exists"
+                },
+                {
+                  "attempts": 1,
+                  "command": "show route table inet.0 10.0.12.0/30 exact | display json",
+                  "description": "r3 has the r1-r2 link subnet learned by OSPF",
+                  "device": "r3",
+                  "elapsedSeconds": 1.007,
+                  "error": null,
+                  "expected": {
+                    "prefix": "10.0.12.0/30",
+                    "protocol": "OSPF",
+                    "type": "route-exists"
+                  },
+                  "hint": null,
+                  "id": "s1-r3-link12",
+                  "metExpectation": true,
+                  "passed": true,
+                  "type": "route-exists"
+                },
+                {
+                  "attempts": 1,
+                  "command": "show route table inet.0 10.10.3.0/24 exact | display json",
+                  "description": "r1 learns the far user subnet by OSPF",
+                  "device": "r1",
+                  "elapsedSeconds": 1.548,
+                  "error": null,
+                  "expected": {
+                    "prefix": "10.10.3.0/24",
+                    "protocol": "OSPF",
+                    "type": "route-exists"
+                  },
+                  "hint": null,
+                  "id": "s1-r1-user-subnet",
+                  "metExpectation": true,
+                  "passed": true,
+                  "type": "route-exists"
+                },
+                {
+                  "attempts": 1,
+                  "command": "show route table inet.0 10.10.1.0/24 exact | display json",
+                  "description": "r3 learns the near user subnet by OSPF",
+                  "device": "r3",
+                  "elapsedSeconds": 2.056,
+                  "error": null,
+                  "expected": {
+                    "prefix": "10.10.1.0/24",
+                    "protocol": "OSPF",
+                    "type": "route-exists"
+                  },
+                  "hint": null,
+                  "id": "s1-r3-user-subnet",
+                  "metExpectation": true,
+                  "passed": true,
+                  "type": "route-exists"
+                },
+                {
+                  "attempts": 1,
+                  "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.11",
+                  "description": "h1 reaches h2",
+                  "device": "h1",
+                  "elapsedSeconds": 4.617,
+                  "error": null,
+                  "expected": {
+                    "count": 3,
+                    "min_success_rate": 1,
+                    "source_interface": "eth1",
+                    "target": "10.10.3.11",
+                    "type": "host-ping"
+                  },
+                  "hint": null,
+                  "id": "s1-h1-reaches-h2",
+                  "metExpectation": true,
+                  "passed": true,
+                  "type": "host-ping"
+                },
+                {
+                  "attempts": 1,
+                  "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.11",
+                  "description": "h2 reaches h1",
+                  "device": "h2",
+                  "elapsedSeconds": 7.188,
+                  "error": null,
+                  "expected": {
+                    "count": 3,
+                    "min_success_rate": 1,
+                    "source_interface": "eth1",
+                    "target": "10.10.1.11",
+                    "type": "host-ping"
+                  },
+                  "hint": null,
+                  "id": "s1-h2-reaches-h1",
+                  "metExpectation": true,
+                  "passed": true,
+                  "type": "host-ping"
+                }
+              ],
+              "deadlineSeconds": 600,
+              "elapsedSeconds": 7.188,
+              "expect": "pass",
+              "intervalSeconds": 15,
+              "label": "s1",
+              "polls": 1,
+              "satisfied": true
+            }
+          ],
+          "stageId": "s2",
+          "target": {
+            "checks": [
+              {
+                "attempts": 1,
+                "command": "show route table inet.0 10.255.0.2/32 exact | display json",
+                "description": "r1 learns r2's loopback by OSPF",
+                "device": "r1",
+                "elapsedSeconds": 0.502,
+                "error": null,
+                "expected": {
+                  "prefix": "10.255.0.2/32",
+                  "protocol": "OSPF",
+                  "type": "route-exists"
+                },
+                "hint": null,
+                "id": "s2-r1-lo2",
+                "metExpectation": true,
+                "passed": true,
+                "type": "route-exists"
+              },
+              {
+                "attempts": 2,
+                "command": "show route table inet.0 10.255.0.3/32 exact | display json",
+                "description": "r1 learns r3's loopback by OSPF",
+                "device": "r1",
+                "elapsedSeconds": 32.214,
+                "error": null,
+                "expected": {
+                  "prefix": "10.255.0.3/32",
+                  "protocol": "OSPF",
+                  "type": "route-exists"
+                },
+                "hint": null,
+                "id": "s2-r1-lo3",
+                "metExpectation": true,
+                "passed": true,
+                "type": "route-exists"
+              },
+              {
+                "attempts": 1,
+                "command": "show route table inet.0 10.255.0.1/32 exact | display json",
+                "description": "r3 learns r1's loopback by OSPF",
+                "device": "r3",
+                "elapsedSeconds": 1.543,
+                "error": null,
+                "expected": {
+                  "prefix": "10.255.0.1/32",
+                  "protocol": "OSPF",
+                  "type": "route-exists"
+                },
+                "hint": null,
+                "id": "s2-r3-lo1",
+                "metExpectation": true,
+                "passed": true,
+                "type": "route-exists"
+              },
+              {
+                "attempts": 2,
+                "command": "ping 10.255.0.3 count 3 | display json",
+                "description": "r1 reaches r3's loopback",
+                "device": "r1",
+                "elapsedSeconds": 34.714,
+                "error": null,
+                "expected": {
+                  "count": 3,
+                  "min_success_rate": 1,
+                  "target": "10.255.0.3",
+                  "type": "ping"
+                },
+                "hint": null,
+                "id": "s2-r1-ping",
+                "metExpectation": true,
+                "passed": true,
+                "type": "ping"
+              },
+              {
+                "attempts": 1,
+                "command": "ping 10.255.0.1 count 3 | display json",
+                "description": "r3 reaches r1's loopback",
+                "device": "r3",
+                "elapsedSeconds": 16.623,
+                "error": null,
+                "expected": {
+                  "count": 3,
+                  "min_success_rate": 1,
+                  "target": "10.255.0.1",
+                  "type": "ping"
+                },
+                "hint": null,
+                "id": "s2-r3-ping",
+                "metExpectation": true,
+                "passed": true,
+                "type": "ping"
+              }
+            ],
+            "deadlineSeconds": 600,
+            "elapsedSeconds": 34.714,
+            "expect": "pass",
+            "intervalSeconds": 15,
+            "label": "s2",
+            "polls": 2,
+            "satisfied": true
+          }
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "checks": [
+          {
+            "attempts": 1,
+            "command": "show interfaces ge-0/0/0 terse | display json",
+            "description": "r1 ge-0/0/0 is up",
+            "device": "r1",
+            "elapsedSeconds": 0.589,
+            "error": null,
+            "expected": {
+              "interface": "ge-0/0/0",
+              "type": "interface-up"
+            },
+            "hint": null,
+            "id": "b-r1-if",
+            "metExpectation": true,
+            "passed": true,
+            "type": "interface-up"
+          },
+          {
+            "attempts": 1,
+            "command": "show interfaces ge-0/0/0 terse | display json",
+            "description": "r2 ge-0/0/0 is up",
+            "device": "r2",
+            "elapsedSeconds": 1.133,
+            "error": null,
+            "expected": {
+              "interface": "ge-0/0/0",
+              "type": "interface-up"
+            },
+            "hint": null,
+            "id": "b-r2-if0",
+            "metExpectation": true,
+            "passed": true,
+            "type": "interface-up"
+          },
+          {
+            "attempts": 1,
+            "command": "show interfaces ge-0/0/1 terse | display json",
+            "description": "r2 ge-0/0/1 is up",
+            "device": "r2",
+            "elapsedSeconds": 1.709,
+            "error": null,
+            "expected": {
+              "interface": "ge-0/0/1",
+              "type": "interface-up"
+            },
+            "hint": null,
+            "id": "b-r2-if1",
+            "metExpectation": true,
+            "passed": true,
+            "type": "interface-up"
+          },
+          {
+            "attempts": 1,
+            "command": "show interfaces ge-0/0/0 terse | display json",
+            "description": "r3 ge-0/0/0 is up",
+            "device": "r3",
+            "elapsedSeconds": 2.305,
+            "error": null,
+            "expected": {
+              "interface": "ge-0/0/0",
+              "type": "interface-up"
+            },
+            "hint": null,
+            "id": "b-r3-if",
+            "metExpectation": true,
+            "passed": true,
+            "type": "interface-up"
+          },
+          {
+            "attempts": 1,
+            "command": "ping 10.0.12.2 count 3 | display json",
+            "description": "r1 reaches r2 on the r1-r2 link",
+            "device": "r1",
+            "elapsedSeconds": 4.789,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "min_success_rate": 1,
+              "target": "10.0.12.2",
+              "type": "ping"
+            },
+            "hint": null,
+            "id": "b-r1-nbr",
+            "metExpectation": true,
+            "passed": true,
+            "type": "ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping 10.0.23.1 count 3 | display json",
+            "description": "r3 reaches r2 on the r2-r3 link",
+            "device": "r3",
+            "elapsedSeconds": 7.293,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "min_success_rate": 1,
+              "target": "10.0.23.1",
+              "type": "ping"
+            },
+            "hint": null,
+            "id": "b-r3-nbr",
+            "metExpectation": true,
+            "passed": true,
+            "type": "ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.1",
+            "description": "h1 reaches its own router",
+            "device": "h1",
+            "elapsedSeconds": 9.902,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "min_success_rate": 1,
+              "source_interface": "eth1",
+              "target": "10.10.1.1",
+              "type": "host-ping"
+            },
+            "hint": null,
+            "id": "b-h1-gw",
+            "metExpectation": true,
+            "passed": true,
+            "type": "host-ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.11",
+            "description": "h1 cannot reach h2 yet",
+            "device": "h1",
+            "elapsedSeconds": 12.527,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "negate": true,
+              "source_interface": "eth1",
+              "target": "10.10.3.11",
+              "type": "host-ping"
+            },
+            "hint": null,
+            "id": "b-h1-no-h2",
+            "metExpectation": true,
+            "passed": true,
+            "type": "host-ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.1",
+            "description": "h2 reaches its own router",
+            "device": "h2",
+            "elapsedSeconds": 15.086,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "min_success_rate": 1,
+              "source_interface": "eth1",
+              "target": "10.10.3.1",
+              "type": "host-ping"
+            },
+            "hint": null,
+            "id": "b-h2-gw",
+            "metExpectation": true,
+            "passed": true,
+            "type": "host-ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.11",
+            "description": "h2 cannot reach h1 yet",
+            "device": "h2",
+            "elapsedSeconds": 17.767,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "negate": true,
+              "source_interface": "eth1",
+              "target": "10.10.1.11",
+              "type": "host-ping"
+            },
+            "hint": null,
+            "id": "b-h2-no-h1",
+            "metExpectation": true,
+            "passed": true,
+            "type": "host-ping"
+          }
+        ],
+        "deadlineSeconds": 600,
+        "elapsedSeconds": 17.767,
+        "expect": "pass",
+        "intervalSeconds": 15,
+        "label": "baseline",
+        "polls": 1,
+        "satisfied": true
+      },
+      "elapsedSeconds": 83.921,
+      "issues": [],
+      "message": null,
+      "name": "reset",
+      "stageExpectations": [
+        {
+          "checks": [
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.0.23.0/30 exact | display json",
+              "description": "r1 has the r2-r3 link subnet learned by OSPF",
+              "device": "r1",
+              "elapsedSeconds": 0.456,
+              "error": null,
+              "expected": {
+                "prefix": "10.0.23.0/30",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s1-r1-link23",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.0.12.0/30 exact | display json",
+              "description": "r3 has the r1-r2 link subnet learned by OSPF",
+              "device": "r3",
+              "elapsedSeconds": 0.985,
+              "error": null,
+              "expected": {
+                "prefix": "10.0.12.0/30",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s1-r3-link12",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.10.3.0/24 exact | display json",
+              "description": "r1 learns the far user subnet by OSPF",
+              "device": "r1",
+              "elapsedSeconds": 1.451,
+              "error": null,
+              "expected": {
+                "prefix": "10.10.3.0/24",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s1-r1-user-subnet",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.10.1.0/24 exact | display json",
+              "description": "r3 learns the near user subnet by OSPF",
+              "device": "r3",
+              "elapsedSeconds": 1.959,
+              "error": null,
+              "expected": {
+                "prefix": "10.10.1.0/24",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s1-r3-user-subnet",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.11",
+              "description": "h1 reaches h2",
+              "device": "h1",
+              "elapsedSeconds": 4.614,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1,
+                "source_interface": "eth1",
+                "target": "10.10.3.11",
+                "type": "host-ping"
+              },
+              "hint": null,
+              "id": "s1-h1-reaches-h2",
+              "metExpectation": true,
+              "passed": false,
+              "type": "host-ping"
+            },
+            {
+              "attempts": 1,
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.11",
+              "description": "h2 reaches h1",
+              "device": "h2",
+              "elapsedSeconds": 7.176,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1,
+                "source_interface": "eth1",
+                "target": "10.10.1.11",
+                "type": "host-ping"
+              },
+              "hint": null,
+              "id": "s1-h2-reaches-h1",
+              "metExpectation": true,
+              "passed": false,
+              "type": "host-ping"
+            }
+          ],
+          "deadlineSeconds": 600,
+          "elapsedSeconds": 7.176,
+          "expect": "fail",
+          "intervalSeconds": 15,
+          "label": "s1",
+          "polls": 1,
+          "satisfied": true
+        },
+        {
+          "checks": [
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.255.0.2/32 exact | display json",
+              "description": "r1 learns r2's loopback by OSPF",
+              "device": "r1",
+              "elapsedSeconds": 0.518,
+              "error": null,
+              "expected": {
+                "prefix": "10.255.0.2/32",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s2-r1-lo2",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.255.0.3/32 exact | display json",
+              "description": "r1 learns r3's loopback by OSPF",
+              "device": "r1",
+              "elapsedSeconds": 1.051,
+              "error": null,
+              "expected": {
+                "prefix": "10.255.0.3/32",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s2-r1-lo3",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.255.0.1/32 exact | display json",
+              "description": "r3 learns r1's loopback by OSPF",
+              "device": "r3",
+              "elapsedSeconds": 1.541,
+              "error": null,
+              "expected": {
+                "prefix": "10.255.0.1/32",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s2-r3-lo1",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "ping 10.255.0.3 count 3 | display json",
+              "description": "r1 reaches r3's loopback",
+              "device": "r1",
+              "elapsedSeconds": 14.05,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1,
+                "target": "10.255.0.3",
+                "type": "ping"
+              },
+              "hint": null,
+              "id": "s2-r1-ping",
+              "metExpectation": true,
+              "passed": false,
+              "type": "ping"
+            },
+            {
+              "attempts": 1,
+              "command": "ping 10.255.0.1 count 3 | display json",
+              "description": "r3 reaches r1's loopback",
+              "device": "r3",
+              "elapsedSeconds": 26.611,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1,
+                "target": "10.255.0.1",
+                "type": "ping"
+              },
+              "hint": null,
+              "id": "s2-r3-ping",
+              "metExpectation": true,
+              "passed": false,
+              "type": "ping"
+            }
+          ],
+          "deadlineSeconds": 600,
+          "elapsedSeconds": 26.611,
+          "expect": "fail",
+          "intervalSeconds": 15,
+          "label": "s2",
+          "polls": 1,
+          "satisfied": true
+        }
+      ],
+      "stages": [],
+      "status": "passed"
+    },
+    {
+      "baseline": {
+        "checks": [
+          {
+            "attempts": 1,
+            "command": "show interfaces ge-0/0/0 terse | display json",
+            "description": "r1 ge-0/0/0 is up",
+            "device": "r1",
+            "elapsedSeconds": 0.567,
+            "error": null,
+            "expected": {
+              "interface": "ge-0/0/0",
+              "type": "interface-up"
+            },
+            "hint": null,
+            "id": "b-r1-if",
+            "metExpectation": true,
+            "passed": true,
+            "type": "interface-up"
+          },
+          {
+            "attempts": 1,
+            "command": "show interfaces ge-0/0/0 terse | display json",
+            "description": "r2 ge-0/0/0 is up",
+            "device": "r2",
+            "elapsedSeconds": 1.149,
+            "error": null,
+            "expected": {
+              "interface": "ge-0/0/0",
+              "type": "interface-up"
+            },
+            "hint": null,
+            "id": "b-r2-if0",
+            "metExpectation": true,
+            "passed": true,
+            "type": "interface-up"
+          },
+          {
+            "attempts": 1,
+            "command": "show interfaces ge-0/0/1 terse | display json",
+            "description": "r2 ge-0/0/1 is up",
+            "device": "r2",
+            "elapsedSeconds": 1.681,
+            "error": null,
+            "expected": {
+              "interface": "ge-0/0/1",
+              "type": "interface-up"
+            },
+            "hint": null,
+            "id": "b-r2-if1",
+            "metExpectation": true,
+            "passed": true,
+            "type": "interface-up"
+          },
+          {
+            "attempts": 1,
+            "command": "show interfaces ge-0/0/0 terse | display json",
+            "description": "r3 ge-0/0/0 is up",
+            "device": "r3",
+            "elapsedSeconds": 2.241,
+            "error": null,
+            "expected": {
+              "interface": "ge-0/0/0",
+              "type": "interface-up"
+            },
+            "hint": null,
+            "id": "b-r3-if",
+            "metExpectation": true,
+            "passed": true,
+            "type": "interface-up"
+          },
+          {
+            "attempts": 1,
+            "command": "ping 10.0.12.2 count 3 | display json",
+            "description": "r1 reaches r2 on the r1-r2 link",
+            "device": "r1",
+            "elapsedSeconds": 4.797,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "min_success_rate": 1,
+              "target": "10.0.12.2",
+              "type": "ping"
+            },
+            "hint": null,
+            "id": "b-r1-nbr",
+            "metExpectation": true,
+            "passed": true,
+            "type": "ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping 10.0.23.1 count 3 | display json",
+            "description": "r3 reaches r2 on the r2-r3 link",
+            "device": "r3",
+            "elapsedSeconds": 7.342,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "min_success_rate": 1,
+              "target": "10.0.23.1",
+              "type": "ping"
+            },
+            "hint": null,
+            "id": "b-r3-nbr",
+            "metExpectation": true,
+            "passed": true,
+            "type": "ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.1",
+            "description": "h1 reaches its own router",
+            "device": "h1",
+            "elapsedSeconds": 9.928,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "min_success_rate": 1,
+              "source_interface": "eth1",
+              "target": "10.10.1.1",
+              "type": "host-ping"
+            },
+            "hint": null,
+            "id": "b-h1-gw",
+            "metExpectation": true,
+            "passed": true,
+            "type": "host-ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.11",
+            "description": "h1 cannot reach h2 yet",
+            "device": "h1",
+            "elapsedSeconds": 12.487,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "negate": true,
+              "source_interface": "eth1",
+              "target": "10.10.3.11",
+              "type": "host-ping"
+            },
+            "hint": null,
+            "id": "b-h1-no-h2",
+            "metExpectation": true,
+            "passed": true,
+            "type": "host-ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.1",
+            "description": "h2 reaches its own router",
+            "device": "h2",
+            "elapsedSeconds": 15.046,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "min_success_rate": 1,
+              "source_interface": "eth1",
+              "target": "10.10.3.1",
+              "type": "host-ping"
+            },
+            "hint": null,
+            "id": "b-h2-gw",
+            "metExpectation": true,
+            "passed": true,
+            "type": "host-ping"
+          },
+          {
+            "attempts": 1,
+            "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.11",
+            "description": "h2 cannot reach h1 yet",
+            "device": "h2",
+            "elapsedSeconds": 17.673,
+            "error": null,
+            "expected": {
+              "count": 3,
+              "negate": true,
+              "source_interface": "eth1",
+              "target": "10.10.1.11",
+              "type": "host-ping"
+            },
+            "hint": null,
+            "id": "b-h2-no-h1",
+            "metExpectation": true,
+            "passed": true,
+            "type": "host-ping"
+          }
+        ],
+        "deadlineSeconds": 600,
+        "elapsedSeconds": 17.673,
+        "expect": "pass",
+        "intervalSeconds": 15,
+        "label": "baseline",
+        "polls": 1,
+        "satisfied": true
+      },
+      "elapsedSeconds": 264.605,
+      "issues": [],
+      "message": null,
+      "name": "learner-start",
+      "stageExpectations": [
+        {
+          "checks": [
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.0.23.0/30 exact | display json",
+              "description": "r1 has the r2-r3 link subnet learned by OSPF",
+              "device": "r1",
+              "elapsedSeconds": 0.48,
+              "error": null,
+              "expected": {
+                "prefix": "10.0.23.0/30",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s1-r1-link23",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.0.12.0/30 exact | display json",
+              "description": "r3 has the r1-r2 link subnet learned by OSPF",
+              "device": "r3",
+              "elapsedSeconds": 0.999,
+              "error": null,
+              "expected": {
+                "prefix": "10.0.12.0/30",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s1-r3-link12",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.10.3.0/24 exact | display json",
+              "description": "r1 learns the far user subnet by OSPF",
+              "device": "r1",
+              "elapsedSeconds": 1.522,
+              "error": null,
+              "expected": {
+                "prefix": "10.10.3.0/24",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s1-r1-user-subnet",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.10.1.0/24 exact | display json",
+              "description": "r3 learns the near user subnet by OSPF",
+              "device": "r3",
+              "elapsedSeconds": 2.027,
+              "error": null,
+              "expected": {
+                "prefix": "10.10.1.0/24",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s1-r3-user-subnet",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.3.11",
+              "description": "h1 reaches h2",
+              "device": "h1",
+              "elapsedSeconds": 4.607,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1,
+                "source_interface": "eth1",
+                "target": "10.10.3.11",
+                "type": "host-ping"
+              },
+              "hint": null,
+              "id": "s1-h1-reaches-h2",
+              "metExpectation": true,
+              "passed": false,
+              "type": "host-ping"
+            },
+            {
+              "attempts": 1,
+              "command": "ping -c 3 -W 2 -n -q -I eth1 10.10.1.11",
+              "description": "h2 reaches h1",
+              "device": "h2",
+              "elapsedSeconds": 7.231,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1,
+                "source_interface": "eth1",
+                "target": "10.10.1.11",
+                "type": "host-ping"
+              },
+              "hint": null,
+              "id": "s1-h2-reaches-h1",
+              "metExpectation": true,
+              "passed": false,
+              "type": "host-ping"
+            }
+          ],
+          "deadlineSeconds": 600,
+          "elapsedSeconds": 7.231,
+          "expect": "fail",
+          "intervalSeconds": 15,
+          "label": "s1",
+          "polls": 1,
+          "satisfied": true
+        },
+        {
+          "checks": [
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.255.0.2/32 exact | display json",
+              "description": "r1 learns r2's loopback by OSPF",
+              "device": "r1",
+              "elapsedSeconds": 0.478,
+              "error": null,
+              "expected": {
+                "prefix": "10.255.0.2/32",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s2-r1-lo2",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.255.0.3/32 exact | display json",
+              "description": "r1 learns r3's loopback by OSPF",
+              "device": "r1",
+              "elapsedSeconds": 0.99,
+              "error": null,
+              "expected": {
+                "prefix": "10.255.0.3/32",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s2-r1-lo3",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "show route table inet.0 10.255.0.1/32 exact | display json",
+              "description": "r3 learns r1's loopback by OSPF",
+              "device": "r3",
+              "elapsedSeconds": 1.382,
+              "error": null,
+              "expected": {
+                "prefix": "10.255.0.1/32",
+                "protocol": "OSPF",
+                "type": "route-exists"
+              },
+              "hint": null,
+              "id": "s2-r3-lo1",
+              "metExpectation": true,
+              "passed": false,
+              "type": "route-exists"
+            },
+            {
+              "attempts": 1,
+              "command": "ping 10.255.0.3 count 3 | display json",
+              "description": "r1 reaches r3's loopback",
+              "device": "r1",
+              "elapsedSeconds": 13.849,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1,
+                "target": "10.255.0.3",
+                "type": "ping"
+              },
+              "hint": null,
+              "id": "s2-r1-ping",
+              "metExpectation": true,
+              "passed": false,
+              "type": "ping"
+            },
+            {
+              "attempts": 1,
+              "command": "ping 10.255.0.1 count 3 | display json",
+              "description": "r3 reaches r1's loopback",
+              "device": "r3",
+              "elapsedSeconds": 26.4,
+              "error": null,
+              "expected": {
+                "count": 3,
+                "min_success_rate": 1,
+                "target": "10.255.0.1",
+                "type": "ping"
+              },
+              "hint": null,
+              "id": "s2-r3-ping",
+              "metExpectation": true,
+              "passed": false,
+              "type": "ping"
+            }
+          ],
+          "deadlineSeconds": 600,
+          "elapsedSeconds": 26.4,
+          "expect": "fail",
+          "intervalSeconds": 15,
+          "label": "s2",
+          "polls": 1,
+          "satisfied": true
+        }
+      ],
+      "stages": [],
+      "status": "passed"
+    }
+  ],
+  "status": "passed",
+  "toolVersions": {
+    "containerlab": "0.77.0",
+    "imageDigest": "sha256:b343ea11ab9bfc9878632ba52cb910f5b147d018dc785bae337da9f7163da24d",
+    "labsmith": "86847a16c65909e20050382f408cfdf8aab161c4"
+  },
+  "totalSeconds": 811.065
+}
