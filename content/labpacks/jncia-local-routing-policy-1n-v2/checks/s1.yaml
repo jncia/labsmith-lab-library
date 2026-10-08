@@ -1,0 +1,26 @@
+schemaVersion: 0
+checks:
+- id: s1a
+  description: lo0.0 reports 192.0.2.2
+  device: r1
+  type: state-match
+  command: show interfaces lo0.0 terse
+  container: interface-information
+  expect:
+    ifa-destination: 0/0
+  records: interface-address
+  where:
+    ifa-local: 192.0.2.2
+- id: s1b
+  description: Direct host route 192.0.2.2/32 in inet.0
+  device: r1
+  type: route-exists
+  prefix: 192.0.2.2/32
+  protocol: Direct
+  table: inet.0
+- id: s1c
+  description: r1 pings 192.0.2.2
+  device: r1
+  type: ping
+  count: 3
+  target: 192.0.2.2

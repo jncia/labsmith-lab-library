@@ -1,0 +1,18 @@
+schemaVersion: 0
+checks:
+- id: b1
+  description: ge-0/0/0 is up
+  device: r1
+  type: interface-up
+  interface: ge-0/0/0
+- id: b2
+  description: ge-0/0/1 is up
+  device: r1
+  type: interface-up
+  interface: ge-0/0/1
+- id: b3
+  description: Diagnostic 192.0.2.1 answers ping
+  device: r1
+  type: ping
+  count: 3
+  target: 192.0.2.1

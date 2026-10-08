@@ -1,0 +1,29 @@
+schemaVersion: 0
+checks:
+- id: s3a
+  description: 172.16.0.0/16 active Aggregate
+  device: r1
+  type: route-exists
+  prefix: 172.16.0.0/16
+  protocol: Aggregate
+  table: inet.0
+- id: s3b
+  description: 172.17.0.0/16 absent from inet.0
+  device: r1
+  type: route-exists
+  negate: true
+  prefix: 172.17.0.0/16
+  table: inet.0
+- id: s3c
+  description: 172.17.0.0/16 Aggregate in hidden view
+  device: r1
+  type: state-match
+  command: show route hidden
+  container: route-information
+  records: rt-entry
+  where:
+    protocol-name: Aggregate
+  within:
+  - records: rt
+    where:
+      rt-destination: 172.17.0.0/16

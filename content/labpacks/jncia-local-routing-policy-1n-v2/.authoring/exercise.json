@@ -1,0 +1,281 @@
+{
+  "baselineChecks": [
+    {
+      "description": "ge-0/0/0 is up",
+      "device": "r1",
+      "id": "b1",
+      "interface": "ge-0/0/0",
+      "type": "interface-up"
+    },
+    {
+      "description": "ge-0/0/1 is up",
+      "device": "r1",
+      "id": "b2",
+      "interface": "ge-0/0/1",
+      "type": "interface-up"
+    },
+    {
+      "count": 3,
+      "description": "Diagnostic 192.0.2.1 answers ping",
+      "device": "r1",
+      "id": "b3",
+      "target": "192.0.2.1",
+      "type": "ping"
+    }
+  ],
+  "briefId": "jncia-local-routing-policy-1n-v2",
+  "labType": "build",
+  "provenance": {
+    "checksUntestedAtStart": [],
+    "derived": [
+      "startState.configs",
+      "stages[].solution",
+      "topology",
+      "provenance"
+    ],
+    "engineerModel": "claude-sonnet-5-5",
+    "runId": "a1008zoh",
+    "snapshots": {
+      "s1": "543cb1dea37ecbdecd05240c5b33f14e331e69251bd3e87f2b882752269620e6",
+      "s2": "b518c67445eecf6cf5e9c1485f175407225ca30ed6b7530a54682ff891e3638e",
+      "s3": "379fa6ea29454fe3503e7fe721c773a17650cf9197bd25843ea968589866e3fb",
+      "start": "a8670cdf6529a2b9c08924e8ed33bdd1174355da041a45cd87f54c750edb9c6f"
+    }
+  },
+  "scenario": "One router r1 has two data ports joined by a same-router wire. Add a service endpoint and two planned static routes, then admit the approved aggregate contributor while rejecting the other, keeping the rejected aggregate as a hidden route.",
+  "schemaVersion": 0,
+  "stages": [
+    {
+      "checks": [
+        {
+          "command": "show interfaces lo0.0 terse",
+          "container": "interface-information",
+          "description": "lo0.0 reports 192.0.2.2",
+          "device": "r1",
+          "expect": {
+            "ifa-destination": "0/0"
+          },
+          "id": "s1a",
+          "records": "interface-address",
+          "type": "state-match",
+          "where": {
+            "ifa-local": "192.0.2.2"
+          }
+        },
+        {
+          "description": "Direct host route 192.0.2.2/32 in inet.0",
+          "device": "r1",
+          "id": "s1b",
+          "prefix": "192.0.2.2/32",
+          "protocol": "Direct",
+          "table": "inet.0",
+          "type": "route-exists"
+        },
+        {
+          "count": 3,
+          "description": "r1 pings 192.0.2.2",
+          "device": "r1",
+          "id": "s1c",
+          "target": "192.0.2.2",
+          "type": "ping"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Using a mask other than /32 or another interface",
+          "recognise": "show route 192.0.2.2 shows no Direct /32 entry",
+          "symptom": "No Direct 192.0.2.2/32 route in inet.0"
+        }
+      ],
+      "doneWhen": [
+        "Interface state shows 192.0.2.2 on lo0.0",
+        "inet.0 holds Direct route 192.0.2.2/32",
+        "r1 pings 192.0.2.2"
+      ],
+      "explanation": [
+        "A /32 on lo0.0 creates a Direct 192.0.2.2/32 route; a different mask would create a different Direct prefix, so the route check pins the mask."
+      ],
+      "goal": "Make lo0.0 carry service address 192.0.2.2 with an exact host mask, reachable from r1.",
+      "hint": "Use the interface address with a host-length mask and compare the interface and route views.",
+      "id": "s1",
+      "solution": {
+        "r1": [
+          "set interfaces lo0 unit 0 family inet address 192.0.2.2/32"
+        ]
+      },
+      "title": "Establish the exact local service endpoint"
+    },
+    {
+      "checks": [
+        {
+          "description": "172.16.10.0/24 Static in inet.0",
+          "device": "r1",
+          "id": "s2a",
+          "prefix": "172.16.10.0/24",
+          "protocol": "Static",
+          "table": "inet.0",
+          "type": "route-exists"
+        },
+        {
+          "description": "172.16.10.0/24 forwards as discard",
+          "device": "r1",
+          "id": "s2b",
+          "next_hop_type": "dscd",
+          "prefix": "172.16.10.0/24",
+          "type": "forwarding-table-entry"
+        },
+        {
+          "description": "172.17.10.0/24 Static in inet.0",
+          "device": "r1",
+          "id": "s2c",
+          "prefix": "172.17.10.0/24",
+          "protocol": "Static",
+          "table": "inet.0",
+          "type": "route-exists"
+        },
+        {
+          "description": "172.17.10.0/24 forwards as reject",
+          "device": "r1",
+          "id": "s2d",
+          "next_hop_type": "rjct",
+          "prefix": "172.17.10.0/24",
+          "type": "forwarding-table-entry"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Swapping discard and reject",
+          "recognise": "show route forwarding-table destination for each prefix",
+          "symptom": "Forwarding entry shows rjct for 172.16.10.0/24 or dscd for 172.17.10.0/24"
+        }
+      ],
+      "doneWhen": [
+        "172.16.10.0/24 is active Static with a discard forwarding entry",
+        "172.17.10.0/24 is active Static with a reject forwarding entry",
+        "Stage 1 outcomes remain"
+      ],
+      "explanation": [
+        "Forwarding table next-hop types dscd and rjct show the difference between discard and reject."
+      ],
+      "goal": "Create the two planned networks as static routes, one that silently drops traffic and one that drops it with an error response.",
+      "hint": "Compare the forwarding table entries of the two prefixes.",
+      "id": "s2",
+      "solution": {
+        "r1": [
+          "set routing-options static route 172.16.10.0/24 discard",
+          "set routing-options static route 172.17.10.0/24 reject"
+        ]
+      },
+      "title": "Represent the two planned networks"
+    },
+    {
+      "checks": [
+        {
+          "description": "172.16.0.0/16 active Aggregate",
+          "device": "r1",
+          "id": "s3a",
+          "prefix": "172.16.0.0/16",
+          "protocol": "Aggregate",
+          "table": "inet.0",
+          "type": "route-exists"
+        },
+        {
+          "description": "172.17.0.0/16 absent from inet.0",
+          "device": "r1",
+          "id": "s3b",
+          "negate": true,
+          "prefix": "172.17.0.0/16",
+          "table": "inet.0",
+          "type": "route-exists"
+        },
+        {
+          "command": "show route hidden",
+          "container": "route-information",
+          "description": "172.17.0.0/16 Aggregate in hidden view",
+          "device": "r1",
+          "id": "s3c",
+          "records": "rt-entry",
+          "type": "state-match",
+          "where": {
+            "protocol-name": "Aggregate"
+          },
+          "within": [
+            {
+              "records": "rt",
+              "where": {
+                "rt-destination": "172.17.0.0/16"
+              }
+            }
+          ]
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Leaving the passive property on 172.17.0.0/16",
+          "recognise": "show route 172.17.0.0/16 shows an active Aggregate and the hidden view is empty",
+          "symptom": "Aggregate stays active in the ordinary view"
+        },
+        {
+          "mistake": "Deleting the aggregate definition",
+          "recognise": "show route hidden lists no 172.17.0.0/16",
+          "symptom": "Prefix is absent from the hidden view too"
+        }
+      ],
+      "doneWhen": [
+        "172.16.0.0/16 is an active Aggregate",
+        "172.17.0.0/16 is absent from the ordinary route view but present as Aggregate in the hidden view",
+        "Earlier outcomes remain"
+      ],
+      "explanation": [
+        "A policy accepting only 172.16.10.0/24 gives 172.16.0.0/16 a contributor; 172.17.10.0/24 is rejected, and with no passive property the 172.17.0.0/16 aggregate has no contributor so it is hidden."
+      ],
+      "goal": "Activate aggregate 172.16.0.0/16 using only the approved contributor, and make aggregate 172.17.0.0/16 inactive through contributor policy while keeping its definition.",
+      "hint": "Compare show route and show route hidden for both aggregates.",
+      "id": "s3",
+      "solution": {
+        "r1": [
+          "delete routing-options aggregate route 172.17.0.0/16 passive",
+          "set policy-options policy-statement AGG-CONTRIB term approved from route-filter 172.16.10.0/24 exact",
+          "set policy-options policy-statement AGG-CONTRIB term approved then accept",
+          "set policy-options policy-statement AGG-CONTRIB term other then reject",
+          "set routing-options aggregate route 172.16.0.0/16 policy AGG-CONTRIB",
+          "set routing-options aggregate route 172.17.0.0/16 policy AGG-CONTRIB"
+        ]
+      },
+      "title": "Distinguish rejected contribution from route deletion"
+    }
+  ],
+  "startState": {
+    "configs": {
+      "r1": [
+        "set system host-name r1",
+        "set interfaces lo0 unit 0 family inet address 192.0.2.1/32",
+        "set routing-options aggregate route 172.17.0.0/16 passive"
+      ]
+    },
+    "description": "r1 has ge-0/0/0 and ge-0/0/1 up/up and 192.0.2.1/32 on lo0.0. Aggregate 172.17.0.0/16 is configured as passive, so it is active in the ordinary route view and absent from the hidden view. Service 192.0.2.2/32, the two statics and aggregate 172.16.0.0/16 are absent."
+  },
+  "summary": "Configure an exact loopback service address, two static routes with different forwarding actions, and aggregate contributor policy on one router. Fixed values: service 192.0.2.2/32 on lo0.0; discard route 172.16.10.0/24; reject route 172.17.10.0/24; approved contributor 172.16.10.0/24; aggregates 172.16.0.0/16 and 172.17.0.0/16.",
+  "title": "Local Addressing, Static Routes, and Contributor Policy",
+  "topology": {
+    "links": [
+      {
+        "a": {
+          "interface": "ge-0/0/0",
+          "node": "r1"
+        },
+        "b": {
+          "interface": "ge-0/0/1",
+          "node": "r1"
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "id": "r1",
+        "kind": "vjunos-router",
+        "role": "Router-local addressing and routing-policy practice"
+      }
+    ]
+  }
+}

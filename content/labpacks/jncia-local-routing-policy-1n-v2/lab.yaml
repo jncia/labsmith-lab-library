@@ -1,0 +1,175 @@
+schemaVersion: 0
+id: jncia-local-routing-policy-1n-v2
+title: Local Addressing, Static Routes, and Contributor Policy
+summary: 'On one router, r1, add an exact loopback service address, two static routes
+  with different forwarding actions, and aggregate contributor policy. Fixed values:
+  service 192.0.2.2/32 on lo0.0; discard route 172.16.10.0/24; reject route 172.17.10.0/24;
+  approved contributor 172.16.10.0/24; aggregates 172.16.0.0/16 and 172.17.0.0/16.'
+labType: build
+level: associate
+certifications:
+- JNCIA-Junos
+topics:
+- loopback addressing
+- static discard and reject routes
+- routing policy terms
+- aggregate contributor policy
+- active and hidden route views
+- operational verification
+estimatedMinutes: 35
+nodes:
+- id: r1
+  kind: juniper_vjunosrouter
+  role: Router-local addressing and routing-policy practice
+requirements:
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  minimumFreeMemoryGb: 8
+  minimumCores: 4
+stages:
+- id: s1
+  title: Establish the exact local service endpoint
+  goal: Make lo0.0 carry the service address 192.0.2.2 with an exact host mask, and
+    make it reachable from r1. The existing 192.0.2.1 address must stay.
+  doneWhen:
+  - The interface view of lo0.0 lists 192.0.2.2 alongside 192.0.2.1
+  - inet.0 holds a Direct route for 192.0.2.2/32
+  - r1 pings 192.0.2.2 with no loss
+- id: s2
+  title: Represent the two planned networks
+  goal: Create the two planned networks as static routes. Traffic to 172.16.10.0/24
+    must be dropped silently. Traffic to 172.17.10.0/24 must be dropped with an error
+    response to the sender. Keep the stage 1 results.
+  doneWhen:
+  - 172.16.10.0/24 is an active Static route whose forwarding entry is a discard
+  - 172.17.10.0/24 is an active Static route whose forwarding entry is a reject
+  - The stage 1 outcomes still hold
+- id: s3
+  title: Distinguish rejected contribution from route deletion
+  goal: Make aggregate 172.16.0.0/16 active, using only 172.16.10.0/24 as its contributor.
+    Make aggregate 172.17.0.0/16 inactive through contributor policy, so that 172.17.10.0/24
+    is not accepted, but keep its definition in the configuration.
+  doneWhen:
+  - 172.16.0.0/16 is an active Aggregate in inet.0
+  - 172.17.0.0/16 is absent from the ordinary inet.0 view but present as an Aggregate
+    in the hidden route view
+  - The earlier outcomes still hold
+qualification:
+- contractVersion: labsmith.learner-labpack-qualification.v0
+  receiptId: jncia-local-routing-policy-1n-v2-2026-10-08-87e48a930328
+  labId: jncia-local-routing-policy-1n-v2
+  packetContentHash: 87e48a93032809414edf6ebb3494753174f30837375f9753a8de9264c4ff41b9
+  date: '2026-10-08'
+  generatedAt: '2026-10-08T22:01:00+00:00'
+  status: passed
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  toolVersions:
+    containerlab: 0.77.0
+    imageDigest: sha256:b343ea11ab9bfc9878632ba52cb910f5b147d018dc785bae337da9f7163da24d
+    labsmith: a7e132651e38675ec87598dc682b907ada3ea1c3
+  cleanup:
+    topologyName: labpack-jncia-local-routing-policy-1n-v2-a1008zohq
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-10-08T21:57:20+00:00'
+    clean: true
+  learnerCleanup:
+    topologyName: labpack-jncia-local-routing-policy-1n-v2-a1008zohql
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-10-08T22:01:00+00:00'
+    clean: true
+  totalSeconds: 798.458
+  issues: []
+  message: null
+  discrimination:
+    name: discrimination
+    status: completed
+    reason: null
+    elapsedSeconds: 247.292
+    statements: 8
+    statementsConsidered: 8
+    statementsOmitted: 0
+    noticed: 7
+    unnoticed: 1
+    coupled: 0
+    skipped: 1
+    stages:
+    - stageId: s1
+      elapsedSeconds: 45.566
+      statementsOmitted: 0
+      counts:
+        noticed: 1
+        unnoticed: 0
+        coupled: 0
+        skipped: 0
+      statements:
+      - node: r1
+        index: 1
+        outcome: noticed
+    - stageId: s2
+      elapsedSeconds: 34.769
+      statementsOmitted: 0
+      counts:
+        noticed: 2
+        unnoticed: 0
+        coupled: 0
+        skipped: 0
+      statements:
+      - node: r1
+        index: 1
+        outcome: noticed
+      - node: r1
+        index: 2
+        outcome: noticed
+    - stageId: s3
+      elapsedSeconds: 166.957
+      statementsOmitted: 0
+      counts:
+        noticed: 4
+        unnoticed: 1
+        coupled: 0
+        skipped: 1
+      statements:
+      - node: r1
+        index: 1
+        outcome: skipped
+      - node: r1
+        index: 2
+        outcome: noticed
+      - node: r1
+        index: 3
+        outcome: noticed
+      - node: r1
+        index: 4
+        outcome: noticed
+      - node: r1
+        index: 5
+        outcome: unnoticed
+      - node: r1
+        index: 6
+        outcome: noticed
+  runs:
+  - name: start-state
+    status: passed
+    elapsedSeconds: 230.054
+  - name: reference-solution
+    status: passed
+    elapsedSeconds: 57.197
+  - name: reset
+    status: passed
+    elapsedSeconds: 39.623
+  - name: learner-start
+    status: passed
+    elapsedSeconds: 215.355

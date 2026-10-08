@@ -1,0 +1,28 @@
+schemaVersion: 0
+checks:
+- id: s2a
+  description: 172.16.10.0/24 Static in inet.0
+  device: r1
+  type: route-exists
+  prefix: 172.16.10.0/24
+  protocol: Static
+  table: inet.0
+- id: s2b
+  description: 172.16.10.0/24 forwards as discard
+  device: r1
+  type: forwarding-table-entry
+  next_hop_type: dscd
+  prefix: 172.16.10.0/24
+- id: s2c
+  description: 172.17.10.0/24 Static in inet.0
+  device: r1
+  type: route-exists
+  prefix: 172.17.10.0/24
+  protocol: Static
+  table: inet.0
+- id: s2d
+  description: 172.17.10.0/24 forwards as reject
+  device: r1
+  type: forwarding-table-entry
+  next_hop_type: rjct
+  prefix: 172.17.10.0/24

@@ -1,0 +1,6 @@
+delete routing-options aggregate route 172.17.0.0/16 passive
+set policy-options policy-statement AGG-CONTRIB term approved from route-filter 172.16.10.0/24 exact
+set policy-options policy-statement AGG-CONTRIB term approved then accept
+set policy-options policy-statement AGG-CONTRIB term other then reject
+set routing-options aggregate route 172.16.0.0/16 policy AGG-CONTRIB
+set routing-options aggregate route 172.17.0.0/16 policy AGG-CONTRIB

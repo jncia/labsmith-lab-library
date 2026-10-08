@@ -1,0 +1,118 @@
+schemaVersion: 0
+queueId: jncia-single-router-v2-20261008
+blueprint:
+  credentialName: JNCIA-Junos
+  examCode: JN0-106
+  sourceFile: official-blueprint.json
+  sourceSha256: e802a5ef10d25465bd9abdba7ab0f1f5d21e05f737a9a626a5211201eb0554b5
+generated:
+  at: '2026-10-08T21:35:30.232866+00:00'
+  model: owner-seed
+  costUsd: 0
+  promptSha256: null
+  ownerNote: Additive reauthoring after original run a1008ccn passed complete native
+    qualification and clean teardown, with remaining learner-review coverage/wording
+    findings. The original packet, receipt and branch stay unchanged. Root approves
+    this precise corrected brief within the owner's single-router task, using the
+    same Sonnet5.5 loop and existing check vocabulary. No packet hand repair.
+entries:
+- status: approved
+  priority: 10
+  model: claude-sonnet-5-5
+  ownerNote: Approved within the existing single-router task after original complete
+    qualification and review; new packet identity preserves the original evidence,
+    same native loop, no hand repair.
+  brief:
+    schemaVersion: 0
+    id: jncia-local-routing-policy-1n-v2
+    title: Local Addressing, Static Routes, and Contributor Policy
+    labType: build
+    level: associate
+    certifications:
+    - JNCIA-Junos
+    blueprint:
+      examCode: JN0-106
+      objectives:
+      - OBJ-1-5
+      - OBJ-5-1
+      - OBJ-5-4
+      - OBJ-6-2
+      - OBJ-6-6
+      - OBJ-7-3
+      - OBJ-7-4
+      - OBJ-7-5
+      - OBJ-7-6
+    topics:
+    - loopback addressing
+    - static discard and reject routes
+    - routing policy terms
+    - aggregate contributor policy
+    - active and hidden route views
+    - operational verification
+    scenario: You are preparing one ordinary router for a small local routing exercise.
+      Two data ports are joined by a same-router wire, with no second node or logical
+      system. Add a service endpoint and two planned static routes, then admit the
+      approved aggregate contributor while rejecting the other. Keep the rejected
+      aggregate as a hidden, inactive route so you can distinguish policy exclusion
+      from deleting its definition.
+    learnerOutcome: Verify the exact address and mask on lo0.0 directly from interface
+      state, distinguish static discard and reject actions, and use routing policy
+      to activate an approved aggregate while retaining an unwanted aggregate as hidden
+      rather than installed.
+    startStateSketch: One initialized vJunos-router r1 has one same-router link between
+      distinct host-assigned data ports, already up/up, with no other nodes or logical
+      systems. The ports and diagnostic 192.0.2.1/32 on lo0.0 stay healthy. Service
+      192.0.2.2/32, static routes 172.16.10.0/24 and 172.17.10.0/24, and aggregate
+      172.16.0.0/16 are absent. Unwanted aggregate 172.17.0.0/16 is passive, active
+      and visible in the ordinary route view, and absent from the hidden view. The
+      engineer verifies that truth table before the start snapshot. A stable discard
+      property on this summary is optional if native derivation needs it; it must
+      not turn a stage check true at start.
+    stageSketch:
+    - title: Establish the exact local service endpoint
+      achieves: Done when interface state directly reports 192.0.2.2/32 on lo0.0,
+        its route exists in inet.0, and r1 pings it. Route existence or ping alone
+        cannot establish the required interface or configured mask.
+    - title: Represent the two planned networks
+      achieves: Done when 172.16.10.0/24 is an active Static discard route and 172.17.10.0/24
+        an active Static reject route, with their forwarding actions verified and
+        the earlier endpoint outcome preserved.
+    - title: Distinguish rejected contribution from route deletion
+      achieves: Done when 172.16.0.0/16 is active Aggregate, 172.17.0.0/16 remains
+        an exact Aggregate in the hidden view and is absent from the ordinary route
+        view, and both statics and the exact endpoint remain.
+    observableOutcomes:
+    - Interface operational state directly identifies lo0.0 with exactly 192.0.2.2/32;
+      another interface or a different configured mask does not satisfy this outcome.
+    - inet.0 contains the service host route and r1 successfully pings 192.0.2.2.
+    - 172.16.10.0/24 is active Static with discard next hop, and its forwarding entry
+      has the measured discard action.
+    - 172.17.10.0/24 is active Static with reject next hop, and its forwarding entry
+      has the measured reject action.
+    - 172.16.0.0/16 is an active Aggregate after its exact approved contributor is
+      accepted.
+    - The hidden-route operational view directly reports exact unwanted Aggregate
+      172.17.0.0/16 retained but inactive after its active static contributor is rejected.
+    - The ordinary route view contains no entry for aggregate 172.17.0.0/16 while
+      the hidden view retains it; this is not a claim that the prefix vanished from
+      every RIB view.
+    - Both component statics and the exact interface-address and ping outcomes of
+      earlier stages remain true at final handover.
+    - Both distinct self-linked ports remain administrative and operational up, and
+      diagnostic 192.0.2.1 remains reachable throughout.
+    topology:
+      nodes:
+      - id: r1
+        kind: vjunos-router
+        role: Router-local addressing and routing-policy practice
+      links:
+      - a: r1
+        b: r1
+    estimatedMinutes: 35
+    rationale: This practices exact interface addressing, static forwarding actions
+      and contributor policy on one ordinary appliance. Reading both ordinary and
+      hidden route views distinguishes policy exclusion from deletion, while preserving
+      component routes and service reachability. Existing interface-state and route-state
+      readers must prove each declared outcome directly from captured device answers,
+      with all stage targets failing at original start/reset and cumulatively passing
+      at final handover.
