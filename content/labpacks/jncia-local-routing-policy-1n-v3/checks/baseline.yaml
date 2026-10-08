@@ -1,0 +1,28 @@
+schemaVersion: 0
+checks:
+- id: b-lo
+  description: lo0.0 holds 192.0.2.1
+  device: r1
+  type: state-match
+  command: show interfaces lo0.0 terse
+  container: interface-information
+  records: interface-address
+  where:
+    ifa-local: 192.0.2.1
+- id: b-ping
+  description: r1 pings 192.0.2.1
+  device: r1
+  type: ping
+  count: 3
+  min_success_rate: 1
+  target: 192.0.2.1
+- id: b-p0
+  description: ge-0/0/0 is up
+  device: r1
+  type: interface-up
+  interface: ge-0/0/0
+- id: b-p1
+  description: ge-0/0/1 is up
+  device: r1
+  type: interface-up
+  interface: ge-0/0/1

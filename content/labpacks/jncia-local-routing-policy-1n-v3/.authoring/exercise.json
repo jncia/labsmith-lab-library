@@ -1,0 +1,364 @@
+{
+  "baselineChecks": [
+    {
+      "command": "show interfaces lo0.0 terse",
+      "container": "interface-information",
+      "description": "lo0.0 holds 192.0.2.1",
+      "device": "r1",
+      "id": "b-lo",
+      "records": "interface-address",
+      "type": "state-match",
+      "where": {
+        "ifa-local": "192.0.2.1"
+      }
+    },
+    {
+      "count": 3,
+      "description": "r1 pings 192.0.2.1",
+      "device": "r1",
+      "id": "b-ping",
+      "min_success_rate": 1,
+      "target": "192.0.2.1",
+      "type": "ping"
+    },
+    {
+      "description": "ge-0/0/0 is up",
+      "device": "r1",
+      "id": "b-p0",
+      "interface": "ge-0/0/0",
+      "type": "interface-up"
+    },
+    {
+      "description": "ge-0/0/1 is up",
+      "device": "r1",
+      "id": "b-p1",
+      "interface": "ge-0/0/1",
+      "type": "interface-up"
+    }
+  ],
+  "briefId": "jncia-local-routing-policy-1n-v3",
+  "labType": "build",
+  "provenance": {
+    "checksUntestedAtStart": [],
+    "derived": [
+      "startState.configs",
+      "stages[].solution",
+      "topology",
+      "provenance"
+    ],
+    "engineerModel": "claude-sonnet-5-5",
+    "runId": "a1008o12",
+    "snapshots": {
+      "s1": "224d79503f3d6d27939db5d5368c8cee0ef5dd48a22e262b2bfc5875eec8c3db",
+      "s2": "706273aa24a50217ca92e0c86bcb5fe7d184b57bc0f51efbe240a39fd66786a4",
+      "s3": "a53701f9dbaaf4130f724b1ea03e179a047a272770f3eb6c459242cc9960cf55",
+      "start": "a8670cdf6529a2b9c08924e8ed33bdd1174355da041a45cd87f54c750edb9c6f"
+    }
+  },
+  "referenceTables": [
+    {
+      "columns": [
+        "Item",
+        "Value"
+      ],
+      "rows": [
+        [
+          "Service address",
+          "192.0.2.2/24 on ge-0/0/0.0"
+        ],
+        [
+          "Discard route",
+          "172.16.10.0/24"
+        ],
+        [
+          "Reject route",
+          "172.17.10.0/24"
+        ],
+        [
+          "Approved aggregate",
+          "172.16.0.0/16, contributor 172.16.10.0/24"
+        ],
+        [
+          "Unwanted aggregate",
+          "172.17.0.0/16, contributor 172.17.10.0/24 rejected"
+        ]
+      ],
+      "title": "Design values"
+    },
+    {
+      "columns": [
+        "Prefix",
+        "Role",
+        "Expected"
+      ],
+      "rows": [
+        [
+          "192.0.2.0/24",
+          "Direct subnet",
+          "Direct"
+        ],
+        [
+          "172.16.10.0/24",
+          "Static",
+          "discard"
+        ],
+        [
+          "172.17.10.0/24",
+          "Static",
+          "reject"
+        ],
+        [
+          "172.16.0.0/16",
+          "Aggregate",
+          "active"
+        ],
+        [
+          "172.17.0.0/16",
+          "Aggregate",
+          "hidden"
+        ]
+      ],
+      "title": "Planned prefixes"
+    }
+  ],
+  "scenario": "r1 has two ports wired together and a diagnostic loopback 192.0.2.1/32 on lo0.0. An aggregate 172.17.0.0/16 is already defined as passive and is active in the ordinary route view. Build a service endpoint, two planned static routes, and aggregates where only the approved contributor is accepted.",
+  "schemaVersion": 0,
+  "stages": [
+    {
+      "checks": [
+        {
+          "command": "show interfaces ge-0/0/0.0 terse",
+          "container": "interface-information",
+          "description": "ge-0/0/0.0 carries 192.0.2.2/24",
+          "device": "r1",
+          "id": "s1-if",
+          "records": "interface-address",
+          "type": "state-match",
+          "where": {
+            "ifa-local": "192.0.2.2/24"
+          }
+        },
+        {
+          "description": "Direct route 192.0.2.0/24",
+          "device": "r1",
+          "id": "s1-rt",
+          "prefix": "192.0.2.0/24",
+          "protocol": "Direct",
+          "table": "inet.0",
+          "type": "route-exists"
+        },
+        {
+          "count": 3,
+          "description": "r1 pings 192.0.2.2",
+          "device": "r1",
+          "id": "s1-ping",
+          "min_success_rate": 1,
+          "target": "192.0.2.2",
+          "type": "ping"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Using /32 or the wrong port",
+          "recognise": "The address shows on ge-0/0/1.0 or with /32 in the interface readback",
+          "symptom": "No Direct 192.0.2.0/24 route"
+        }
+      ],
+      "doneWhen": [
+        "Operational state shows 192.0.2.2/24 on ge-0/0/0.0.",
+        "inet.0 has an active Direct route 192.0.2.0/24.",
+        "r1 pings 192.0.2.2."
+      ],
+      "explanation": [
+        "The interface readback shows the address and mask on the named unit.",
+        "The Direct route is derived from that mask and the ping then succeeds locally."
+      ],
+      "goal": "Give r1 a service endpoint on its first wired port so that the local subnet is connected and reachable.",
+      "hint": "Check the interface readback for the unit, address and mask.",
+      "id": "s1",
+      "solution": {
+        "r1": [
+          "set interfaces ge-0/0/0 unit 0 family inet address 192.0.2.2/24"
+        ]
+      },
+      "title": "Establish the exact local service endpoint"
+    },
+    {
+      "checks": [
+        {
+          "command": "show route 172.16.10.0/24 exact",
+          "container": "route-information",
+          "description": "172.16.10.0/24 active static discard",
+          "device": "r1",
+          "id": "s2-d-rt",
+          "records": "rt-entry",
+          "type": "state-match",
+          "where": {
+            "active-tag": "*",
+            "nh-type": "Discard",
+            "protocol-name": "Static"
+          }
+        },
+        {
+          "command": "show route 172.17.10.0/24 exact",
+          "container": "route-information",
+          "description": "172.17.10.0/24 active static reject",
+          "device": "r1",
+          "id": "s2-r-rt",
+          "records": "rt-entry",
+          "type": "state-match",
+          "where": {
+            "active-tag": "*",
+            "nh-type": "Reject",
+            "protocol-name": "Static"
+          }
+        },
+        {
+          "description": "discard forwarding entry",
+          "device": "r1",
+          "id": "s2-d-fw",
+          "next_hop_type": "dscd",
+          "prefix": "172.16.10.0/24",
+          "type": "forwarding-table-entry"
+        },
+        {
+          "description": "reject forwarding entry",
+          "device": "r1",
+          "id": "s2-r-fw",
+          "next_hop_type": "rjct",
+          "prefix": "172.17.10.0/24",
+          "type": "forwarding-table-entry"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Swapping discard and reject",
+          "recognise": "dscd appears where rjct is expected or the reverse",
+          "symptom": "Forwarding entry type is swapped"
+        }
+      ],
+      "doneWhen": [
+        "172.16.10.0/24 is active Static with a discard next hop and a discard forwarding entry.",
+        "172.17.10.0/24 is active Static with a reject next hop and a reject forwarding entry."
+      ],
+      "explanation": [
+        "Discard drops silently; reject drops and returns an unreachable.",
+        "The route view and forwarding table show Discard/dscd and Reject/rjct."
+      ],
+      "goal": "Create the two planned networks as local static routes that drop traffic in two different ways.",
+      "hint": "One drops silently, the other signals unreachable.",
+      "id": "s2",
+      "solution": {
+        "r1": [
+          "set routing-options static route 172.16.10.0/24 discard",
+          "set routing-options static route 172.17.10.0/24 reject"
+        ]
+      },
+      "title": "Represent the two planned networks"
+    },
+    {
+      "checks": [
+        {
+          "command": "show route 172.16.0.0/16 exact",
+          "container": "route-information",
+          "description": "172.16.0.0/16 active Aggregate",
+          "device": "r1",
+          "id": "s3-agg",
+          "records": "rt-entry",
+          "type": "state-match",
+          "where": {
+            "active-tag": "*",
+            "protocol-name": "Aggregate"
+          }
+        },
+        {
+          "command": "show route hidden 172.17.0.0/16 exact",
+          "container": "route-information",
+          "description": "172.17.0.0/16 Aggregate retained in hidden view",
+          "device": "r1",
+          "id": "s3-hid",
+          "records": "rt-entry",
+          "type": "state-match",
+          "where": {
+            "protocol-name": "Aggregate"
+          }
+        },
+        {
+          "command": "show route 172.17.0.0/16 exact",
+          "container": "route-information",
+          "description": "172.17.0.0/16 absent from the ordinary view",
+          "device": "r1",
+          "id": "s3-ord",
+          "negate": true,
+          "records": "rt-entry",
+          "type": "state-match",
+          "where": {
+            "protocol-name": "Aggregate"
+          }
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Leaving the passive setting on 172.17.0.0/16",
+          "recognise": "show route 172.17.0.0/16 exact still lists the Aggregate",
+          "symptom": "172.17.0.0/16 stays active in the ordinary view"
+        }
+      ],
+      "doneWhen": [
+        "172.16.0.0/16 is an active Aggregate.",
+        "172.17.0.0/16 appears as Aggregate in the hidden view only, not in the ordinary view."
+      ],
+      "explanation": [
+        "The aggregate policy accepts only the exact approved contributor and rejects the rest.",
+        "With no accepted contributor, and the passive setting removed, 172.17.0.0/16 stays in the hidden view, so it is excluded by policy, not deleted."
+      ],
+      "goal": "Use policy so only the 172.16.10.0/24 contributor builds an aggregate 172.16.0.0/16; the 172.17.0.0/16 aggregate must stay defined but be inactive and hidden.",
+      "hint": "An aggregate with no accepted contributor is kept hidden; the passive setting keeps it active regardless.",
+      "id": "s3",
+      "solution": {
+        "r1": [
+          "delete routing-options aggregate route 172.17.0.0/16 passive",
+          "set policy-options policy-statement AGG-CONTRIB term approved from route-filter 172.16.10.0/24 exact",
+          "set policy-options policy-statement AGG-CONTRIB term approved then accept",
+          "set policy-options policy-statement AGG-CONTRIB term rest then reject",
+          "set routing-options aggregate route 172.16.0.0/16 policy AGG-CONTRIB",
+          "set routing-options aggregate route 172.17.0.0/16 policy AGG-CONTRIB"
+        ]
+      },
+      "title": "Distinguish rejected contribution from route deletion"
+    }
+  ],
+  "startState": {
+    "configs": {
+      "r1": [
+        "set system host-name r1",
+        "set interfaces lo0 unit 0 family inet address 192.0.2.1/32",
+        "set routing-options aggregate route 172.17.0.0/16 passive"
+      ]
+    },
+    "description": "r1 has ge-0/0/0 and ge-0/0/1 up/up, joined by a self-link, and lo0.0 holds 192.0.2.1/32. Aggregate 172.17.0.0/16 is defined as passive and is active in the ordinary route view. Nothing else is configured."
+  },
+  "summary": "Add a service address, two static routes and aggregate contributor policy on one router.",
+  "title": "Interface Addressing, Static Routes, and Contributor Policy",
+  "topology": {
+    "links": [
+      {
+        "a": {
+          "interface": "ge-0/0/0",
+          "node": "r1"
+        },
+        "b": {
+          "interface": "ge-0/0/1",
+          "node": "r1"
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "id": "r1",
+        "kind": "vjunos-router",
+        "role": "Router-local addressing and routing-policy practice"
+      }
+    ]
+  }
+}

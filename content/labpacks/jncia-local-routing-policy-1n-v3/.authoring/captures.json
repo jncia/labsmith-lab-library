@@ -1,0 +1,97 @@
+{
+  "baseline": [
+    {
+      "checkId": "b-lo",
+      "command": "show interfaces lo0.0 terse",
+      "node": "r1",
+      "output": "Interface               Admin Link Proto    Local                 Remote\nlo0.0                   up    up   inet     192.0.2.1           --> 0/0\n"
+    },
+    {
+      "checkId": "b-ping",
+      "command": "ping 192.0.2.1 count 3",
+      "node": "r1",
+      "output": "PING 192.0.2.1 (192.0.2.1): 56 data bytes\n<counter> bytes from 192.0.2.1: icmp_seq=0 ttl=64 time=0.126 ms\n<counter> bytes from 192.0.2.1: icmp_seq=1 ttl=64 time=0.063 ms\n<counter> bytes from 192.0.2.1: icmp_seq=2 ttl=64 time=0.109 ms\n\n--- 192.0.2.1 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 0.063/0.099/0.126/0.027 ms\n"
+    },
+    {
+      "checkId": "b-p0",
+      "command": "show interfaces ge-0/0/0 terse",
+      "node": "r1",
+      "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     192.0.2.2/24\n                                   multiservice\n"
+    },
+    {
+      "checkId": "b-p1",
+      "command": "show interfaces ge-0/0/1 terse",
+      "node": "r1",
+      "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/1                up    up\nge-0/0/1.16386          up    up\n"
+    }
+  ],
+  "receiptId": "jncia-local-routing-policy-1n-v3-2026-10-08-28b7a041e5ba",
+  "stages": {
+    "s1": [
+      {
+        "checkId": "s1-if",
+        "command": "show interfaces ge-0/0/0.0 terse",
+        "node": "r1",
+        "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0.0              up    up   inet     192.0.2.2/24\n                                   multiservice\n"
+      },
+      {
+        "checkId": "s1-rt",
+        "command": "show route table inet.0 192.0.2.0/24 exact",
+        "node": "r1",
+        "output": "inet.0: 4 destinations, 4 routes (4 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n192.0.2.0/24       *[Direct/0] <age>\n                    >  via ge-0/0/0.0\n"
+      },
+      {
+        "checkId": "s1-ping",
+        "command": "ping 192.0.2.2 count 3",
+        "node": "r1",
+        "output": "PING 192.0.2.2 (192.0.2.2): 56 data bytes\n<counter> bytes from 192.0.2.2: icmp_seq=0 ttl=64 time=0.042 ms\n<counter> bytes from 192.0.2.2: icmp_seq=1 ttl=64 time=0.036 ms\n<counter> bytes from 192.0.2.2: icmp_seq=2 ttl=64 time=0.108 ms\n\n--- 192.0.2.2 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 0.036/0.062/0.108/0.033 ms\n"
+      }
+    ],
+    "s2": [
+      {
+        "checkId": "s2-d-rt",
+        "command": "show route 172.16.10.0/24 exact",
+        "node": "r1",
+        "output": "inet.0: 6 destinations, 6 routes (6 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n172.16.10.0/24     *[Static/5] <age>\n                       Discard\n"
+      },
+      {
+        "checkId": "s2-r-rt",
+        "command": "show route 172.17.10.0/24 exact",
+        "node": "r1",
+        "output": "inet.0: 6 destinations, 6 routes (6 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n172.17.10.0/24     *[Static/5] <age>\n                       Reject\n"
+      },
+      {
+        "checkId": "s2-d-fw",
+        "command": "show route forwarding-table destination 172.16.10.0/24 table default",
+        "node": "r1",
+        "output": "Routing table: default.inet\nInternet:\nDestination        Type RtRef Next hop           Type Index    NhRef Netif\n172.16.10.0/24     user     0                    dscd       34     2\n"
+      },
+      {
+        "checkId": "s2-r-fw",
+        "command": "show route forwarding-table destination 172.17.10.0/24 table default",
+        "node": "r1",
+        "output": "Routing table: default.inet\nInternet:\nDestination        Type RtRef Next hop           Type Index    NhRef Netif\n172.17.10.0/24     user     0                    rjct       36     3\n"
+      }
+    ],
+    "s3": [
+      {
+        "checkId": "s3-agg",
+        "command": "show route 172.16.0.0/16 exact",
+        "node": "r1",
+        "output": "inet.0: 7 destinations, 7 routes (6 active, 0 holddown, 1 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n172.16.0.0/16      *[Aggregate/130] <age>\n                       Reject\n"
+      },
+      {
+        "checkId": "s3-hid",
+        "command": "show route hidden 172.17.0.0/16 exact",
+        "node": "r1",
+        "output": "inet.0: 7 destinations, 7 routes (6 active, 0 holddown, 1 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n172.17.0.0/16       [Aggregate] <age>\n                       Reject\n"
+      },
+      {
+        "checkId": "s3-ord",
+        "command": "show route 172.17.0.0/16 exact",
+        "node": "r1",
+        "output": "inet.0: 7 destinations, 7 routes (6 active, 0 holddown, 1 hidden)\n"
+      }
+    ]
+  }
+}

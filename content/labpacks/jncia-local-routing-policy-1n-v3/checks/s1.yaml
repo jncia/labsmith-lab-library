@@ -1,0 +1,25 @@
+schemaVersion: 0
+checks:
+- id: s1-if
+  description: ge-0/0/0.0 carries 192.0.2.2/24
+  device: r1
+  type: state-match
+  command: show interfaces ge-0/0/0.0 terse
+  container: interface-information
+  records: interface-address
+  where:
+    ifa-local: 192.0.2.2/24
+- id: s1-rt
+  description: Direct route 192.0.2.0/24
+  device: r1
+  type: route-exists
+  prefix: 192.0.2.0/24
+  protocol: Direct
+  table: inet.0
+- id: s1-ping
+  description: r1 pings 192.0.2.2
+  device: r1
+  type: ping
+  count: 3
+  min_success_rate: 1
+  target: 192.0.2.2

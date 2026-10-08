@@ -1,0 +1,83 @@
+{
+  "reviewVersion": 2,
+  "reviewedAtUtc": "2026-10-08T23:25:50.354811+00:00",
+  "packetId": "jncia-local-routing-policy-1n-v3",
+  "nativeRunId": "a1008o12",
+  "nativePublicationCommit": "c306d3af0767afda74995dcccc956dc778504520",
+  "priorReviewedPublicationCommit": "c05114987912fc5dd3c234ad095606f7d29d362f",
+  "qualificationReceiptId": "jncia-local-routing-policy-1n-v3-2026-10-08-b7f4bbac9fba",
+  "qualifiedContentHash": "b7f4bbac9fba151d19f9574cd74b1bf6439fefcb34fe4c93f80ef198265aeda4",
+  "contentHashUnchanged": true,
+  "launcherRefs": {
+    "candidate": "be96c4385e93e3e146473f2fbeb95b709067d163",
+    "main": "baf20792ccc107d33edc9e5a9cd55966870c33cf"
+  },
+  "launcherSourceFileSha256": {
+    "candidate": {
+      "src/labpack/actions.py": "bafc49e36a014869132395beb27332dbab784878cdca5fa76d05d5a9d564cef0",
+      "src/labpack/ui/static/app.js": "dbb301675a4761fa6bf26179133a574a68904101e572fccca3cad7b7068fd128"
+    },
+    "main": {
+      "src/labpack/actions.py": "bafc49e36a014869132395beb27332dbab784878cdca5fa76d05d5a9d564cef0",
+      "src/labpack/ui/static/app.js": "dbb301675a4761fa6bf26179133a574a68904101e572fccca3cad7b7068fd128"
+    }
+  },
+  "finding": {
+    "defaultOrUiCheckAtFreshStart": "baseline only when no current stage is recorded",
+    "explicitNamedCheck": "only that stage; baseline and prior stages are separate",
+    "allCheck": "baseline plus every stage",
+    "dropdown": "does not advance saved current stage",
+    "goAction": "resets lab and applies earlier stage answers",
+    "completionFlag": "no completion flag is established by a named check"
+  },
+  "workbookGuidanceAdded": "After each stage, require `labpack check baseline` and every completed stage's named check to pass: `labpack check s1` after stage 1; both `labpack check s1` and `labpack check s2` after stage 2; and `labpack check s1`, `labpack check s2` and `labpack check s3` after stage 3. Finish with `labpack check --all` and require all results to pass. A named stage check covers only that stage. After a fresh start, `labpack check` and the UI's \u201cCheck this stage\u201d can check baseline only; choosing a stage in the dropdown does not advance the saved stage. The UI's \u201cGo\u201d action resets the lab and applies earlier answers.",
+  "changedFiles": [
+    "workbook.md"
+  ],
+  "beforeFileSha256": {
+    "workbook.md": "f9dcc3e379d5868b84349af5f7b34f7bd216ec852be28088a1c54c2898d2f6c1"
+  },
+  "afterFileSha256": {
+    "workbook.md": "ef53ef83bb68227331a172340be5c1ff945d82f53b6f415d91c2039483ddd26e"
+  },
+  "configsChecksTopologyReferenceSolutionsMetadataRawAuthoringAndExistingProseReviewUnchanged": true,
+  "allExistingFileSha256": {
+    ".authoring/REVIEW.md": "471b5b69ac5ff7c155f1a9e5d31adc956404202e4f528c9e65744c50731e9135",
+    ".authoring/brief.json": "d48671f3c2a311240c339e2b3d806bed4b36d18ff7fd3f1b31377f8db8a6588a",
+    ".authoring/captures.json": "aac2c10d9081250cd4a91f22a261cab7e2030262bfe989ea5f87639f77bc2c6e",
+    ".authoring/exercise.json": "f1f8f61d2a758fcbcd7b0e17e596fc37dbe8fea3b1954da43bc3551fc23ae2b8",
+    ".authoring/owner-prose-review.json": "a60c6f65bd488239b3f7b929d1d93e3aa4ad64315801d412e077f1d5b40cf79a",
+    ".authoring/prose.json": "7009a3465531c5fd1f1981fbe8f8603cf7b7e6509c10fb74f1596a94bb640bef",
+    ".authoring/run-record.json": "96e064dfbf4f28b7d72c1b6898144dccf949305458fe5fcca6caf580030a9cc0",
+    "checks/baseline.yaml": "f8dc6d11b92adfd385196e7eb51516fe03a477bb5dad75d46a348e01bfdf9ff0",
+    "checks/s1.yaml": "c5f3b928fc02facfed2d26a9f099411258662cac8c9ac26bf44560317c4a9ebc",
+    "checks/s2.yaml": "c9ed05b598a88f23cdeadb6034fb4ace75329ce501e280f974c407b2c68cddfc",
+    "checks/s3.yaml": "1fe73635436d87bda492f7ac9a802da7e96a20b72e4c67e2cdff95fcd5ca1d8c",
+    "configs/r1.cfg": "57f3a50e320b74a10eeab46ae17882f5fe2a3fba4aebfb6fd7d50bbebe679d6d",
+    "configs/r1.set": "bc85b7f48ade2959eb7d3842b06d459355c72d731992e04dd2267599d9cc3740",
+    "diagram.svg": "4e3f889ef21225dc5c88458147398ef91d70bf54771a914de86759d32f07413c",
+    "lab.yaml": "3d1292276e8c4a9265e5dae71fd731a014611296e1df89022dfcca6c431a9b9b",
+    "solutions.md": "66e905ada5a82dbd366f493945af01321fd2c4a35d021437c97156fe84c657e8",
+    "solutions/s1/r1.set": "31e6481cf903f754de42a7d3c076f6296378e08963fe9bc328dafb9f65e60f69",
+    "solutions/s2/r1.set": "315f5bcbe0c2f65321c66da41a9713f630fff089cdf60420040c2845d71afcb7",
+    "solutions/s3/r1.set": "62206db2d93939e400597ac26294dd1579a811d104bf4831536fe2535d8bd65c",
+    "topology.clab.yml": "f7f62dfbd1952e62ee0519675bde8027957d1bd23ecbe5e654532172807cb51d",
+    "workbook.md": "f9dcc3e379d5868b84349af5f7b34f7bd216ec852be28088a1c54c2898d2f6c1"
+  },
+  "allExistingFencedBlocksUnchanged": true,
+  "fencedBlockCounts": {
+    "workbook.md": 0,
+    "solutions.md": 17
+  },
+  "newCapturedOrConfigurationFences": 0,
+  "authority": "Owner-approved prose-only checking guidance after qualified native completion; format v0 excludes workbook wording from qualification hashing.",
+  "hostCalls": 0,
+  "modelCalls": 0,
+  "clientEdits": 0,
+  "unrunLive": [
+    "isolated wrong-mask trial",
+    "isolated wrong-port trial",
+    "native Windows runtime",
+    "extra live validation of checking guidance"
+  ]
+}

@@ -1,0 +1,121 @@
+schemaVersion: 0
+queueId: jncia-single-router-v3-20261008
+blueprint:
+  credentialName: JNCIA-Junos
+  examCode: JN0-106
+  sourceFile: official-blueprint.json
+  sourceSha256: e802a5ef10d25465bd9abdba7ab0f1f5d21e05f737a9a626a5211201eb0554b5
+generated:
+  at: '2026-10-08T22:03:07.802727+00:00'
+  model: owner-seed
+  costUsd: 0
+  promptSha256: null
+  ownerNote: Additive fresh brief after a1008zoh completed native qualification and
+    clean teardown. Original and v2 packets, receipts and branches remain unchanged;
+    learner review found misleading proof wording. Exact physical /24 observation
+    and isolated alternative trials use the same native loop, Sonnet model and check
+    vocabulary. No packet hand repair.
+entries:
+- status: approved
+  priority: 10
+  model: claude-sonnet-5-5
+  ownerNote: Approved within the existing first-packet task after a1008zoh completed
+    qualification and clean teardown. Fresh physical /24 brief fixes misleading proof
+    wording through native authoring; same model, prompts, check vocabulary and qualifier,
+    no hand packet repair.
+  brief:
+    schemaVersion: 0
+    id: jncia-local-routing-policy-1n-v3
+    title: Interface Addressing, Static Routes, and Contributor Policy
+    labType: build
+    level: associate
+    certifications:
+    - JNCIA-Junos
+    blueprint:
+      examCode: JN0-106
+      objectives:
+      - OBJ-1-5
+      - OBJ-5-1
+      - OBJ-5-4
+      - OBJ-6-2
+      - OBJ-6-6
+      - OBJ-7-3
+      - OBJ-7-4
+      - OBJ-7-5
+      - OBJ-7-6
+    topics:
+    - interface and loopback addressing
+    - static discard and reject routes
+    - routing policy terms
+    - aggregate contributor policy
+    - active and hidden route views
+    - operational verification
+    scenario: You are preparing one ordinary router for a small local routing exercise.
+      Two data ports are joined by a same-router wire, with no second node or logical
+      system. Keep the diagnostic loopback, add a service endpoint on the first wired
+      interface and two planned static routes, then admit the approved aggregate contributor
+      while rejecting the other. Keep the rejected aggregate as a hidden, inactive
+      route so you can distinguish policy exclusion from deleting its definition.
+    learnerOutcome: Verify exact 192.0.2.2/24 on ge-0/0/0.0 directly from operational
+      interface state and its measured Direct subnet route, distinguish static discard
+      and reject actions, and use routing policy to activate an approved aggregate
+      while retaining an unwanted aggregate as hidden rather than installed.
+    startStateSketch: One initialized vJunos-router r1 has one same-router link between
+      distinct host-assigned data ports, already up/up, with no other nodes or logical
+      systems. Diagnostic 192.0.2.1/32 remains on lo0.0. Service 192.0.2.2/24 on ge-0/0/0.0,
+      Direct subnet 192.0.2.0/24, statics 172.16.10.0/24 and 172.17.10.0/24, and aggregate
+      172.16.0.0/16 are absent. Unwanted aggregate 172.17.0.0/16 is passive, active
+      in the ordinary route view, and absent from the hidden view. All stage checks
+      evaluate false at this original start and reset; healthy port up/up is baseline,
+      not an independent stage check. A stable discard property on the unwanted summary
+      is optional if native derivation needs it, without making a stage check pass
+      at start.
+    stageSketch:
+    - title: Establish the exact local service endpoint
+      achieves: Done when operational interface state reports 192.0.2.2/24 on ge-0/0/0.0,
+        inet.0 has measured active Direct 192.0.2.0/24, and r1 pings the service address.
+        Route or ping alone does not prove the interface or mask.
+    - title: Represent the two planned networks
+      achieves: Done when 172.16.10.0/24 is an active Static discard route and 172.17.10.0/24
+        an active Static reject route, with their forwarding actions verified and
+        the earlier endpoint outcome preserved.
+    - title: Distinguish rejected contribution from route deletion
+      achieves: Done when 172.16.0.0/16 is active Aggregate, 172.17.0.0/16 remains
+        an exact Aggregate in the hidden view and is absent from the ordinary route
+        view, and both statics and the exact endpoint remain.
+    observableOutcomes:
+    - Operational interface state directly identifies ge-0/0/0.0 with exactly 192.0.2.2/24;
+      a different interface or configured mask does not satisfy this outcome.
+    - inet.0 contains exact active 192.0.2.0/24 with its native Direct protocol measured
+      from route state, and r1 successfully pings 192.0.2.2.
+    - 172.16.10.0/24 is active Static with discard next hop, and its forwarding entry
+      has the measured discard action.
+    - 172.17.10.0/24 is active Static with reject next hop, and its forwarding entry
+      has the measured reject action.
+    - 172.16.0.0/16 is an active Aggregate after its exact approved contributor is
+      accepted.
+    - The hidden-route operational view directly reports exact unwanted Aggregate
+      172.17.0.0/16 retained but inactive after its active static contributor is rejected.
+    - The ordinary route view contains no entry for aggregate 172.17.0.0/16 while
+      the hidden view retains it; this is not a claim that the prefix vanished from
+      every RIB view.
+    - Both component statics and the exact interface-address and ping outcomes of
+      earlier stages remain true at final handover.
+    - Both distinct self-linked ports remain administrative and operational up as
+      baseline health, and diagnostic 192.0.2.1/32 remains on lo0.0 and reachable
+      throughout.
+    topology:
+      nodes:
+      - id: r1
+        kind: vjunos-router
+        role: Router-local addressing and routing-policy practice
+      links:
+      - a: r1
+        b: r1
+    estimatedMinutes: 35
+    rationale: 'Use the physical-interface address/prefix readback and connected route
+      to distinguish mask and placement. Before submission, measure two isolated alternatives
+      with existing tools: service 192.0.2.2/32 on ge-0/0/0.0, and 192.0.2.2/24 on
+      ge-0/0/1.0. Restore the intended state after each trial. Explain which interface
+      and route fields changed; do not claim route or ping alone identifies the interface.
+      Ordinary and hidden route views distinguish policy exclusion from deletion.'
