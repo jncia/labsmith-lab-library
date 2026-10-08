@@ -1,0 +1,122 @@
+{
+  "solutions": {
+    "intro": "All work is on r1. Apply each stage's configuration in configuration mode and commit. The stages build on each other, so keep the earlier configuration in place.",
+    "stages": [
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Wrong mask or wrong unit",
+            "recognise": "show route for 192.0.2.2 returns nothing and the ping fails.",
+            "symptom": "There is no 192.0.2.2/32 route in inet.0"
+          }
+        ],
+        "configurationIntro": "Add the address under lo0 unit 0 on r1, next to 192.0.2.1/32, then commit.",
+        "id": "s1",
+        "verification": [
+          {
+            "checkId": "s1-route",
+            "lookFor": "The route for 192.0.2.2/32 is Direct, via lo0.0. This shows the address is configured on the loopback and installed in inet.0."
+          },
+          {
+            "checkId": "s1-ping",
+            "lookFor": "Three replies and 0% packet loss. The router answers for its own address locally."
+          }
+        ],
+        "whyItWorks": "A /32 on lo0.0 gives inet.0 a Direct route via lo0.0, as the route output shows. The ping succeeds because the destination is local to r1."
+      },
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Swapping discard and reject",
+            "recognise": "show route shows Discard on 172.17.10.0/24.",
+            "symptom": "The next hop types are reversed"
+          }
+        ],
+        "configurationIntro": "Under routing-options on r1, define the two static routes and commit. 172.16.10.0/24 gets discard and 172.17.10.0/24 gets reject.",
+        "id": "s2",
+        "verification": [
+          {
+            "checkId": "s2-disc",
+            "lookFor": "The forwarding entry for 172.16.10.0/24 has next hop type dscd, so matching traffic is silently dropped."
+          },
+          {
+            "checkId": "s2-rej",
+            "lookFor": "The forwarding entry for 172.17.10.0/24 has next hop type rjct, so matching traffic is dropped and the sender is told."
+          },
+          {
+            "checkId": "s2-r1",
+            "lookFor": "172.16.10.0/24 is an active Static route with Discard as its next hop."
+          },
+          {
+            "checkId": "s2-r2",
+            "lookFor": "172.17.10.0/24 is an active Static route with Reject as its next hop."
+          }
+        ],
+        "whyItWorks": "The routing table shows both prefixes as Static, one with Discard and one with Reject. The forwarding table carries the same actions as dscd and rjct, so the control plane and forwarding plane agree."
+      },
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Reject term placed before the accept term",
+            "recognise": "show route protocol aggregate lacks 172.16.0.0/16.",
+            "symptom": "172.16.0.0/16 never becomes active"
+          },
+          {
+            "mistake": "Leaving passive on 172.17.0.0/16",
+            "recognise": "show route 172.17.0.0/16 shows Aggregate with Reject.",
+            "symptom": "172.17.0.0/16 is still present"
+          }
+        ],
+        "configurationIntro": "Configure an aggregate for 172.16.0.0/16 and a policy for its contributors, then remove the passive property from the 172.17.0.0/16 aggregate. Commit on r1.",
+        "id": "s3",
+        "verification": [
+          {
+            "checkId": "s3-agg",
+            "lookFor": "172.16.0.0/16 is an active Aggregate route with a Reject next hop. This shows the approved contributor feeds it."
+          },
+          {
+            "checkId": "s3-noagg",
+            "lookFor": "The output contains only the table header and no route. 172.17.0.0/16 is gone from inet.0."
+          }
+        ],
+        "whyItWorks": "The policy accepts only 172.16.10.0/24 into the 172.16.0.0/16 aggregate and rejects every other route, so that aggregate has a contributor and becomes active. 172.17.0.0/16 has no contributor, and without the passive property it is no longer installed. The 172.17.10.0/24 static route is still present, as the stage 2 checks show."
+      }
+    ]
+  },
+  "summary": "On a single router, r1, you add a second loopback endpoint, create discard and reject static routes for two planned networks, and use an aggregate contributor policy so that only 172.16.0.0/16 is active and 172.17.0.0/16 disappears.",
+  "workbook": {
+    "closing": "When all three stages pass, r1 holds one approved active summary and nothing for the other.",
+    "scenario": "You run r1, a single router whose two data ports, ge-0/0/0 and ge-0/0/1, are cabled to each other. The diagnostic loopback 192.0.2.1/32 works. Two networks are planned, 172.16.10.0/24 and 172.17.10.0/24, and only the 172.16.0.0/16 summary is approved for use. You are asked to add a second service endpoint, represent the two planned networks locally, and control the aggregates so that the approved summary is active and the other one is gone.",
+    "stages": [
+      {
+        "doneWhen": [
+          "lo0.0 carries 192.0.2.2/32 and inet.0 has a route for it",
+          "r1 pings 192.0.2.2 with no loss"
+        ],
+        "goal": "Give r1 the service address 192.0.2.2/32 on lo0.0, alongside the existing diagnostic 192.0.2.1.",
+        "hint": "A /32 on the loopback creates its own local route. Check the mask and the unit.",
+        "id": "s1"
+      },
+      {
+        "doneWhen": [
+          "172.16.10.0/24 is an active Static route in inet.0 and its forwarding entry is a discard",
+          "172.17.10.0/24 is an active Static route in inet.0 and its forwarding entry is a reject"
+        ],
+        "goal": "Create local routes for 172.16.10.0/24 with a discard next hop and 172.17.10.0/24 with a reject next hop. Neither needs a gateway.",
+        "hint": "Static routes can point at a next-hop action instead of a neighbour. Decide which action belongs to which prefix before you type anything.",
+        "id": "s2"
+      },
+      {
+        "doneWhen": [
+          "172.16.0.0/16 is an active Aggregate route in inet.0",
+          "inet.0 has no route for 172.17.0.0/16",
+          "Both static routes and 192.0.2.2 still work"
+        ],
+        "goal": "Make 172.16.0.0/16 an active aggregate whose only contributor is the exact approved route 172.16.10.0/24. Make 172.17.0.0/16 absent from inet.0. Keep both static routes and 192.0.2.2 working.",
+        "hint": "Think of an ordered policy: accept the one exact route you approve, then reject everything else. Then ask what keeps a contributor-less summary alive, and remove it.",
+        "id": "s3"
+      }
+    ],
+    "startState": "r1 already has ge-0/0/0 and ge-0/0/1 up/up and lo0.0 carrying 192.0.2.1/32. An aggregate for 172.17.0.0/16 is configured and retained with the passive property. The address 192.0.2.2/32, both static routes and the 172.16.0.0/16 aggregate do not exist yet. Leave the interfaces and the diagnostic address alone."
+  }
+}

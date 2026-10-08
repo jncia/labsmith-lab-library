@@ -1,0 +1,260 @@
+{
+  "briefHash": "sha256:a8171f49c5481bc0d06c37df664fa9fb3f260000d9bab19de6ba6da637fb197b",
+  "briefId": "jncia-local-routing-policy-1n",
+  "cost": {
+    "byModel": {
+      "claude-sonnet-5-5": {
+        "cacheCreationInputTokens": 50137,
+        "cacheReadInputTokens": 407572,
+        "inputTokens": 42,
+        "outputTokens": 20319,
+        "usd": 0.485337
+      }
+    },
+    "byStage": {
+      "engineer": 0.397441,
+      "writer": 0.087896
+    },
+    "costKnown": true,
+    "totalUsd": 0.485337
+  },
+  "deferReason": null,
+  "finishedAt": "2026-10-08T21:28:29+00:00",
+  "labs": [
+    {
+      "baseDrift": false,
+      "cleanup": {
+        "clean": true
+      },
+      "deploySeconds": 191.8,
+      "labRunId": "a1008ccne"
+    }
+  ],
+  "ledger": null,
+  "occupancyProbeFailed": false,
+  "outcome": "qualified",
+  "parkReason": null,
+  "publication": null,
+  "qualification": {
+    "contentHash": "d1b4a9732ab9f2b96a47d19df73f670e4118122c7b896533613c24b1bab0aea5",
+    "discrimination": {
+      "coupled": 0,
+      "elapsedSeconds": 241.866,
+      "name": "discrimination",
+      "noticed": 7,
+      "reason": null,
+      "skipped": 1,
+      "stages": [
+        {
+          "counts": {
+            "coupled": 0,
+            "noticed": 1,
+            "skipped": 0,
+            "unnoticed": 0
+          },
+          "elapsedSeconds": 44.219,
+          "stageId": "s1",
+          "statements": [
+            {
+              "index": 1,
+              "node": "r1",
+              "outcome": "noticed"
+            }
+          ],
+          "statementsOmitted": 0
+        },
+        {
+          "counts": {
+            "coupled": 0,
+            "noticed": 2,
+            "skipped": 0,
+            "unnoticed": 0
+          },
+          "elapsedSeconds": 35.046,
+          "stageId": "s2",
+          "statements": [
+            {
+              "index": 1,
+              "node": "r1",
+              "outcome": "noticed"
+            },
+            {
+              "index": 2,
+              "node": "r1",
+              "outcome": "noticed"
+            }
+          ],
+          "statementsOmitted": 0
+        },
+        {
+          "counts": {
+            "coupled": 0,
+            "noticed": 4,
+            "skipped": 1,
+            "unnoticed": 1
+          },
+          "elapsedSeconds": 162.601,
+          "stageId": "s3",
+          "statements": [
+            {
+              "index": 1,
+              "node": "r1",
+              "outcome": "skipped"
+            },
+            {
+              "index": 2,
+              "node": "r1",
+              "outcome": "noticed"
+            },
+            {
+              "index": 3,
+              "node": "r1",
+              "outcome": "noticed"
+            },
+            {
+              "index": 4,
+              "node": "r1",
+              "outcome": "noticed"
+            },
+            {
+              "index": 5,
+              "node": "r1",
+              "outcome": "unnoticed"
+            },
+            {
+              "index": 6,
+              "node": "r1",
+              "outcome": "noticed"
+            }
+          ],
+          "statementsOmitted": 0
+        }
+      ],
+      "statements": 8,
+      "statementsConsidered": 8,
+      "statementsOmitted": 0,
+      "status": "completed",
+      "unnoticed": 1
+    },
+    "receiptId": "jncia-local-routing-policy-1n-2026-10-08-d1b4a9732ab9",
+    "runs": [
+      {
+        "elapsedSeconds": 226.3,
+        "name": "start-state",
+        "status": "passed"
+      },
+      {
+        "elapsedSeconds": 55.2,
+        "name": "reference-solution",
+        "status": "passed"
+      },
+      {
+        "elapsedSeconds": 39.4,
+        "name": "reset",
+        "status": "passed"
+      },
+      {
+        "elapsedSeconds": 222.2,
+        "name": "learner-start",
+        "status": "passed"
+      }
+    ],
+    "seconds": 793.8,
+    "status": "passed"
+  },
+  "queueId": "jncia-single-router-20261008",
+  "rehearsals": [
+    {
+      "afterSession": 1,
+      "deadlineSeconds": 150,
+      "issues": [],
+      "repolled": false,
+      "seconds": 137.7,
+      "status": "passed"
+    }
+  ],
+  "runId": "a1008ccn",
+  "schemaVersion": 0,
+  "sessions": [
+    {
+      "call": {
+        "costUsd": 0.39744060000000003,
+        "durationMs": 173065,
+        "effort": "medium",
+        "exit": "ok",
+        "isError": false,
+        "model": "claude-sonnet-5-5",
+        "modelUsage": {
+          "claude-sonnet-5-5": {
+            "cacheCreationInputTokens": 40526,
+            "cacheReadInputTokens": 400453,
+            "canonicalModel": "claude-sonnet-5-5",
+            "contextWindow": 1000000,
+            "costBasis": "list",
+            "costUSD": 0.39744060000000003,
+            "inputTokens": 38,
+            "maxOutputTokens": 128000,
+            "outputTokens": 15517,
+            "provider": "firstParty",
+            "thinkingTokens": 1690,
+            "webSearchRequests": 0
+          }
+        },
+        "numTurns": 30,
+        "promptName": "engineer",
+        "promptSha256": "036355a759d8ea1a418ff5b67bc1a2bc58cf3aa2c53499f1b847db14aa021bb9",
+        "resultFile": "engineer-1.result.json"
+      },
+      "ended": "submitted",
+      "freeRejections": 6,
+      "kind": "engineer",
+      "labRunId": "a1008ccne",
+      "n": 1,
+      "outputChars": 33063,
+      "submissions": 1,
+      "toolCalls": 29
+    }
+  ],
+  "startedAt": "2026-10-08T21:06:15+00:00",
+  "validatorWarnings": [],
+  "versions": {
+    "claudeCode": "2.1.284 (Claude Code)",
+    "containerlab": "unknown",
+    "labsmith": "5878a61e9c5c9d8a6c2a73be113204a76a9de5ee",
+    "limits": "63c7b9a2822fcf6743e1d871c614aa882f5678a2a77cafa9a34795025cbd1c8a",
+    "prompts": {
+      "engineer": "036355a759d8ea1a418ff5b67bc1a2bc58cf3aa2c53499f1b847db14aa021bb9",
+      "writer": "a374211deb21cb5daa9997f5826468ee7367506fb1e588d1142db898ec7b5aa2"
+    }
+  },
+  "wallClockSeconds": 1334.062,
+  "writer": {
+    "attempts": 1,
+    "call": {
+      "costUsd": 0.0878958,
+      "effort": "medium",
+      "exit": "ok",
+      "isError": false,
+      "model": "claude-sonnet-5-5",
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "cacheCreationInputTokens": 9611,
+          "cacheReadInputTokens": 7119,
+          "canonicalModel": "claude-sonnet-5-5",
+          "contextWindow": 1000000,
+          "costBasis": "list",
+          "costUSD": 0.0878958,
+          "inputTokens": 4,
+          "maxOutputTokens": 128000,
+          "outputTokens": 4802,
+          "provider": "firstParty",
+          "thinkingTokens": 0,
+          "webSearchRequests": 0
+        }
+      },
+      "promptName": "writer",
+      "promptSha256": "a374211deb21cb5daa9997f5826468ee7367506fb1e588d1142db898ec7b5aa2"
+    },
+    "status": "accepted"
+  }
+}

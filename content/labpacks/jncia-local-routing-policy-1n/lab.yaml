@@ -1,0 +1,171 @@
+schemaVersion: 0
+id: jncia-local-routing-policy-1n
+title: Local Addressing, Static Routes, and Contributor Policy
+summary: On a single router, r1, you add a second loopback endpoint, create discard
+  and reject static routes for two planned networks, and use an aggregate contributor
+  policy so that only 172.16.0.0/16 is active and 172.17.0.0/16 disappears.
+labType: build
+level: associate
+certifications:
+- JNCIA-Junos
+topics:
+- loopback addressing
+- static discard and reject routes
+- routing policy terms
+- aggregate contributor policy
+- operational verification
+estimatedMinutes: 35
+nodes:
+- id: r1
+  kind: juniper_vjunosrouter
+  role: Router-local addressing and routing-policy practice
+requirements:
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  minimumFreeMemoryGb: 8
+  minimumCores: 4
+stages:
+- id: s1
+  title: Establish the local service endpoint
+  goal: Give r1 the service address 192.0.2.2/32 on lo0.0, alongside the existing
+    diagnostic 192.0.2.1.
+  doneWhen:
+  - lo0.0 carries 192.0.2.2/32 and inet.0 has a route for it
+  - r1 pings 192.0.2.2 with no loss
+- id: s2
+  title: Represent the two planned networks
+  goal: Create local routes for 172.16.10.0/24 with a discard next hop and 172.17.10.0/24
+    with a reject next hop. Neither needs a gateway.
+  doneWhen:
+  - 172.16.10.0/24 is an active Static route in inet.0 and its forwarding entry is
+    a discard
+  - 172.17.10.0/24 is an active Static route in inet.0 and its forwarding entry is
+    a reject
+- id: s3
+  title: Admit only the approved contributor
+  goal: Make 172.16.0.0/16 an active aggregate whose only contributor is the exact
+    approved route 172.16.10.0/24. Make 172.17.0.0/16 absent from inet.0. Keep both
+    static routes and 192.0.2.2 working.
+  doneWhen:
+  - 172.16.0.0/16 is an active Aggregate route in inet.0
+  - inet.0 has no route for 172.17.0.0/16
+  - Both static routes and 192.0.2.2 still work
+qualification:
+- contractVersion: labsmith.learner-labpack-qualification.v0
+  receiptId: jncia-local-routing-policy-1n-2026-10-08-d1b4a9732ab9
+  labId: jncia-local-routing-policy-1n
+  packetContentHash: d1b4a9732ab9f2b96a47d19df73f670e4118122c7b896533613c24b1bab0aea5
+  date: '2026-10-08'
+  generatedAt: '2026-10-08T21:28:29+00:00'
+  status: passed
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  toolVersions:
+    containerlab: 0.77.0
+    imageDigest: sha256:b343ea11ab9bfc9878632ba52cb910f5b147d018dc785bae337da9f7163da24d
+    labsmith: 5878a61e9c5c9d8a6c2a73be113204a76a9de5ee
+  cleanup:
+    topologyName: labpack-jncia-local-routing-policy-1n-a1008ccnq
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-10-08T21:24:42+00:00'
+    clean: true
+  learnerCleanup:
+    topologyName: labpack-jncia-local-routing-policy-1n-a1008ccnql
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-10-08T21:28:29+00:00'
+    clean: true
+  totalSeconds: 793.834
+  issues: []
+  message: null
+  discrimination:
+    name: discrimination
+    status: completed
+    reason: null
+    elapsedSeconds: 241.866
+    statements: 8
+    statementsConsidered: 8
+    statementsOmitted: 0
+    noticed: 7
+    unnoticed: 1
+    coupled: 0
+    skipped: 1
+    stages:
+    - stageId: s1
+      elapsedSeconds: 44.219
+      statementsOmitted: 0
+      counts:
+        noticed: 1
+        unnoticed: 0
+        coupled: 0
+        skipped: 0
+      statements:
+      - node: r1
+        index: 1
+        outcome: noticed
+    - stageId: s2
+      elapsedSeconds: 35.046
+      statementsOmitted: 0
+      counts:
+        noticed: 2
+        unnoticed: 0
+        coupled: 0
+        skipped: 0
+      statements:
+      - node: r1
+        index: 1
+        outcome: noticed
+      - node: r1
+        index: 2
+        outcome: noticed
+    - stageId: s3
+      elapsedSeconds: 162.601
+      statementsOmitted: 0
+      counts:
+        noticed: 4
+        unnoticed: 1
+        coupled: 0
+        skipped: 1
+      statements:
+      - node: r1
+        index: 1
+        outcome: skipped
+      - node: r1
+        index: 2
+        outcome: noticed
+      - node: r1
+        index: 3
+        outcome: noticed
+      - node: r1
+        index: 4
+        outcome: noticed
+      - node: r1
+        index: 5
+        outcome: unnoticed
+      - node: r1
+        index: 6
+        outcome: noticed
+  runs:
+  - name: start-state
+    status: passed
+    elapsedSeconds: 226.332
+  - name: reference-solution
+    status: passed
+    elapsedSeconds: 55.17
+  - name: reset
+    status: passed
+    elapsedSeconds: 39.417
+  - name: learner-start
+    status: passed
+    elapsedSeconds: 222.239

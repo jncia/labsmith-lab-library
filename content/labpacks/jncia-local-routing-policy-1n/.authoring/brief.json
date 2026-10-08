@@ -1,0 +1,74 @@
+{
+  "blueprint": {
+    "examCode": "JN0-106",
+    "objectives": [
+      "OBJ-1-5",
+      "OBJ-5-1",
+      "OBJ-5-4",
+      "OBJ-6-2",
+      "OBJ-6-6",
+      "OBJ-7-3",
+      "OBJ-7-4",
+      "OBJ-7-5",
+      "OBJ-7-6"
+    ]
+  },
+  "certifications": [
+    "JNCIA-Junos"
+  ],
+  "estimatedMinutes": 35,
+  "id": "jncia-local-routing-policy-1n",
+  "labType": "build",
+  "learnerOutcome": "Configure and verify a router-local endpoint, distinguish static discard and reject next hops in the routing table, and demonstrate how ordered routing-policy terms admit one contributor and exclude another without removing the component routes.",
+  "level": "associate",
+  "observableOutcomes": [
+    "lo0.0 reports service address 192.0.2.2/32, its local route exists in inet.0, and router-originated ping to 192.0.2.2 succeeds.",
+    "inet.0 reports active Static route 172.16.10.0/24 with a discard next hop.",
+    "inet.0 reports active Static route 172.17.10.0/24 with a reject next hop.",
+    "inet.0 reports active Aggregate route 172.16.0.0/16 after the exact approved static contributor is admitted.",
+    "inet.0 contains no route for aggregate destination 172.17.0.0/16 after passive retention is removed and the unwanted contributor is rejected.",
+    "Both component Static routes and the service endpoint remain usable after contributor policy takes effect.",
+    "Both distinct self-linked data ports report administrative and operational up throughout the exercise."
+  ],
+  "rationale": "This practices addressing, static routing, and policy on one appliance. A same-router wire provides measured ordinary appliance readiness while local operational state carries the taught outcomes. Aggregate contribution supplies a real local policy effect, without route advertisement or transit claims. Every stage check fails at original start/reset and stays true at final handover. The engineer must establish the passive-summary scaffold and accepted/rejected policy effects with native tools and snapshots before an accepted submission.",
+  "scenario": "You are preparing one ordinary router for a small local routing exercise. Two data ports are joined by a same-router wire so the appliance starts with healthy ports; no second node or logical system is present. A diagnostic loopback endpoint already works, but a second endpoint and two planned routes are missing. An unwanted summary is retained without contributors; your final policy must make only the approved summary active while keeping both component routes.",
+  "schemaVersion": 0,
+  "stageSketch": [
+    {
+      "achieves": "Done when 192.0.2.2/32 appears on lo0.0, its local route is present in inet.0, and r1 can ping that address while the diagnostic endpoint remains reachable.",
+      "title": "Establish the local service endpoint"
+    },
+    {
+      "achieves": "Done when inet.0 contains active Static routes for 172.16.10.0/24 with a discard next hop and 172.17.10.0/24 with a reject next hop, and the service endpoint still works.",
+      "title": "Represent the two planned networks"
+    },
+    {
+      "achieves": "Done when contributor policy makes 172.16.0.0/16 an active Aggregate route, 172.17.0.0/16 is absent, both component Static routes remain active, and the service endpoint still works.",
+      "title": "Admit only the approved contributor"
+    }
+  ],
+  "startStateSketch": "One initialized vJunos-router r1 has one same-router link between two distinct host-assigned data ports, already up/up with no addressing required by the exercises; there are no other nodes or logical systems. The wired ports and diagnostic endpoint 192.0.2.1/32 on lo0.0 remain healthy throughout. Service endpoint 192.0.2.2/32, static routes 172.16.10.0/24 and 172.17.10.0/24, and approved summary 172.16.0.0/16 are absent. Unwanted aggregate summary 172.17.0.0/16 is retained with its passive property, so a check requiring that summary to be absent fails at the original start.",
+  "title": "Local Addressing, Static Routes, and Contributor Policy",
+  "topics": [
+    "loopback addressing",
+    "static discard and reject routes",
+    "routing policy terms",
+    "aggregate contributor policy",
+    "operational verification"
+  ],
+  "topology": {
+    "links": [
+      {
+        "a": "r1",
+        "b": "r1"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "r1",
+        "kind": "vjunos-router",
+        "role": "Router-local addressing and routing-policy practice"
+      }
+    ]
+  }
+}
