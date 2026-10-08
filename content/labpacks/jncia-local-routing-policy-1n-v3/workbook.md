@@ -4,7 +4,7 @@ On a single router, r1, you add a service address on ge-0/0/0.0, create a discar
 
 ## Scenario
 
-You have r1, a single router whose two ports are cabled to each other. It has a diagnostic loopback address and nothing else. The team has planned two networks, 172.16.10.0/24 and 172.17.10.0/24, and wants r1 to handle them in a controlled way. One aggregate, 172.17.0.0/16, was defined earlier and shows as active in the ordinary route view, which is not what the team wants. You give r1 a service endpoint, represent the two planned networks as static routes that drop traffic differently, and make the aggregates follow the contributor rule: only the approved contributor counts.
+You have r1, a single router whose two ports are cabled to each other. It has a diagnostic loopback address. The team has planned two networks, 172.16.10.0/24 and 172.17.10.0/24, and wants r1 to handle them in a controlled way. One aggregate, 172.17.0.0/16, was defined earlier and shows as active in the ordinary route view, which is not what the team wants. You give r1 a service endpoint, represent the two planned networks as static routes that drop traffic differently, and make the aggregates follow the contributor rule: only the approved contributor counts.
 
 ## Before you start
 
@@ -86,7 +86,7 @@ The drawing and the tables above are the whole of the wiring: every node, every 
 
 ## What is already built
 
-r1 has ge-0/0/0 and ge-0/0/1 up and joined by a self-link, and lo0.0 holds 192.0.2.1/32. Aggregate 172.17.0.0/16 is defined as passive and is active in the ordinary route view. Leave the interfaces, the loopback and the link as they are. Nothing else is configured.
+r1 has ge-0/0/0 and ge-0/0/1 up and joined by a self-link, and lo0.0 holds 192.0.2.1/32. Aggregate 172.17.0.0/16 is defined as passive and is active in the ordinary route view. Keep both wired ports up and preserve the diagnostic loopback address and the self-link. Nothing else is configured.
 
 ## Stage 1 — Establish the exact local service endpoint
 

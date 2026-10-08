@@ -67,7 +67,7 @@ The readback shows 192.0.2.2/24 on ge-0/0/0.0, and the Direct route in inet.0 po
 
 | Mistake | What it produces | How to tell |
 | --- | --- | --- |
-| Using a /32 mask or putting the address on the wrong port | There is no Direct 192.0.2.0/24 route. | The readback shows the address on ge-0/0/1.0, or shows a /32 instead of 192.0.2.2/24. |
+| Using a /32 mask or putting the address on the wrong port | ge-0/0/0.0 does not report exactly 192.0.2.2/24. | Check show interfaces ge-0/0/0.0 terse for the exact address and prefix length; a subnet route or ping alone does not establish the port. |
 
 ## Stage 2 — Represent the two planned networks
 

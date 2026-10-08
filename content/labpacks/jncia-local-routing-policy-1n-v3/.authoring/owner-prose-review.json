@@ -1,0 +1,48 @@
+{
+  "reviewVersion": 1,
+  "reviewedAtUtc": "2026-10-08T22:30:17.646738+00:00",
+  "nativeRunId": "a1008o12",
+  "nativePublicationCommit": "c306d3af0767afda74995dcccc956dc778504520",
+  "qualifiedContentHash": "b7f4bbac9fba151d19f9574cd74b1bf6439fefcb34fe4c93f80ef198265aeda4",
+  "contentHashUnchanged": true,
+  "changedFiles": [
+    "solutions.md",
+    "workbook.md"
+  ],
+  "edits": {
+    "solutions.md": [
+      [
+        "| Using a /32 mask or putting the address on the wrong port | There is no Direct 192.0.2.0/24 route. | The readback shows the address on ge-0/0/1.0, or shows a /32 instead of 192.0.2.2/24. |",
+        "| Using a /32 mask or putting the address on the wrong port | ge-0/0/0.0 does not report exactly 192.0.2.2/24. | Check show interfaces ge-0/0/0.0 terse for the exact address and prefix length; a subnet route or ping alone does not establish the port. |"
+      ]
+    ],
+    "workbook.md": [
+      [
+        "It has a diagnostic loopback address and nothing else.",
+        "It has a diagnostic loopback address."
+      ],
+      [
+        "Leave the interfaces, the loopback and the link as they are.",
+        "Keep both wired ports up and preserve the diagnostic loopback address and the self-link."
+      ]
+    ]
+  },
+  "beforeFileSha256": {
+    "solutions.md": "cf05c3c4b9266f86d669a25ff600202a8114bee7bbc3ac83fff65bfa1c9fa3bd",
+    "workbook.md": "6007ecd9dde117b3d5434445e9e9e727fc896809a1951412561b885ccf9a6d63"
+  },
+  "afterFileSha256": {
+    "solutions.md": "66e905ada5a82dbd366f493945af01321fd2c4a35d021437c97156fe84c657e8",
+    "workbook.md": "f9dcc3e379d5868b84349af5f7b34f7bd216ec852be28088a1c54c2898d2f6c1"
+  },
+  "configsChecksTopologyReferenceSolutionsAndMetadataUnchanged": true,
+  "capturedAndReferenceConfigurationBlocksUnchanged": true,
+  "rawNativePacketUnchanged": true,
+  "authority": "Format v0 excludes workbook, answers and diagram wording from qualification hashing; owner task prohibits hand configuration/check edits and parked rescue. This is prose-only review after native qualified completion.",
+  "unrunLive": [
+    "isolated wrong-mask trial",
+    "isolated wrong-port trial",
+    "native Windows runtime"
+  ],
+  "note": "Original engineer, repair, writer outputs and native packet are retained unchanged. Published Markdown is the author-owned prose; this additive record explains the editorial correction."
+}
