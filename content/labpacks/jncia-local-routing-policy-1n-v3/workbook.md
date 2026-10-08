@@ -145,6 +145,8 @@ Hint: An aggregate with no accepted contributor is kept hidden, not deleted. Som
 
 Each outcome of this exercise is written as a check under `checks/`. `checks/baseline.yaml` states what is true before you start and must stay true, and one file per stage states that stage's outcome. Every check names the device and the command it reads, so you can run them with the launcher for this format or read the file and check the outcome by hand.
 
+After each stage, require `labpack check baseline` and every completed stage's named check to pass: `labpack check s1` after stage 1; both `labpack check s1` and `labpack check s2` after stage 2; and `labpack check s1`, `labpack check s2` and `labpack check s3` after stage 3. Finish with `labpack check --all` and require all results to pass. A named stage check covers only that stage. After a fresh start, `labpack check` and the UI's “Check this stage” can check baseline only; choosing a stage in the dropdown does not advance the saved stage. The UI's “Go” action resets the lab and applies earlier answers.
+
 ## Tearing down
 
 Destroy the lab with the same tool you deployed it with, and confirm that nothing of it is left running. A lab left up holds the memory and the cores the next one needs.
