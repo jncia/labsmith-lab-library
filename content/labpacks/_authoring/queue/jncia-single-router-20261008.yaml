@@ -1,0 +1,195 @@
+schemaVersion: 0
+queueId: jncia-single-router-20261008
+blueprint:
+  credentialName: JNCIA-Junos
+  examCode: JN0-106
+  sourceFile: official-blueprint.json
+  sourceSha256: e802a5ef10d25465bd9abdba7ab0f1f5d21e05f737a9a626a5211201eb0554b5
+generated:
+  at: '2026-10-08T20:56:00.744284+00:00'
+  model: owner-seed
+  costUsd: 0
+  promptSha256: null
+  ownerNote: 'Human-seeded strict JNCIA-Junos briefs, no catalog provider call. Parent
+    selected the measured SELF-LINK topology: one ordinary vJunos-router with one
+    wire joining its own distinct ports, no other node or logical systems. First packet
+    is approved for the existing Sonnet 5.5 authoring loop; second remains held until
+    the first qualifies cleanly. The engineer proves topic behavior through native
+    tools, snapshots, rehearsals, and qualification. No separate topic probe is required
+    before the first model call.'
+entries:
+- status: approved
+  priority: 10
+  model: claude-sonnet-5-5
+  ownerNote: First packet approved on the measured single-router self-link topology.
+    Preserve the wired-port and diagnostic baseline, prove the passive-summary scaffold
+    and policy effects before accepted submission, and retain any parked attempt without
+    hand-patching packet configs/checks.
+  brief:
+    schemaVersion: 0
+    id: jncia-local-routing-policy-1n
+    title: Local Addressing, Static Routes, and Contributor Policy
+    labType: build
+    level: associate
+    certifications:
+    - JNCIA-Junos
+    blueprint:
+      examCode: JN0-106
+      objectives:
+      - OBJ-1-5
+      - OBJ-5-1
+      - OBJ-5-4
+      - OBJ-6-2
+      - OBJ-6-6
+      - OBJ-7-3
+      - OBJ-7-4
+      - OBJ-7-5
+      - OBJ-7-6
+    topics:
+    - loopback addressing
+    - static discard and reject routes
+    - routing policy terms
+    - aggregate contributor policy
+    - operational verification
+    scenario: You are preparing one ordinary router for a small local routing exercise.
+      Two data ports are joined by a same-router wire so the appliance starts with
+      healthy ports; no second node or logical system is present. A diagnostic loopback
+      endpoint already works, but a second endpoint and two planned routes are missing.
+      An unwanted summary is retained without contributors; your final policy must
+      make only the approved summary active while keeping both component routes.
+    learnerOutcome: Configure and verify a router-local endpoint, distinguish static
+      discard and reject next hops in the routing table, and demonstrate how ordered
+      routing-policy terms admit one contributor and exclude another without removing
+      the component routes.
+    startStateSketch: One initialized vJunos-router r1 has one same-router link between
+      two distinct host-assigned data ports, already up/up with no addressing required
+      by the exercises; there are no other nodes or logical systems. The wired ports
+      and diagnostic endpoint 192.0.2.1/32 on lo0.0 remain healthy throughout. Service
+      endpoint 192.0.2.2/32, static routes 172.16.10.0/24 and 172.17.10.0/24, and
+      approved summary 172.16.0.0/16 are absent. Unwanted aggregate summary 172.17.0.0/16
+      is retained with its passive property, so a check requiring that summary to
+      be absent fails at the original start.
+    stageSketch:
+    - title: Establish the local service endpoint
+      achieves: Done when 192.0.2.2/32 appears on lo0.0, its local route is present
+        in inet.0, and r1 can ping that address while the diagnostic endpoint remains
+        reachable.
+    - title: Represent the two planned networks
+      achieves: Done when inet.0 contains active Static routes for 172.16.10.0/24
+        with a discard next hop and 172.17.10.0/24 with a reject next hop, and the
+        service endpoint still works.
+    - title: Admit only the approved contributor
+      achieves: Done when contributor policy makes 172.16.0.0/16 an active Aggregate
+        route, 172.17.0.0/16 is absent, both component Static routes remain active,
+        and the service endpoint still works.
+    observableOutcomes:
+    - lo0.0 reports service address 192.0.2.2/32, its local route exists in inet.0,
+      and router-originated ping to 192.0.2.2 succeeds.
+    - inet.0 reports active Static route 172.16.10.0/24 with a discard next hop.
+    - inet.0 reports active Static route 172.17.10.0/24 with a reject next hop.
+    - inet.0 reports active Aggregate route 172.16.0.0/16 after the exact approved
+      static contributor is admitted.
+    - inet.0 contains no route for aggregate destination 172.17.0.0/16 after passive
+      retention is removed and the unwanted contributor is rejected.
+    - Both component Static routes and the service endpoint remain usable after contributor
+      policy takes effect.
+    - Both distinct self-linked data ports report administrative and operational up
+      throughout the exercise.
+    topology:
+      nodes:
+      - id: r1
+        kind: vjunos-router
+        role: Router-local addressing and routing-policy practice
+      links:
+      - a: r1
+        b: r1
+    estimatedMinutes: 35
+    rationale: This practices addressing, static routing, and policy on one appliance.
+      A same-router wire provides measured ordinary appliance readiness while local
+      operational state carries the taught outcomes. Aggregate contribution supplies
+      a real local policy effect, without route advertisement or transit claims. Every
+      stage check fails at original start/reset and stays true at final handover.
+      The engineer must establish the passive-summary scaffold and accepted/rejected
+      policy effects with native tools and snapshots before an accepted submission.
+- status: hold
+  priority: 20
+  model: claude-sonnet-5-5
+  ownerNote: Hold until the first packet qualifies cleanly. A later explicit release
+    is required before invocation; the engineer must then prove self-ping filter effects
+    before submission. Never invoke run-one for this held entry before releasing that
+    gate.
+  brief:
+    schemaVersion: 0
+    id: jncia-loopback-filter-1n
+    title: Selective ICMP Access to Local Router Endpoints
+    labType: build
+    level: associate
+    certifications:
+    - JNCIA-Junos
+    blueprint:
+      examCode: JN0-106
+      objectives:
+      - OBJ-5-1
+      - OBJ-5-4
+      - OBJ-7-7
+      - OBJ-7-8
+      - OBJ-7-9
+      - OBJ-7-10
+    topics:
+    - loopback firewall filtering
+    - filter term order
+    - ICMP match criteria
+    - accept and discard actions
+    - operational verification
+    scenario: One ordinary router has three local service addresses and a separate
+      diagnostic address. Its two wired data ports are joined to each other, with
+      no additional node or logical system. The starting loopback filter blocks the
+      two services intended for testing and permits a service that should be isolated.
+      Restore the intended ICMP access without disturbing diagnostics or unrelated
+      traffic.
+    learnerOutcome: Use ordered firewall-filter terms and precise ICMP destination
+      matches to permit two local services and block a third, then verify those effects
+      with router-originated ping observations.
+    startStateSketch: One initialized vJunos-router r1 has one same-router link between
+      distinct host-assigned data ports, already up/up and retained throughout; there
+      are no other nodes or logical systems. lo0.0 owns diagnostic address 192.0.2.254/32
+      and service addresses 192.0.2.10/32, 192.0.2.20/32, and 192.0.2.30/32. A narrow
+      loopback ICMP filter initially denies self-ping to .10 and .20, permits self-ping
+      to .30, and permits diagnostics and all unrelated traffic. All local address
+      routes remain present throughout. The engineer must measure that self-ping traverses
+      the chosen filter before submission; if it bypasses the filter, this brief is
+      not runnable.
+    stageSketch:
+    - title: Restore the first service
+      achieves: Done when r1 can ping 192.0.2.10, and diagnostic address 192.0.2.254
+        remains reachable.
+    - title: Complete the service access policy
+      achieves: Done when r1 can ping both 192.0.2.10 and 192.0.2.20, cannot ping
+        192.0.2.30, and diagnostic address 192.0.2.254 remains reachable.
+    observableOutcomes:
+    - Router-originated ping to 192.0.2.10 changes from failure in the start state
+      to success after stage one and remains successful.
+    - Router-originated ping to 192.0.2.20 changes from failure in the start state
+      to success after stage two.
+    - Router-originated ping to 192.0.2.30 changes from success in the start state
+      to failure after stage two.
+    - Router-originated ping to diagnostic address 192.0.2.254 remains successful
+      through both stages.
+    - Both distinct self-linked data ports report administrative and operational up
+      throughout the exercise.
+    topology:
+      nodes:
+      - id: r1
+        kind: vjunos-router
+        role: Local ICMP access controlled by a loopback filter
+      links:
+      - a: r1
+        b: r1
+    estimatedMinutes: 25
+    rationale: This different objective family uses existing ping outcomes. Start
+      only after the first packet qualifies cleanly. The engineer must prove that
+      router-originated ping traverses the chosen lo0 filter on this one-router image.
+      Counter tasks are omitted because existing checks reject changing counters.
+      If filter effects cannot be observed, park the second packet and preserve the
+      failure. Do not add another node, logical systems, a new check type, or configuration-text
+      checks.

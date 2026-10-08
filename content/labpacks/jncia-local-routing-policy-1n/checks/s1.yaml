@@ -1,0 +1,14 @@
+schemaVersion: 0
+checks:
+- id: s1-route
+  description: inet.0 has a route for 192.0.2.2/32
+  device: r1
+  type: route-exists
+  prefix: 192.0.2.2/32
+  table: inet.0
+- id: s1-ping
+  description: r1 pings 192.0.2.2
+  device: r1
+  type: ping
+  count: 3
+  target: 192.0.2.2

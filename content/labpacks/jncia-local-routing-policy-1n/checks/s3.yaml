@@ -1,0 +1,16 @@
+schemaVersion: 0
+checks:
+- id: s3-agg
+  description: Aggregate 172.16.0.0/16 in inet.0
+  device: r1
+  type: route-exists
+  prefix: 172.16.0.0/16
+  protocol: Aggregate
+  table: inet.0
+- id: s3-noagg
+  description: No route for 172.17.0.0/16
+  device: r1
+  type: route-exists
+  negate: true
+  prefix: 172.17.0.0/16
+  table: inet.0

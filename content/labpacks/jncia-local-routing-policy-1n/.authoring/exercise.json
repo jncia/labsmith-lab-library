@@ -1,0 +1,253 @@
+{
+  "baselineChecks": [
+    {
+      "description": "ge-0/0/0 up",
+      "device": "r1",
+      "id": "b1",
+      "interface": "ge-0/0/0",
+      "type": "interface-up"
+    },
+    {
+      "description": "ge-0/0/1 up",
+      "device": "r1",
+      "id": "b2",
+      "interface": "ge-0/0/1",
+      "type": "interface-up"
+    },
+    {
+      "count": 3,
+      "description": "Diagnostic endpoint answers",
+      "device": "r1",
+      "id": "b3",
+      "target": "192.0.2.1",
+      "type": "ping"
+    },
+    {
+      "description": "Diagnostic route present",
+      "device": "r1",
+      "id": "b4",
+      "prefix": "192.0.2.1/32",
+      "table": "inet.0",
+      "type": "route-exists"
+    }
+  ],
+  "briefId": "jncia-local-routing-policy-1n",
+  "labType": "build",
+  "provenance": {
+    "checksUntestedAtStart": [],
+    "derived": [
+      "startState.configs",
+      "stages[].solution",
+      "topology",
+      "provenance"
+    ],
+    "engineerModel": "claude-sonnet-5-5",
+    "runId": "a1008ccn",
+    "snapshots": {
+      "s1": "543cb1dea37ecbdecd05240c5b33f14e331e69251bd3e87f2b882752269620e6",
+      "s2": "b518c67445eecf6cf5e9c1485f175407225ca30ed6b7530a54682ff891e3638e",
+      "s3": "d152996860f1a75b404e369b8a686dd203a24415c393b1b45914fcd03616af4e",
+      "start": "a8670cdf6529a2b9c08924e8ed33bdd1174355da041a45cd87f54c750edb9c6f"
+    }
+  },
+  "scenario": "One router r1 with two self-linked data ports. Diagnostic loopback 192.0.2.1/32 exists. You add a second endpoint, two planned static routes, and a policy so only the approved summary is active.",
+  "schemaVersion": 0,
+  "stages": [
+    {
+      "checks": [
+        {
+          "description": "inet.0 has a route for 192.0.2.2/32",
+          "device": "r1",
+          "id": "s1-route",
+          "prefix": "192.0.2.2/32",
+          "table": "inet.0",
+          "type": "route-exists"
+        },
+        {
+          "count": 3,
+          "description": "r1 pings 192.0.2.2",
+          "device": "r1",
+          "id": "s1-ping",
+          "target": "192.0.2.2",
+          "type": "ping"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Wrong mask or unit",
+          "recognise": "show route 192.0.2.2 returns nothing and ping fails",
+          "symptom": "No 192.0.2.2/32 route in inet.0"
+        }
+      ],
+      "doneWhen": [
+        "lo0.0 carries 192.0.2.2/32 and inet.0 has its route",
+        "r1 pings 192.0.2.2 successfully"
+      ],
+      "explanation": [
+        "Once the address is on lo0.0, inet.0 holds the /32 and a router-originated ping is answered locally."
+      ],
+      "goal": "Give r1 service address 192.0.2.2/32 on lo0.0 next to diagnostic 192.0.2.1.",
+      "hint": "A /32 on the loopback creates its own local route.",
+      "id": "s1",
+      "solution": {
+        "r1": [
+          "set interfaces lo0 unit 0 family inet address 192.0.2.2/32"
+        ]
+      },
+      "title": "Establish the local service endpoint"
+    },
+    {
+      "checks": [
+        {
+          "description": "172.16.10.0/24 forwards to discard",
+          "device": "r1",
+          "id": "s2-disc",
+          "next_hop_type": "dscd",
+          "prefix": "172.16.10.0/24",
+          "table": "default",
+          "type": "forwarding-table-entry"
+        },
+        {
+          "description": "172.17.10.0/24 forwards to reject",
+          "device": "r1",
+          "id": "s2-rej",
+          "next_hop_type": "rjct",
+          "prefix": "172.17.10.0/24",
+          "table": "default",
+          "type": "forwarding-table-entry"
+        },
+        {
+          "description": "Static route 172.16.10.0/24 in inet.0",
+          "device": "r1",
+          "id": "s2-r1",
+          "prefix": "172.16.10.0/24",
+          "protocol": "Static",
+          "table": "inet.0",
+          "type": "route-exists"
+        },
+        {
+          "description": "Static route 172.17.10.0/24 in inet.0",
+          "device": "r1",
+          "id": "s2-r2",
+          "prefix": "172.17.10.0/24",
+          "protocol": "Static",
+          "table": "inet.0",
+          "type": "route-exists"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Swapping discard and reject",
+          "recognise": "show route shows Discard on 172.17.10.0/24",
+          "symptom": "Next hop types are reversed"
+        }
+      ],
+      "doneWhen": [
+        "172.16.10.0/24 is an active Static route with a discard next hop",
+        "172.17.10.0/24 is an active Static route with a reject next hop"
+      ],
+      "explanation": [
+        "The forwarding table shows next hop type dscd for 172.16.10.0/24 and rjct for 172.17.10.0/24; both are Static in inet.0."
+      ],
+      "goal": "Create local routes for 172.16.10.0/24 (discard next hop) and 172.17.10.0/24 (reject next hop).",
+      "hint": "Static routes can use discard or reject instead of a gateway.",
+      "id": "s2",
+      "solution": {
+        "r1": [
+          "set routing-options static route 172.16.10.0/24 discard",
+          "set routing-options static route 172.17.10.0/24 reject"
+        ]
+      },
+      "title": "Represent the two planned networks"
+    },
+    {
+      "checks": [
+        {
+          "description": "Aggregate 172.16.0.0/16 in inet.0",
+          "device": "r1",
+          "id": "s3-agg",
+          "prefix": "172.16.0.0/16",
+          "protocol": "Aggregate",
+          "table": "inet.0",
+          "type": "route-exists"
+        },
+        {
+          "description": "No route for 172.17.0.0/16",
+          "device": "r1",
+          "id": "s3-noagg",
+          "negate": true,
+          "prefix": "172.17.0.0/16",
+          "table": "inet.0",
+          "type": "route-exists"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Reject term placed before accept term",
+          "recognise": "show route protocol aggregate lacks 172.16.0.0/16",
+          "symptom": "172.16.0.0/16 never becomes active"
+        },
+        {
+          "mistake": "Leaving passive on 172.17.0.0/16",
+          "recognise": "show route 172.17.0.0/16 shows Aggregate Reject",
+          "symptom": "172.17.0.0/16 still present"
+        }
+      ],
+      "doneWhen": [
+        "172.16.0.0/16 is an active Aggregate route",
+        "inet.0 has no route for 172.17.0.0/16",
+        "both static routes and 192.0.2.2 still work"
+      ],
+      "explanation": [
+        "The 172.16/16 aggregate accepts only 172.16.10.0/24; 172.17.0.0/16 loses its contributor and, no longer passive, is not installed."
+      ],
+      "goal": "Make 172.16.0.0/16 an active aggregate fed only by the exact approved contributor 172.16.10.0/24, and make 172.17.0.0/16 absent, keeping both static routes.",
+      "hint": "Ordered policy terms: accept the exact approved route, reject everything else; the retained summary must stop being passive.",
+      "id": "s3",
+      "solution": {
+        "r1": [
+          "delete routing-options aggregate route 172.17.0.0/16 passive",
+          "set policy-options policy-statement agg-contrib term approved from route-filter 172.16.10.0/24 exact",
+          "set policy-options policy-statement agg-contrib term approved then accept",
+          "set policy-options policy-statement agg-contrib term rest then reject",
+          "set routing-options aggregate route 172.16.0.0/16 policy agg-contrib",
+          "set routing-options aggregate route 172.17.0.0/16 policy agg-contrib"
+        ]
+      },
+      "title": "Admit only the approved contributor"
+    }
+  ],
+  "startState": {
+    "configs": {
+      "r1": [
+        "set system host-name r1",
+        "set interfaces lo0 unit 0 family inet address 192.0.2.1/32",
+        "set routing-options aggregate route 172.17.0.0/16 passive"
+      ]
+    },
+    "description": "r1 has ge-0/0/0 and ge-0/0/1 up/up, lo0.0 192.0.2.1/32, and aggregate 172.17.0.0/16 retained with the passive property. 192.0.2.2/32, the static routes and aggregate 172.16.0.0/16 are absent."
+  },
+  "summary": "Configure a local endpoint, static discard/reject routes, and aggregate contributor policy on r1.",
+  "title": "Local Addressing, Static Routes, and Contributor Policy",
+  "topology": {
+    "links": [
+      {
+        "a": {
+          "interface": "ge-0/0/0",
+          "node": "r1"
+        },
+        "b": {
+          "interface": "ge-0/0/1",
+          "node": "r1"
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "id": "r1",
+        "kind": "vjunos-router",
+        "role": "Router-local addressing and routing-policy practice"
+      }
+    ]
+  }
+}

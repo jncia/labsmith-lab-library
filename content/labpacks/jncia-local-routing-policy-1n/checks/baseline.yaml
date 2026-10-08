@@ -1,0 +1,24 @@
+schemaVersion: 0
+checks:
+- id: b1
+  description: ge-0/0/0 up
+  device: r1
+  type: interface-up
+  interface: ge-0/0/0
+- id: b2
+  description: ge-0/0/1 up
+  device: r1
+  type: interface-up
+  interface: ge-0/0/1
+- id: b3
+  description: Diagnostic endpoint answers
+  device: r1
+  type: ping
+  count: 3
+  target: 192.0.2.1
+- id: b4
+  description: Diagnostic route present
+  device: r1
+  type: route-exists
+  prefix: 192.0.2.1/32
+  table: inet.0
