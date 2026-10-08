@@ -1,0 +1,130 @@
+{
+  "solutions": {
+    "intro": "All three stages are configured on r1 alone. Apply each stage in configuration mode and commit, then run the captured checks. The reference configuration for each stage is shown with the stage.",
+    "stages": [
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Using a /32 mask or putting the address on the wrong port",
+            "recognise": "The readback shows the address on ge-0/0/1.0, or shows a /32 instead of 192.0.2.2/24.",
+            "symptom": "There is no Direct 192.0.2.0/24 route."
+          }
+        ],
+        "configurationIntro": "Apply this on r1 under ge-0/0/0 unit 0, then commit. It adds only the inet address and leaves ge-0/0/1 and lo0.0 alone.",
+        "id": "s1",
+        "verification": [
+          {
+            "checkId": "s1-if",
+            "lookFor": "ge-0/0/0.0 is up/up with inet 192.0.2.2/24. The unit, address and /24 mask must all match."
+          },
+          {
+            "checkId": "s1-rt",
+            "lookFor": "inet.0 lists 192.0.2.0/24 as Direct, active (the asterisk), via ge-0/0/0.0. That route exists only because the address carries a /24."
+          },
+          {
+            "checkId": "s1-ping",
+            "lookFor": "All three echoes are answered and loss is 0%. r1 reaches its own new address."
+          }
+        ],
+        "whyItWorks": "The readback shows 192.0.2.2/24 on ge-0/0/0.0, and the Direct route in inet.0 points out that same unit. The route is derived from the interface mask, so the /24 produces the 192.0.2.0/24 subnet. The ping to 192.0.2.2 succeeds locally. The loopback holds 192.0.2.1/32, which is a host route and gives no subnet route of its own."
+      },
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Swapping discard and reject",
+            "recognise": "dscd appears against 172.17.10.0/24, or rjct against 172.16.10.0/24, in the forwarding table.",
+            "symptom": "Traffic to each network is dropped the opposite way from the plan."
+          }
+        ],
+        "configurationIntro": "Apply this on r1 in the routing-options static section, then commit. One route uses the discard next hop and the other uses reject.",
+        "id": "s2",
+        "verification": [
+          {
+            "checkId": "s2-d-rt",
+            "lookFor": "172.16.10.0/24 is Static, active, with next hop Discard."
+          },
+          {
+            "checkId": "s2-r-rt",
+            "lookFor": "172.17.10.0/24 is Static, active, with next hop Reject."
+          },
+          {
+            "checkId": "s2-d-fw",
+            "lookFor": "The forwarding entry for 172.16.10.0/24 has next-hop type dscd, so the forwarding plane drops silently."
+          },
+          {
+            "checkId": "s2-r-fw",
+            "lookFor": "The forwarding entry for 172.17.10.0/24 has next-hop type rjct, so the forwarding plane drops and signals unreachable."
+          }
+        ],
+        "whyItWorks": "Each prefix shows the intended next-hop type in the route view (Discard, Reject) and the matching type in the forwarding table (dscd, rjct). The routes are Static with the asterisk, so they are active. The two checks together show the choice reached forwarding and not only the route table."
+      },
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Leaving the passive setting on 172.17.0.0/16",
+            "recognise": "show route 172.17.0.0/16 exact still lists the Aggregate, and the hidden view is empty for it.",
+            "symptom": "172.17.0.0/16 stays active in the ordinary view."
+          },
+          {
+            "mistake": "Deleting the 172.17.0.0/16 aggregate instead of leaving it hidden",
+            "recognise": "show route hidden 172.17.0.0/16 exact returns nothing.",
+            "symptom": "The prefix is gone from the hidden view too."
+          }
+        ],
+        "configurationIntro": "Apply this on r1, then commit. Add an aggregate policy that accepts only 172.16.10.0/24 as contributor and rejects everything else, and attach it to the aggregate routes. Remove the passive setting from 172.17.0.0/16 and keep the route defined.",
+        "id": "s3",
+        "verification": [
+          {
+            "checkId": "s3-agg",
+            "lookFor": "172.16.0.0/16 is Aggregate, active, with a Reject next hop. The accepted contributor 172.16.10.0/24 builds it."
+          },
+          {
+            "checkId": "s3-hid",
+            "lookFor": "In the hidden view, 172.17.0.0/16 is still listed as Aggregate, with no asterisk. The route exists but is inactive."
+          },
+          {
+            "checkId": "s3-ord",
+            "lookFor": "The ordinary view shows only the table summary and no 172.17.0.0/16 entry. The route no longer takes part in forwarding."
+          }
+        ],
+        "whyItWorks": "The route summary counts one hidden route, and the hidden view holds the 172.17.0.0/16 aggregate. That is the difference between rejecting a contribution and deleting a route. The definition stays, but with no accepted contributor the aggregate is not active. 172.16.0.0/16 has an accepted contributor, so it is active. The passive setting would have forced 172.17.0.0/16 active regardless of contributors, which is why it has to be removed."
+      }
+    ]
+  },
+  "summary": "On a single router, r1, you add a service address on ge-0/0/0.0, create a discard and a reject static route, and use policy so that only the approved contributor builds aggregate 172.16.0.0/16 while 172.17.0.0/16 stays defined but hidden.",
+  "workbook": {
+    "scenario": "You have r1, a single router whose two ports are cabled to each other. It has a diagnostic loopback address and nothing else. The team has planned two networks, 172.16.10.0/24 and 172.17.10.0/24, and wants r1 to handle them in a controlled way. One aggregate, 172.17.0.0/16, was defined earlier and shows as active in the ordinary route view, which is not what the team wants. You give r1 a service endpoint, represent the two planned networks as static routes that drop traffic differently, and make the aggregates follow the contributor rule: only the approved contributor counts.",
+    "stages": [
+      {
+        "doneWhen": [
+          "Operational state shows 192.0.2.2/24 on ge-0/0/0.0.",
+          "inet.0 has an active Direct route 192.0.2.0/24.",
+          "r1 pings 192.0.2.2 with no loss."
+        ],
+        "goal": "Give r1 a service endpoint on its first wired port, ge-0/0/0, using the 192.0.2.2 address with the mask that makes 192.0.2.0/24 a connected subnet. The local subnet must be connected and reachable.",
+        "hint": "The connected route comes from the address and its mask on a specific unit. Read back the unit, address and prefix length before you look at the routing table.",
+        "id": "s1"
+      },
+      {
+        "doneWhen": [
+          "172.16.10.0/24 is an active Static route with a Discard next hop and a discard entry in the forwarding table.",
+          "172.17.10.0/24 is an active Static route with a Reject next hop and a reject entry in the forwarding table."
+        ],
+        "goal": "Create the two planned networks, 172.16.10.0/24 and 172.17.10.0/24, as local static routes that both drop traffic. The first must drop it silently. The second must drop it and signal that the destination is unreachable.",
+        "hint": "Both routes have no real next hop, and the two behaviours differ in whether the sender is told. Check the forwarding table as well as the route view.",
+        "id": "s2"
+      },
+      {
+        "doneWhen": [
+          "172.16.0.0/16 is an active Aggregate.",
+          "172.17.0.0/16 appears as Aggregate in the hidden view only.",
+          "172.17.0.0/16 does not appear in the ordinary route view."
+        ],
+        "goal": "Use policy so that only the 172.16.10.0/24 contributor builds aggregate 172.16.0.0/16. Aggregate 172.17.0.0/16 must stay defined but be inactive and hidden, because its contributor is rejected.",
+        "hint": "An aggregate with no accepted contributor is kept hidden, not deleted. Something in the existing 172.17.0.0/16 definition keeps it active regardless of contributors. Find it and decide what the policy should accept.",
+        "id": "s3"
+      }
+    ],
+    "startState": "r1 has ge-0/0/0 and ge-0/0/1 up and joined by a self-link, and lo0.0 holds 192.0.2.1/32. Aggregate 172.17.0.0/16 is defined as passive and is active in the ordinary route view. Leave the interfaces, the loopback and the link as they are. Nothing else is configured."
+  }
+}

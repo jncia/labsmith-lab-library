@@ -1,0 +1,31 @@
+schemaVersion: 0
+checks:
+- id: s3-agg
+  description: 172.16.0.0/16 active Aggregate
+  device: r1
+  type: state-match
+  command: show route 172.16.0.0/16 exact
+  container: route-information
+  records: rt-entry
+  where:
+    active-tag: '*'
+    protocol-name: Aggregate
+- id: s3-hid
+  description: 172.17.0.0/16 Aggregate retained in hidden view
+  device: r1
+  type: state-match
+  command: show route hidden 172.17.0.0/16 exact
+  container: route-information
+  records: rt-entry
+  where:
+    protocol-name: Aggregate
+- id: s3-ord
+  description: 172.17.0.0/16 absent from the ordinary view
+  device: r1
+  type: state-match
+  command: show route 172.17.0.0/16 exact
+  container: route-information
+  negate: true
+  records: rt-entry
+  where:
+    protocol-name: Aggregate

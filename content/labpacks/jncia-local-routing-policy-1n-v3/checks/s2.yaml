@@ -1,0 +1,36 @@
+schemaVersion: 0
+checks:
+- id: s2-d-rt
+  description: 172.16.10.0/24 active static discard
+  device: r1
+  type: state-match
+  command: show route 172.16.10.0/24 exact
+  container: route-information
+  records: rt-entry
+  where:
+    active-tag: '*'
+    nh-type: Discard
+    protocol-name: Static
+- id: s2-r-rt
+  description: 172.17.10.0/24 active static reject
+  device: r1
+  type: state-match
+  command: show route 172.17.10.0/24 exact
+  container: route-information
+  records: rt-entry
+  where:
+    active-tag: '*'
+    nh-type: Reject
+    protocol-name: Static
+- id: s2-d-fw
+  description: discard forwarding entry
+  device: r1
+  type: forwarding-table-entry
+  next_hop_type: dscd
+  prefix: 172.16.10.0/24
+- id: s2-r-fw
+  description: reject forwarding entry
+  device: r1
+  type: forwarding-table-entry
+  next_hop_type: rjct
+  prefix: 172.17.10.0/24
