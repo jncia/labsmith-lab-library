@@ -1,0 +1,211 @@
+{
+  "baselineChecks": [
+    {
+      "count": 3,
+      "description": "Three replies from diagnostic 192.0.2.254",
+      "device": "r1",
+      "id": "b-254",
+      "min_success_rate": 1,
+      "target": "192.0.2.254",
+      "type": "ping"
+    },
+    {
+      "description": "ge-0/0/0 up",
+      "device": "r1",
+      "id": "b-p0",
+      "interface": "ge-0/0/0",
+      "type": "interface-up"
+    },
+    {
+      "description": "ge-0/0/1 up",
+      "device": "r1",
+      "id": "b-p1",
+      "interface": "ge-0/0/1",
+      "type": "interface-up"
+    },
+    {
+      "description": "Direct route 192.0.2.10/32",
+      "device": "r1",
+      "id": "b-r10",
+      "prefix": "192.0.2.10/32",
+      "protocol": "Direct",
+      "table": "inet.0",
+      "type": "route-exists"
+    },
+    {
+      "description": "Direct route 192.0.2.20/32",
+      "device": "r1",
+      "id": "b-r20",
+      "prefix": "192.0.2.20/32",
+      "protocol": "Direct",
+      "table": "inet.0",
+      "type": "route-exists"
+    },
+    {
+      "description": "Direct route 192.0.2.30/32",
+      "device": "r1",
+      "id": "b-r30",
+      "prefix": "192.0.2.30/32",
+      "protocol": "Direct",
+      "table": "inet.0",
+      "type": "route-exists"
+    },
+    {
+      "description": "Direct route 192.0.2.254/32",
+      "device": "r1",
+      "id": "b-r254",
+      "prefix": "192.0.2.254/32",
+      "protocol": "Direct",
+      "table": "inet.0",
+      "type": "route-exists"
+    }
+  ],
+  "briefId": "jncia-loopback-filter-1n",
+  "labType": "build",
+  "provenance": {
+    "checksUntestedAtStart": [],
+    "derived": [
+      "startState.configs",
+      "stages[].solution",
+      "topology",
+      "provenance"
+    ],
+    "engineerModel": "claude-sonnet-5-5",
+    "runId": "a10087ur",
+    "snapshots": {
+      "s1": "e8ab7ebc51104af82373420c3eb6b247440b869de63163a9bfe967a94845b0fd",
+      "s2": "28cc087a008fefd90ef4cfad1c7ffc51c1253d62f3e7b4292751c7ca9f7d8c7d",
+      "start": "7ebe568b9da8e2ef3b03574e93731413f9f7f7de6181713e6a3cdec8fc2b1334"
+    }
+  },
+  "referenceTables": [],
+  "scenario": "r1 has local addresses 192.0.2.10, .20, .30 and diagnostic .254 on lo0.0. A loopback input filter discards ICMP to some of them.",
+  "schemaVersion": 0,
+  "stages": [
+    {
+      "checks": [
+        {
+          "count": 3,
+          "description": "Three replies from 192.0.2.10",
+          "device": "r1",
+          "id": "s1-10",
+          "min_success_rate": 1,
+          "target": "192.0.2.10",
+          "type": "ping"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Removing the whole filter or the deny term",
+          "recognise": "All three addresses answer after stage one",
+          "symptom": "192.0.2.30 can no longer be denied in stage two"
+        }
+      ],
+      "doneWhen": [
+        "Three of three probes to 192.0.2.10 get replies."
+      ],
+      "explanation": [
+        "The deny term matched ICMP to .10; removing .10 from its match lets the later accept term pass it."
+      ],
+      "goal": "Make 192.0.2.10 answer probes from r1 again.",
+      "hint": "Read which term matches ICMP to .10 and what it does.",
+      "id": "s1",
+      "solution": {
+        "r1": [
+          "delete firewall family inet filter lo0-icmp term deny-icmp from destination-address 192.0.2.10/32"
+        ]
+      },
+      "title": "Restore the first service"
+    },
+    {
+      "checks": [
+        {
+          "count": 3,
+          "description": "Three replies from 192.0.2.20",
+          "device": "r1",
+          "id": "s2-20",
+          "min_success_rate": 1,
+          "target": "192.0.2.20",
+          "type": "ping"
+        },
+        {
+          "count": 3,
+          "description": "No replies from 192.0.2.30",
+          "device": "r1",
+          "id": "s2-30",
+          "min_success_rate": 0.01,
+          "negate": true,
+          "target": "192.0.2.30",
+          "type": "ping"
+        }
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Placing a discard term after the accept term",
+          "recognise": "ping to .30 shows 0% packet loss",
+          "symptom": ".30 still answers"
+        }
+      ],
+      "doneWhen": [
+        "Three of three probes to 192.0.2.20 get replies.",
+        "Zero of three probes to 192.0.2.30 get replies."
+      ],
+      "explanation": [
+        "The deny term must precede the accept-all term and match only ICMP to .30."
+      ],
+      "goal": "Allow 192.0.2.20 and deny 192.0.2.30 while keeping .10 reachable.",
+      "hint": "Terms are evaluated in order; first match wins.",
+      "id": "s2",
+      "solution": {
+        "r1": [
+          "delete firewall family inet filter lo0-icmp term deny-icmp from destination-address 192.0.2.20/32",
+          "set firewall family inet filter lo0-icmp term deny-icmp from destination-address 192.0.2.30/32"
+        ]
+      },
+      "title": "Complete the service access policy"
+    }
+  ],
+  "startState": {
+    "configs": {
+      "r1": [
+        "set system host-name r1",
+        "set interfaces ge-0/0/0 unit 0 family inet address 198.51.100.1/30",
+        "set interfaces ge-0/0/1 unit 0 family inet address 198.51.100.5/30",
+        "set interfaces lo0 unit 0 family inet filter input lo0-icmp",
+        "set interfaces lo0 unit 0 family inet address 192.0.2.254/32",
+        "set interfaces lo0 unit 0 family inet address 192.0.2.10/32",
+        "set interfaces lo0 unit 0 family inet address 192.0.2.20/32",
+        "set interfaces lo0 unit 0 family inet address 192.0.2.30/32",
+        "set firewall family inet filter lo0-icmp term deny-icmp from destination-address 192.0.2.10/32",
+        "set firewall family inet filter lo0-icmp term deny-icmp from destination-address 192.0.2.20/32",
+        "set firewall family inet filter lo0-icmp term deny-icmp from protocol icmp",
+        "set firewall family inet filter lo0-icmp term deny-icmp then discard",
+        "set firewall family inet filter lo0-icmp term allow-rest then accept"
+      ]
+    },
+    "description": "lo0.0 holds four /32 addresses; ge-0/0/0 and ge-0/0/1 are wired together and up. Filter lo0-icmp is applied inbound on lo0.0: ICMP to .10 and .20 is discarded, everything else accepted."
+  },
+  "summary": "Fix a loopback ICMP filter so two local services answer and one is denied.",
+  "title": "Selective ICMP Access to Local Router Endpoints",
+  "topology": {
+    "links": [
+      {
+        "a": {
+          "interface": "ge-0/0/0",
+          "node": "r1"
+        },
+        "b": {
+          "interface": "ge-0/0/1",
+          "node": "r1"
+        }
+      }
+    ],
+    "nodes": [
+      {
+        "id": "r1",
+        "kind": "vjunos-router",
+        "role": "Local ICMP access controlled by a loopback filter"
+      }
+    ]
+  }
+}

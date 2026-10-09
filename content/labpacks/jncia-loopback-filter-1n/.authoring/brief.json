@@ -1,0 +1,67 @@
+{
+  "blueprint": {
+    "examCode": "JN0-106",
+    "objectives": [
+      "OBJ-5-1",
+      "OBJ-5-4",
+      "OBJ-7-7",
+      "OBJ-7-8",
+      "OBJ-7-9",
+      "OBJ-7-10"
+    ]
+  },
+  "certifications": [
+    "JNCIA-Junos"
+  ],
+  "estimatedMinutes": 25,
+  "id": "jncia-loopback-filter-1n",
+  "labType": "build",
+  "learnerOutcome": "Use ordered firewall-filter terms and precise ICMP destination matches to permit all three probes to two local services and receive no replies from a third, while preserving every local address, its route and diagnostics.",
+  "level": "associate",
+  "observableOutcomes": [
+    "Three router-originated probes to 192.0.2.10 change from zero replies at original start to three replies after stage one and remain successful.",
+    "Three router-originated probes to 192.0.2.20 change from zero replies at original start to three replies after stage two.",
+    "Three router-originated probes to 192.0.2.30 change from three replies at original start to zero replies after stage two; partial loss does not meet denial.",
+    "All three diagnostic 192.0.2.254 probes reply at original start, after both stages and after reset; this is baseline, not a stage target.",
+    "All four exact /32 addresses remain identified on lo0.0 by native interface state, and their Direct host routes remain in inet.0; passing baseline guards prevent satisfying denial by removing an endpoint.",
+    "Both distinct self-linked data ports remain administrative and operational up; this is baseline, not a stage target.",
+    "Only three changing service effects are stage targets: .10 succeeds in stage one, then .20 succeeds and .30 returns zero replies in stage two. Earlier targets remain true cumulatively."
+  ],
+  "rationale": "This exercise teaches local ICMP filter matches, ordered terms and packet effects, with no filter-counter goal because current stable checks cannot assert it. The engineer must measure actual self-originated lo0 filter traversal; if bypassed, park. Existing ping checks use count 3 and rate 1 for allowed/diagnostic outcomes. Zero replies require count 3, negate true and a small positive min_success_rate such as 0.01, so partial loss cannot satisfy denial. Keep all address/route, port and diagnostic checks in baseline.",
+  "scenario": "One ordinary router has three local service addresses and a diagnostic address. Its two wired data ports are joined to each other, with no additional node or logical system. A loopback ICMP filter initially blocks two service probes and permits the service to be isolated. Restore the intended responses for the named endpoints while keeping all local addresses, routes and diagnostics intact.",
+  "schemaVersion": 0,
+  "stageSketch": [
+    {
+      "achieves": "Done when all three r1 probes to 192.0.2.10 receive replies. All exact local addresses/routes, both wired ports and all three diagnostic replies remain baseline outcomes.",
+      "title": "Restore the first service"
+    },
+    {
+      "achieves": "Done when all three probes to 192.0.2.20 reply, no probe to 192.0.2.30 replies, the earlier .10 replies persist, and all address/route, diagnostic and port baselines remain.",
+      "title": "Complete the service access policy"
+    }
+  ],
+  "startStateSketch": "One vJunos-router r1 has one same-router wire between distinct assigned data ports, already up/up. lo0.0 owns diagnostic 192.0.2.254/32 and services 192.0.2.10/32, 192.0.2.20/32 and 192.0.2.30/32. All exact interface addresses, their Direct host routes in inet.0 and both ports are passing baseline outcomes retained through both stages. A narrow ICMP filter initially gives zero replies to each three-probe self-ping of .10 and .20, and three replies from .30 and .254. Diagnostic reachability is baseline. Only changing service outcomes are stage targets; every target check fails at original start. The engineer measures genuine self-originated lo0 filter traversal and baselines through both stages before submission; if probes bypass the filter, park this objective.",
+  "title": "Selective ICMP Access to Local Router Endpoints",
+  "topics": [
+    "loopback firewall filtering",
+    "filter term order",
+    "ICMP match criteria",
+    "accept and discard actions",
+    "operational verification"
+  ],
+  "topology": {
+    "links": [
+      {
+        "a": "r1",
+        "b": "r1"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "r1",
+        "kind": "vjunos-router",
+        "role": "Local ICMP access controlled by a loopback filter"
+      }
+    ]
+  }
+}

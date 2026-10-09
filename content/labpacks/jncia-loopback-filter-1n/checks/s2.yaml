@@ -1,0 +1,17 @@
+schemaVersion: 0
+checks:
+- id: s2-20
+  description: Three replies from 192.0.2.20
+  device: r1
+  type: ping
+  count: 3
+  min_success_rate: 1
+  target: 192.0.2.20
+- id: s2-30
+  description: No replies from 192.0.2.30
+  device: r1
+  type: ping
+  count: 3
+  min_success_rate: 0.01
+  negate: true
+  target: 192.0.2.30

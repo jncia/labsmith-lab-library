@@ -1,0 +1,83 @@
+{
+  "solutions": {
+    "intro": "Both stages edit the filter lo0-icmp on r1. The baseline checks show the starting point: ge-0/0/0 and ge-0/0/1 are up, all four loopback addresses are Direct routes in inet.0, and 192.0.2.254 answers. The filter therefore affects only the three service addresses.",
+    "stages": [
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Removing the whole filter or the deny term",
+            "recognise": "A ping to 192.0.2.30 shows 0% packet loss after stage one.",
+            "symptom": "All three service addresses answer, and .30 can no longer be denied without rebuilding the term."
+          },
+          {
+            "mistake": "Forgetting to commit",
+            "recognise": "The candidate configuration shows the change but the running behaviour has not changed.",
+            "symptom": "The ping to .10 still shows 100% packet loss."
+          }
+        ],
+        "configurationIntro": "Apply this on r1 in configuration mode, then commit. It changes the deny term of lo0-icmp so it no longer matches 192.0.2.10.",
+        "id": "s1",
+        "verification": [
+          {
+            "checkId": "s1-10",
+            "lookFor": "The ping to 192.0.2.10 reports 0% packet loss with three packets received. Before the change the same ping would have lost every packet. Replies prove the discard term no longer matches .10 and a later term accepts it."
+          }
+        ],
+        "whyItWorks": "The deny term matched ICMP to .10 and .20, so it discarded the packet before the accept term was reached. Once .10 is out of that term's match, the packet falls through to the accept-all term and is delivered to lo0.0. The ping in s1-10 shows no loss. Removing the whole term would also make .10 answer, but it would leave nothing to deny .30 in stage two."
+      },
+      {
+        "commonMistakes": [
+          {
+            "mistake": "Placing the discard term for .30 after the accept term",
+            "recognise": "The ping to 192.0.2.30 shows 0% packet loss. Check the term order in the filter.",
+            "symptom": ".30 still answers."
+          },
+          {
+            "mistake": "Matching all ICMP in the deny term instead of only .30",
+            "recognise": "The pings to .10 or .20 show 100% packet loss.",
+            "symptom": ".10 and .20 stop answering again."
+          }
+        ],
+        "configurationIntro": "Apply this on r1 in configuration mode, then commit. Keep .10 out of the deny match, take .20 out of it as well, and add a term that discards ICMP to 192.0.2.30 before the accept-all term.",
+        "id": "s2",
+        "verification": [
+          {
+            "checkId": "s2-20",
+            "lookFor": "The ping to 192.0.2.20 reports 0% packet loss with three packets received. This proves .20 is no longer discarded."
+          },
+          {
+            "checkId": "s2-30",
+            "lookFor": "The ping to 192.0.2.30 reports 100% packet loss and no reply lines. This is the wanted result: the deny term now matches .30 and discards it."
+          }
+        ],
+        "whyItWorks": "The filter is evaluated top to bottom. ICMP to .30 meets the deny term first and is discarded, so s2-30 shows no replies. ICMP to .10 and .20 matches no deny term, reaches the accept-all term and is delivered, so s2-20 shows no loss. The deny term has to sit before the accept-all term. Anything after it is never reached."
+      }
+    ]
+  },
+  "summary": "r1 carries four loopback addresses and a loopback input filter that discards ICMP to some of them. You correct the filter in two stages so 192.0.2.10 and 192.0.2.20 answer while 192.0.2.30 stays silent.",
+  "workbook": {
+    "scenario": "You run r1. It has three local service addresses, 192.0.2.10, 192.0.2.20 and 192.0.2.30, and a diagnostic address, 192.0.2.254, all on lo0.0. A loopback input filter is meant to control who can ping which service. It doesn't do that now. Pings to some of the service addresses are discarded when they shouldn't be. The policy you have to reach: .10 and .20 answer ICMP, .30 does not, and the diagnostic address keeps working.",
+    "stages": [
+      {
+        "doneWhen": [
+          "Three of three pings from r1 to 192.0.2.10 get replies.",
+          "The diagnostic address 192.0.2.254 still answers."
+        ],
+        "goal": "Make 192.0.2.10 answer probes from r1 again. Don't weaken the filter for the other addresses, and don't remove the filter.",
+        "hint": "Read the filter term by term. Find the term that matches ICMP to .10 and see what it does with the packet. Then ask what the next term would do if that one didn't match.",
+        "id": "s1"
+      },
+      {
+        "doneWhen": [
+          "Three of three pings from r1 to 192.0.2.20 get replies.",
+          "Zero of three pings from r1 to 192.0.2.30 get replies.",
+          "192.0.2.10 still answers."
+        ],
+        "goal": "Allow 192.0.2.20 and deny 192.0.2.30 while keeping .10 reachable. The denial must apply to ICMP to .30 only.",
+        "hint": "Terms are evaluated in order and the first match wins. Decide what each address needs, then check where a term that denies .30 sits relative to the term that accepts everything else.",
+        "id": "s2"
+      }
+    ],
+    "startState": "lo0.0 holds the four /32 addresses. ge-0/0/0 and ge-0/0/1 are cabled to each other on r1 and are up. The filter lo0-icmp is already applied inbound on lo0.0. It discards ICMP to .10 and .20 and accepts everything else. Leave the addresses, the interfaces and the filter's application to lo0.0 alone. Change only what the filter does."
+  }
+}

@@ -1,0 +1,9 @@
+schemaVersion: 0
+checks:
+- id: s1-10
+  description: Three replies from 192.0.2.10
+  device: r1
+  type: ping
+  count: 3
+  min_success_rate: 1
+  target: 192.0.2.10
