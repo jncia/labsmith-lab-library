@@ -1,0 +1,47 @@
+schemaVersion: 0
+checks:
+- id: b-254
+  description: Three replies from diagnostic 192.0.2.254
+  device: r1
+  type: ping
+  count: 3
+  min_success_rate: 1
+  target: 192.0.2.254
+- id: b-p0
+  description: ge-0/0/0 up
+  device: r1
+  type: interface-up
+  interface: ge-0/0/0
+- id: b-p1
+  description: ge-0/0/1 up
+  device: r1
+  type: interface-up
+  interface: ge-0/0/1
+- id: b-r10
+  description: Direct route 192.0.2.10/32
+  device: r1
+  type: route-exists
+  prefix: 192.0.2.10/32
+  protocol: Direct
+  table: inet.0
+- id: b-r20
+  description: Direct route 192.0.2.20/32
+  device: r1
+  type: route-exists
+  prefix: 192.0.2.20/32
+  protocol: Direct
+  table: inet.0
+- id: b-r30
+  description: Direct route 192.0.2.30/32
+  device: r1
+  type: route-exists
+  prefix: 192.0.2.30/32
+  protocol: Direct
+  table: inet.0
+- id: b-r254
+  description: Direct route 192.0.2.254/32
+  device: r1
+  type: route-exists
+  prefix: 192.0.2.254/32
+  protocol: Direct
+  table: inet.0

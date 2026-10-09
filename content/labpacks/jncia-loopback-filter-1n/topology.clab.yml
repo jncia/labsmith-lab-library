@@ -1,0 +1,11 @@
+name: jncia-loopback-filter-1n
+topology:
+  kinds:
+    juniper_vjunosrouter:
+      image: ${VJUNOS_ROUTER_IMAGE:=vrnetlab/juniper_vjunos-router:26.2R1.7}
+  nodes:
+    r1:
+      kind: juniper_vjunosrouter
+      startup-config: configs/r1.cfg
+  links:
+    - endpoints: ["r1:eth1", "r1:eth2"]

@@ -1,0 +1,13 @@
+set system host-name r1
+set interfaces ge-0/0/0 unit 0 family inet address 198.51.100.1/30
+set interfaces ge-0/0/1 unit 0 family inet address 198.51.100.5/30
+set interfaces lo0 unit 0 family inet filter input lo0-icmp
+set interfaces lo0 unit 0 family inet address 192.0.2.254/32
+set interfaces lo0 unit 0 family inet address 192.0.2.10/32
+set interfaces lo0 unit 0 family inet address 192.0.2.20/32
+set interfaces lo0 unit 0 family inet address 192.0.2.30/32
+set firewall family inet filter lo0-icmp term deny-icmp from destination-address 192.0.2.10/32
+set firewall family inet filter lo0-icmp term deny-icmp from destination-address 192.0.2.20/32
+set firewall family inet filter lo0-icmp term deny-icmp from protocol icmp
+set firewall family inet filter lo0-icmp term deny-icmp then discard
+set firewall family inet filter lo0-icmp term allow-rest then accept

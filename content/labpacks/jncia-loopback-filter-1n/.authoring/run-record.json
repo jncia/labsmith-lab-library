@@ -1,0 +1,217 @@
+{
+  "briefHash": "sha256:c206e6c06c54510fddb983a0d395a99376da6923044c23512e148e2be134eeb7",
+  "briefId": "jncia-loopback-filter-1n",
+  "cost": {
+    "byModel": {
+      "claude-sonnet-5-5": {
+        "cacheCreationInputTokens": 34221,
+        "cacheReadInputTokens": 241591,
+        "inputTokens": 32,
+        "outputTokens": 12978,
+        "usd": 0.315046
+      }
+    },
+    "byStage": {
+      "engineer": 0.270244,
+      "writer": 0.044802
+    },
+    "costKnown": true,
+    "totalUsd": 0.315046
+  },
+  "deferReason": null,
+  "finishedAt": "2026-10-09T00:19:44+00:00",
+  "labs": [
+    {
+      "baseDrift": false,
+      "cleanup": {
+        "clean": true
+      },
+      "deploySeconds": 190.9,
+      "labRunId": "a10087ure"
+    }
+  ],
+  "ledger": null,
+  "occupancyProbeFailed": false,
+  "outcome": "qualified",
+  "parkReason": null,
+  "publication": null,
+  "qualification": {
+    "contentHash": "d7b372f7d14e10477d09809a1346ffedcca3911d48c43f03e3c26d9867c2dca4",
+    "discrimination": {
+      "coupled": 0,
+      "elapsedSeconds": 72.816,
+      "name": "discrimination",
+      "noticed": 1,
+      "reason": null,
+      "skipped": 2,
+      "stages": [
+        {
+          "counts": {
+            "coupled": 0,
+            "noticed": 0,
+            "skipped": 1,
+            "unnoticed": 0
+          },
+          "elapsedSeconds": 6.133,
+          "stageId": "s1",
+          "statements": [
+            {
+              "index": 1,
+              "node": "r1",
+              "outcome": "skipped"
+            }
+          ],
+          "statementsOmitted": 0
+        },
+        {
+          "counts": {
+            "coupled": 0,
+            "noticed": 1,
+            "skipped": 1,
+            "unnoticed": 0
+          },
+          "elapsedSeconds": 66.682,
+          "stageId": "s2",
+          "statements": [
+            {
+              "index": 1,
+              "node": "r1",
+              "outcome": "skipped"
+            },
+            {
+              "index": 2,
+              "node": "r1",
+              "outcome": "noticed"
+            }
+          ],
+          "statementsOmitted": 0
+        }
+      ],
+      "statements": 1,
+      "statementsConsidered": 1,
+      "statementsOmitted": 0,
+      "status": "completed",
+      "unnoticed": 0
+    },
+    "receiptId": "jncia-loopback-filter-1n-2026-10-09-d7b372f7d14e",
+    "runs": [
+      {
+        "elapsedSeconds": 238.6,
+        "name": "start-state",
+        "status": "passed"
+      },
+      {
+        "elapsedSeconds": 56.3,
+        "name": "reference-solution",
+        "status": "passed"
+      },
+      {
+        "elapsedSeconds": 39.6,
+        "name": "reset",
+        "status": "passed"
+      },
+      {
+        "elapsedSeconds": 224.2,
+        "name": "learner-start",
+        "status": "passed"
+      }
+    ],
+    "seconds": 640.4,
+    "status": "passed"
+  },
+  "queueId": "jncia-single-router-filter-20261008",
+  "rehearsals": [
+    {
+      "afterSession": 1,
+      "deadlineSeconds": 150,
+      "issues": [],
+      "repolled": false,
+      "seconds": 145.3,
+      "status": "passed"
+    }
+  ],
+  "runId": "a10087ur",
+  "schemaVersion": 0,
+  "sessions": [
+    {
+      "call": {
+        "costUsd": 0.27024420000000005,
+        "durationMs": 184951,
+        "effort": "medium",
+        "exit": "ok",
+        "isError": false,
+        "model": "claude-sonnet-5-5",
+        "modelUsage": {
+          "claude-sonnet-5-5": {
+            "cacheCreationInputTokens": 27879,
+            "cacheReadInputTokens": 241591,
+            "canonicalModel": "claude-sonnet-5-5",
+            "contextWindow": 1000000,
+            "costBasis": "list",
+            "costUSD": 0.27024420000000005,
+            "inputTokens": 30,
+            "maxOutputTokens": 128000,
+            "outputTokens": 11035,
+            "provider": "firstParty",
+            "thinkingTokens": 1569,
+            "webSearchRequests": 0
+          }
+        },
+        "numTurns": 24,
+        "promptName": "engineer",
+        "promptSha256": "036355a759d8ea1a418ff5b67bc1a2bc58cf3aa2c53499f1b847db14aa021bb9",
+        "resultFile": "engineer-1.result.json"
+      },
+      "ended": "submitted",
+      "freeRejections": 3,
+      "kind": "engineer",
+      "labRunId": "a10087ure",
+      "n": 1,
+      "outputChars": 16065,
+      "submissions": 1,
+      "toolCalls": 23
+    }
+  ],
+  "startedAt": "2026-10-08T23:59:56+00:00",
+  "validatorWarnings": [],
+  "versions": {
+    "claudeCode": "2.1.284 (Claude Code)",
+    "containerlab": "unknown",
+    "labsmith": "a455db3ec1e5837ab3f33eea164c9b4b45241613",
+    "limits": "63c7b9a2822fcf6743e1d871c614aa882f5678a2a77cafa9a34795025cbd1c8a",
+    "prompts": {
+      "engineer": "036355a759d8ea1a418ff5b67bc1a2bc58cf3aa2c53499f1b847db14aa021bb9",
+      "writer": "a374211deb21cb5daa9997f5826468ee7367506fb1e588d1142db898ec7b5aa2"
+    }
+  },
+  "wallClockSeconds": 1188.374,
+  "writer": {
+    "attempts": 1,
+    "call": {
+      "costUsd": 0.044802,
+      "effort": "medium",
+      "exit": "ok",
+      "isError": false,
+      "model": "claude-sonnet-5-5",
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "cacheCreationInputTokens": 6342,
+          "cacheReadInputTokens": 0,
+          "canonicalModel": "claude-sonnet-5-5",
+          "contextWindow": 1000000,
+          "costBasis": "list",
+          "costUSD": 0.044802,
+          "inputTokens": 2,
+          "maxOutputTokens": 128000,
+          "outputTokens": 1943,
+          "provider": "firstParty",
+          "thinkingTokens": 0,
+          "webSearchRequests": 0
+        }
+      },
+      "promptName": "writer",
+      "promptSha256": "a374211deb21cb5daa9997f5826468ee7367506fb1e588d1142db898ec7b5aa2"
+    },
+    "status": "accepted"
+  }
+}

@@ -1,0 +1,134 @@
+schemaVersion: 0
+id: jncia-loopback-filter-1n
+title: Selective ICMP Access to Local Router Endpoints
+summary: r1 carries four loopback addresses and a loopback input filter that discards
+  ICMP to some of them. You correct the filter in two stages so 192.0.2.10 and 192.0.2.20
+  answer while 192.0.2.30 stays silent.
+labType: build
+level: associate
+certifications:
+- JNCIA-Junos
+topics:
+- loopback firewall filtering
+- filter term order
+- ICMP match criteria
+- accept and discard actions
+- operational verification
+estimatedMinutes: 25
+nodes:
+- id: r1
+  kind: juniper_vjunosrouter
+  role: Local ICMP access controlled by a loopback filter
+requirements:
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  minimumFreeMemoryGb: 8
+  minimumCores: 4
+stages:
+- id: s1
+  title: Restore the first service
+  goal: Make 192.0.2.10 answer probes from r1 again. Don't weaken the filter for the
+    other addresses, and don't remove the filter.
+  doneWhen:
+  - Three of three pings from r1 to 192.0.2.10 get replies.
+  - The diagnostic address 192.0.2.254 still answers.
+- id: s2
+  title: Complete the service access policy
+  goal: Allow 192.0.2.20 and deny 192.0.2.30 while keeping .10 reachable. The denial
+    must apply to ICMP to .30 only.
+  doneWhen:
+  - Three of three pings from r1 to 192.0.2.20 get replies.
+  - Zero of three pings from r1 to 192.0.2.30 get replies.
+  - 192.0.2.10 still answers.
+qualification:
+- contractVersion: labsmith.learner-labpack-qualification.v0
+  receiptId: jncia-loopback-filter-1n-2026-10-09-d7b372f7d14e
+  labId: jncia-loopback-filter-1n
+  packetContentHash: d7b372f7d14e10477d09809a1346ffedcca3911d48c43f03e3c26d9867c2dca4
+  date: '2026-10-09'
+  generatedAt: '2026-10-09T00:19:44+00:00'
+  status: passed
+  images:
+  - kind: juniper_vjunosrouter
+    version: 26.2R1.7
+    obtainFrom: Build the container image from the vendor's virtual router release
+      with vrnetlab, then load it on the lab host.
+  toolVersions:
+    containerlab: 0.77.0
+    imageDigest: sha256:b343ea11ab9bfc9878632ba52cb910f5b147d018dc785bae337da9f7163da24d
+    labsmith: a455db3ec1e5837ab3f33eea164c9b4b45241613
+  cleanup:
+    topologyName: labpack-jncia-loopback-filter-1n-a10087urq
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-10-09T00:15:56+00:00'
+    clean: true
+  learnerCleanup:
+    topologyName: labpack-jncia-loopback-filter-1n-a10087urql
+    destroyReturncode: 0
+    containersRemaining: 0
+    managementNetworksRemaining: 0
+    managementBridgeAbsent: true
+    verifiedAt: '2026-10-09T00:19:44+00:00'
+    clean: true
+  totalSeconds: 640.379
+  issues: []
+  message: null
+  discrimination:
+    name: discrimination
+    status: completed
+    reason: null
+    elapsedSeconds: 72.816
+    statements: 1
+    statementsConsidered: 1
+    statementsOmitted: 0
+    noticed: 1
+    unnoticed: 0
+    coupled: 0
+    skipped: 2
+    stages:
+    - stageId: s1
+      elapsedSeconds: 6.133
+      statementsOmitted: 0
+      counts:
+        noticed: 0
+        unnoticed: 0
+        coupled: 0
+        skipped: 1
+      statements:
+      - node: r1
+        index: 1
+        outcome: skipped
+    - stageId: s2
+      elapsedSeconds: 66.682
+      statementsOmitted: 0
+      counts:
+        noticed: 1
+        unnoticed: 0
+        coupled: 0
+        skipped: 1
+      statements:
+      - node: r1
+        index: 1
+        outcome: skipped
+      - node: r1
+        index: 2
+        outcome: noticed
+  runs:
+  - name: start-state
+    status: passed
+    elapsedSeconds: 238.597
+  - name: reference-solution
+    status: passed
+    elapsedSeconds: 56.313
+  - name: reset
+    status: passed
+    elapsedSeconds: 39.635
+  - name: learner-start
+    status: passed
+    elapsedSeconds: 224.183

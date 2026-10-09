@@ -1,0 +1,71 @@
+{
+  "baseline": [
+    {
+      "checkId": "b-254",
+      "command": "ping 192.0.2.254 count 3",
+      "node": "r1",
+      "output": "PING 192.0.2.254 (192.0.2.254): 56 data bytes\n<counter> bytes from 192.0.2.254: icmp_seq=0 ttl=64 time=0.038 ms\n<counter> bytes from 192.0.2.254: icmp_seq=1 ttl=64 time=0.075 ms\n<counter> bytes from 192.0.2.254: icmp_seq=2 ttl=64 time=0.093 ms\n\n--- 192.0.2.254 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 0.038/0.069/0.093/0.023 ms\n"
+    },
+    {
+      "checkId": "b-p0",
+      "command": "show interfaces ge-0/0/0 terse",
+      "node": "r1",
+      "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/0                up    up\nge-0/0/0.0              up    up   inet     198.51.100.1/30\n                                   multiservice\n"
+    },
+    {
+      "checkId": "b-p1",
+      "command": "show interfaces ge-0/0/1 terse",
+      "node": "r1",
+      "output": "Interface               Admin Link Proto    Local                 Remote\nge-0/0/1                up    up\nge-0/0/1.0              up    up   inet     198.51.100.5/30\n                                   multiservice\n"
+    },
+    {
+      "checkId": "b-r10",
+      "command": "show route table inet.0 192.0.2.10/32 exact",
+      "node": "r1",
+      "output": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n192.0.2.10/32      *[Direct/0] <age>\n                    >  via lo0.0\n"
+    },
+    {
+      "checkId": "b-r20",
+      "command": "show route table inet.0 192.0.2.20/32 exact",
+      "node": "r1",
+      "output": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n192.0.2.20/32      *[Direct/0] <age>\n                    >  via lo0.0\n"
+    },
+    {
+      "checkId": "b-r30",
+      "command": "show route table inet.0 192.0.2.30/32 exact",
+      "node": "r1",
+      "output": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n192.0.2.30/32      *[Direct/0] <age>\n                    >  via lo0.0\n"
+    },
+    {
+      "checkId": "b-r254",
+      "command": "show route table inet.0 192.0.2.254/32 exact",
+      "node": "r1",
+      "output": "inet.0: 8 destinations, 8 routes (8 active, 0 holddown, 0 hidden)\n+ = Active Route, - = Last Active, * = Both\n\n192.0.2.254/32     *[Direct/0] <age>\n                    >  via lo0.0\n"
+    }
+  ],
+  "receiptId": "jncia-loopback-filter-1n-2026-10-09-5ae79d8e23be",
+  "stages": {
+    "s1": [
+      {
+        "checkId": "s1-10",
+        "command": "ping 192.0.2.10 count 3",
+        "node": "r1",
+        "output": "PING 192.0.2.10 (192.0.2.10): 56 data bytes\n<counter> bytes from 192.0.2.10: icmp_seq=0 ttl=64 time=0.071 ms\n<counter> bytes from 192.0.2.10: icmp_seq=1 ttl=64 time=0.082 ms\n<counter> bytes from 192.0.2.10: icmp_seq=2 ttl=64 time=0.065 ms\n\n--- 192.0.2.10 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 0.065/0.073/0.082/0.007 ms\n"
+      }
+    ],
+    "s2": [
+      {
+        "checkId": "s2-20",
+        "command": "ping 192.0.2.20 count 3",
+        "node": "r1",
+        "output": "PING 192.0.2.20 (192.0.2.20): 56 data bytes\n<counter> bytes from 192.0.2.20: icmp_seq=0 ttl=64 time=0.039 ms\n<counter> bytes from 192.0.2.20: icmp_seq=1 ttl=64 time=0.032 ms\n<counter> bytes from 192.0.2.20: icmp_seq=2 ttl=64 time=0.134 ms\n\n--- 192.0.2.20 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 0% packet loss\nround-trip min/avg/max/stddev = 0.032/0.068/0.134/0.047 ms\n"
+      },
+      {
+        "checkId": "s2-30",
+        "command": "ping 192.0.2.30 count 3",
+        "node": "r1",
+        "output": "PING 192.0.2.30 (192.0.2.30): 56 data bytes\n\n--- 192.0.2.30 ping statistics ---\n<counter> packets transmitted, <counter> packets received, 100% packet loss\n"
+      }
+    ]
+  }
+}

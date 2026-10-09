@@ -1,0 +1,1 @@
+delete firewall family inet filter lo0-icmp term deny-icmp from destination-address 192.0.2.10/32
