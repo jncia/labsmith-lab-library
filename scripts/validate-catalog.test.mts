@@ -67,10 +67,20 @@ function catalog(overrides: Record<string, unknown> = {}) {
       requirements: ["Windows 11"],
     },
     levels: [
-      { id: "jncia-junos", name: "JNCIA-Junos", track: "Junos", status: "in-review", note: "In review." },
-      { id: "jncis-sp", name: "JNCIS-SP", track: "SP", status: "planned", note: "Planned." },
+      { id: "jncia-junos", name: "JNCIA-Junos", track: "Junos", stage: "associate", status: "in-review", note: "In review." },
+      { id: "jncis-sp", name: "JNCIS-SP", track: "SP", stage: "specialist", status: "planned", note: "Planned." },
     ],
-    collections: [{ id: "lib", title: "Library", short: "Library", summary: "Standalone labs.", level: "jncia-junos", unlistedInReview: 0 }],
+    access: [
+      { id: "open", name: "Free, no account", short: "No account", note: "No sign-up.", delivered: true },
+      { id: "free-account", name: "Free account", short: "Free account", note: "Free with an account.", delivered: false },
+      { id: "course", name: "With the course", short: "With the course", note: "With the course.", delivered: false },
+      { id: "subscription", name: "LabPack subscription", short: "Subscription", note: "Subscription.", delivered: false },
+    ],
+    accessRule: {
+      course: { associate: "open", specialist: "open", professional: "course", expert: "course" },
+      library: { associate: "free-account", specialist: "free-account", professional: "subscription", expert: "subscription" },
+    },
+    collections: [{ id: "lib", title: "Course", short: "Course", summary: "Course labs.", level: "jncia-junos", kind: "course", unlistedInReview: 0 }],
     topicGroups: [{ id: "static", name: "Static routing" }],
     labs: [{ id: "fixture-lab", collection: "lib", status: "in-review" }],
     ...overrides,
@@ -109,7 +119,7 @@ const RELEASED = {
 
 test("a clean catalog passes", () => {
   assert.deepEqual(problems(catalog()), []);
-  assert.deepEqual(problems(catalog({ labs: [RELEASED], levels: [{ id: "jncia-junos", name: "JNCIA-Junos", track: "Junos", status: "available", note: "Ready." }] })), []);
+  assert.deepEqual(problems(catalog({ labs: [RELEASED], levels: [{ id: "jncia-junos", name: "JNCIA-Junos", track: "Junos", stage: "associate", status: "available", note: "Ready." }] })), []);
 });
 
 test("schema: a missing field fails", () => {
@@ -136,10 +146,45 @@ test("honesty: only qualified labs are listed", () => {
 });
 
 test("honesty: levels claim no more than the catalog holds", () => {
-  const available = [{ id: "jncia-junos", name: "JNCIA-Junos", track: "Junos", status: "available", note: "x" }];
+  const available = [{ id: "jncia-junos", name: "JNCIA-Junos", track: "Junos", stage: "associate", status: "available", note: "x" }];
   expectProblem(problems(catalog({ levels: available })), "marked available but has no released lab");
-  const planned = [{ id: "jncia-junos", name: "JNCIA-Junos", track: "Junos", status: "planned", note: "x" }];
+  const planned = [{ id: "jncia-junos", name: "JNCIA-Junos", track: "Junos", stage: "associate", status: "planned", note: "x" }];
   expectProblem(problems(catalog({ levels: planned })), "marked planned but lists labs");
+});
+
+test("access follows the rule: kind and stage decide the tier", () => {
+  const cat = catalog({
+    levels: [
+      { id: "jncia-junos", name: "JNCIA-Junos", track: "Junos", stage: "associate", status: "in-review", note: "x" },
+      { id: "jncip-sp", name: "JNCIP-SP", track: "SP", stage: "professional", status: "later", note: "x" },
+    ],
+    collections: [
+      { id: "lib", title: "Course", short: "Course", summary: "x", level: "jncia-junos", kind: "course", unlistedInReview: 0 },
+      { id: "a-lib", title: "Library", short: "Library", summary: "x", level: "jncia-junos", kind: "library", unlistedInReview: 1 },
+      { id: "p-course", title: "Course", short: "Course", summary: "x", level: "jncip-sp", kind: "course", unlistedInReview: 0 },
+      { id: "p-lib", title: "Library", short: "Library", summary: "x", level: "jncip-sp", kind: "library", unlistedInReview: 0 },
+    ],
+  });
+  const loaded = loadCatalog(makeDir(cat), { production: false });
+  const tierOf = Object.fromEntries(loaded.collections.map((k) => [k.id, k.access.id]));
+  assert.deepEqual(tierOf, { lib: "open", "a-lib": "free-account", "p-course": "course", "p-lib": "subscription" });
+});
+
+test("a lab in a tier the site cannot deliver yet cannot be released", () => {
+  const library = [{ id: "lib", title: "Library", short: "Library", summary: "x", level: "jncia-junos", kind: "library", unlistedInReview: 0 }];
+  const available = [{ id: "jncia-junos", name: "JNCIA-Junos", track: "Junos", stage: "associate", status: "available", note: "x" }];
+  expectProblem(problems(catalog({ collections: library, levels: available, labs: [RELEASED] })), 'needs "Free account", which the site cannot deliver yet');
+  assert.deepEqual(problems(catalog({ collections: library })), []);
+});
+
+test("access is never set by hand, and the rule names only known tiers", () => {
+  const handSet = [{ id: "lib", title: "C", short: "C", summary: "x", level: "jncia-junos", kind: "course", access: "open", unlistedInReview: 0 }];
+  expectProblem(problems(catalog({ collections: handSet })), "access is not set by hand");
+  const badRule = {
+    course: { associate: "open", specialist: "open", professional: "course", expert: "vip" },
+    library: { associate: "free-account", specialist: "free-account", professional: "subscription", expert: "subscription" },
+  };
+  expectProblem(problems(catalog({ accessRule: badRule })), "vip is not in access");
 });
 
 test("a development catalog never builds for production", () => {

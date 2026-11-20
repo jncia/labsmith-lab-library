@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { STAGES } from "@/lib/catalog";
+import { getCatalog } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Getting started",
@@ -28,6 +30,24 @@ const STEPS = [
 ];
 
 export default function StartPage() {
+  const catalog = getCatalog();
+  const tier = new Map(catalog.access.map((a) => [a.id, a]));
+  // One column per run of stages that the access rule treats alike, named by the levels in it.
+  const groups: { label: string; stage: (typeof STAGES)[number] }[] = [];
+  let run: (typeof STAGES)[number][] = [];
+  const same = (a: (typeof STAGES)[number], b: (typeof STAGES)[number]) =>
+    catalog.accessRule.course[a] === catalog.accessRule.course[b] && catalog.accessRule.library[a] === catalog.accessRule.library[b];
+  const close = () => {
+    if (!run.length) return;
+    const names = catalog.levels.filter((l) => run.includes(l.stage)).map((l) => l.name.split("-")[0]);
+    groups.push({ label: [...new Set(names)].join(" and ") || run.join(" and "), stage: run[0] });
+    run = [];
+  };
+  for (const stage of STAGES) {
+    if (run.length && !same(run[0], stage)) close();
+    run.push(stage);
+  }
+  close();
   return (
     <div className="mx-auto grid max-w-3xl gap-10 px-4 pt-8 sm:px-6">
       <header className="grid gap-3">
@@ -55,6 +75,39 @@ export default function StartPage() {
           </li>
         ))}
       </ol>
+
+      <section aria-labelledby="access" className="grid gap-3">
+        <h2 id="access" className="m-0 text-xl font-bold">
+          What each lab needs
+        </h2>
+        <div className="overflow-x-auto rounded-lg border border-line bg-card">
+          <table className="w-full border-collapse text-left text-sm">
+            <thead>
+              <tr className="text-quiet">
+                <th className="px-4 py-2.5 font-semibold" />
+                {groups.map((g) => (
+                  <th key={g.label} className="px-4 py-2.5 font-semibold">
+                    {g.label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {(["course", "library"] as const).map((kind) => (
+                <tr key={kind} className="border-t border-line">
+                  <th className="px-4 py-2.5 font-semibold">{kind === "course" ? "Course labs" : "Practice library"}</th>
+                  {groups.map((g) => (
+                    <td key={g.label} className="px-4 py-2.5 text-quiet">
+                      {tier.get(catalog.accessRule[kind][g.stage])?.name}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="m-0 text-sm text-quiet">LabPack itself is free and needs no account.</p>
+      </section>
 
       <section aria-labelledby="good-to-know" className="grid gap-3">
         <h2 id="good-to-know" className="m-0 text-xl font-bold">

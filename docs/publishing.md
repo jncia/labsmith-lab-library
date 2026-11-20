@@ -23,8 +23,10 @@ content/catalog/
 | `schema` | `labpack-site.catalog.v1` |
 | `kind` | `release` (this folder) or `development` (a local catalog; refused for production) |
 | `client` | the LabPack download: build, file name, bytes, SHA-256, `url` (`null` until hosted), publisher, platform, requirements |
-| `levels[]` | certification levels with `status`: `available` (has a released lab), `in-review`, `planned`, `later` |
-| `collections[]` | sets of labs (course labs, practice library) with `unlistedInReview`, a count shown while none of a set is listed |
+| `levels[]` | certification levels with `stage` and `status`: `available` (has a released lab), `in-review`, `planned`, `later` |
+| `access[]` | access tiers (`open`, `free-account`, `course`, `subscription`) with `delivered`: whether the site can hand out a download in that tier today |
+| `accessRule` | which tier each collection `kind` (`course`, `library`) gets at each level `stage` (`associate`, `specialist`, `professional`, `expert`) |
+| `collections[]` | sets of labs with `kind`, `level` and `unlistedInReview`, a count shown while none of a set is listed; access follows from the rule and is never set by hand |
 | `topicGroups[]` | the catalog's topic filter |
 | `labs[]` | `id`, `collection`, `status` (`in-review` or `released`), and for a released lab `learnerReadOn` and `download` |
 
@@ -34,6 +36,19 @@ prerequisites, topics, stage titles and goals, the drawing's nodes and links,
 terminal labels, image version, memory and cores, and the qualification status
 and date. Configs, solutions, checks, the workbook, authoring records, digests
 and run names never cross.
+
+## Access
+
+The rule (owner direction, 2026-11-20):
+
+| | JNCIA and JNCIS | JNCIP and JNCIE |
+| --- | --- | --- |
+| Course labs | free, no account | with the course purchase |
+| Practice library | free account | LabPack subscription |
+
+LabPack itself needs no account. Only the `open` tier is delivered today: sign-in, course entitlement and
+subscriptions are not built, so a lab in any other tier can be listed as in review but the validator refuses
+to release it. When a tier's delivery exists, set its `delivered: true` in the same change.
 
 ## The status ladder
 

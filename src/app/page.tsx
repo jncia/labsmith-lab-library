@@ -16,6 +16,7 @@ export default function Home() {
     topicGroups: l.topicGroups,
     stages: l.stages.length,
     minutes: l.estimatedMinutes,
+    access: l.collection.access.short,
     status: l.release.status,
     searchText: [l.title, l.summary, ...l.topics, ...l.stages.map((s) => s.title), l.collection.title]
       .join(" ")
@@ -24,6 +25,11 @@ export default function Home() {
   const released = catalog.labs.filter((l) => l.release.status === "released").length;
   const unlisted = catalog.collections.reduce((n, c) => n + c.unlistedInReview, 0);
   const coming = catalog.levels.filter((l) => l.status === "planned" || l.status === "later");
+  const tier = new Map(catalog.access.map((a) => [a.id, a]));
+  const accessLine = (stage: (typeof catalog.levels)[number]["stage"]) =>
+    `Course labs: ${tier.get(catalog.accessRule.course[stage])?.short.toLowerCase()}. Library labs: ${tier
+      .get(catalog.accessRule.library[stage])
+      ?.short.toLowerCase()}.`;
 
   return (
     <>
@@ -65,9 +71,10 @@ export default function Home() {
               </span>
             </li>
             <li className="grid gap-1 border-t border-line pt-3">
-              <strong>Free, no account</strong>
+              <strong>Free to start</strong>
               <span className="text-sm text-quiet">
-                Download LabPack and the JNCIA labs without signing up. LabPack runs on Windows 11.
+                LabPack and the JNCIA course labs need no account. The practice library is free with an account.
+                LabPack runs on Windows 11.
               </span>
             </li>
           </ul>
@@ -106,7 +113,9 @@ export default function Home() {
               <li key={c.id} className="grid gap-1.5 rounded-lg border border-line bg-card p-4">
                 <strong>{c.title}</strong>
                 <span className="text-sm text-quiet">{c.summary}</span>
-                <span className="text-xs text-quiet">{c.unlistedInReview} labs in review</span>
+                <span className="text-xs text-quiet">
+                  {c.unlistedInReview} labs in review · {c.access.name}
+                </span>
               </li>
             ))}
           </ul>
@@ -117,7 +126,7 @@ export default function Home() {
               .filter((c) => catalog.labs.some((x) => x.collection.id === c.id))
               .map((c) => (
                 <li key={c.id}>
-                  <strong className="text-ink">{c.short}:</strong> {c.summary}
+                  <strong className="text-ink">{c.short}:</strong> {c.summary} {c.access.note}
                 </li>
               ))}
           </ul>
@@ -132,6 +141,7 @@ export default function Home() {
               <li key={l.id} className="grid gap-1 rounded-lg border border-dashed border-line p-4">
                 <strong>{l.name}</strong>
                 <span className="text-sm text-quiet">{l.note}</span>
+                <span className="text-xs text-quiet">{accessLine(l.stage)}</span>
               </li>
             ))}
           </ul>

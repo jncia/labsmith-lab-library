@@ -149,6 +149,9 @@ export default async function LabPage({ params }: PageProps<"/labs/[id]">) {
         <aside className="grid content-start gap-4 lg:sticky lg:top-4">
           <div className="grid gap-3 rounded-lg border border-line bg-card p-4">
             <h2 className="m-0 text-lg font-bold">Download</h2>
+            <p className="m-0 text-sm text-quiet">
+              <strong className="text-ink">{lab.collection.access.name}.</strong> {lab.collection.access.note}
+            </p>
             {released && lab.release.download ? (
               <>
                 <a

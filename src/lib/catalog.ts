@@ -41,12 +41,28 @@ export type ClientRelease = {
   requirements: string[];
 };
 
+export const STAGES = ["associate", "specialist", "professional", "expert"] as const;
+export type Stage = (typeof STAGES)[number];
+export const COLLECTION_KINDS = ["course", "library"] as const;
+export type CollectionKind = (typeof COLLECTION_KINDS)[number];
+
 export type Level = {
   id: string;
   name: string;
   track: string;
+  stage: Stage;
   status: LevelStatus;
   note: string;
+};
+
+/** What a learner needs to download a lab: no account, a free account, the course, or a subscription. */
+export type AccessTier = {
+  id: string;
+  name: string;
+  short: string;
+  note: string;
+  /** True only when the site can hand out a download in this tier today. */
+  delivered: boolean;
 };
 
 export type Collection = {
@@ -55,6 +71,9 @@ export type Collection = {
   short: string;
   summary: string;
   level: string;
+  kind: CollectionKind;
+  /** Follows from the access rule: the collection's kind and its level's stage. */
+  access: AccessTier;
   unlistedInReview: number;
 };
 
@@ -108,6 +127,8 @@ export type Catalog = {
   client: ClientRelease;
   levels: Level[];
   collections: Collection[];
+  access: AccessTier[];
+  accessRule: Record<CollectionKind, Record<Stage, string>>;
   topicGroups: TopicGroup[];
   labs: CatalogLab[];
 };
@@ -344,11 +365,39 @@ export function loadCatalog(dir: string = resolveCatalogDir(), env: { production
       id: c.str(lo, "id", w),
       name: c.str(lo, "name", w),
       track: c.str(lo, "track", w),
+      stage: c.oneOf(lo, "stage", STAGES, w),
       status: c.oneOf(lo, "status", ["available", "in-review", "planned", "later"] as const, w),
       note: c.str(lo, "note", w),
     };
   });
   const levelIds = new Set(levels.map((l) => l.id));
+  const levelById = new Map(levels.map((l) => [l.id, l]));
+
+  // Access: the tiers, and the one rule that says which tier each kind of collection at each stage gets.
+  const access: AccessTier[] = c.arr(m, "access", "catalog.yaml", { min: 1 }).map((a, i) => {
+    const w = `access[${i}]`;
+    const ao = c.obj(a, w);
+    if (typeof ao.delivered !== "boolean") c.add(w, "delivered must be true or false");
+    return {
+      id: c.str(ao, "id", w),
+      name: c.str(ao, "name", w),
+      short: c.str(ao, "short", w),
+      note: c.str(ao, "note", w),
+      delivered: ao.delivered === true,
+    };
+  });
+  const tierById = new Map(access.map((a) => [a.id, a]));
+  const ruleRaw = c.obj(m.accessRule, "accessRule");
+  const accessRule = {} as Record<CollectionKind, Record<Stage, string>>;
+  for (const kind of COLLECTION_KINDS) {
+    const row = c.obj(ruleRaw[kind], `accessRule.${kind}`);
+    accessRule[kind] = {} as Record<Stage, string>;
+    for (const stage of STAGES) {
+      const tier = c.str(row, stage, `accessRule.${kind}`);
+      if (tier && !tierById.has(tier)) c.add(`accessRule.${kind}.${stage}`, `${tier} is not in access`);
+      accessRule[kind][stage] = tier;
+    }
+  }
 
   const topicGroups: TopicGroup[] = c.arr(m, "topicGroups", "catalog.yaml", { min: 1 }).map((t, i) => {
     const to = c.obj(t, `topicGroups[${i}]`);
@@ -359,16 +408,22 @@ export function loadCatalog(dir: string = resolveCatalogDir(), env: { production
   const collections: Collection[] = c.arr(m, "collections", "catalog.yaml", { min: 1 }).map((k, i) => {
     const w = `collections[${i}]`;
     const ko = c.obj(k, w);
-    const col = {
+    if (ko.access !== undefined) c.add(w, "access is not set by hand: it follows from accessRule, the kind and the level");
+    const level = c.str(ko, "level", w);
+    const kind = c.oneOf(ko, "kind", COLLECTION_KINDS, w);
+    if (level && !levelIds.has(level)) c.add(w, `level ${level} is not in levels`);
+    const stage = levelById.get(level)?.stage;
+    const tier = stage ? tierById.get(accessRule[kind]?.[stage]) : undefined;
+    return {
       id: c.str(ko, "id", w),
       title: c.str(ko, "title", w),
       short: c.str(ko, "short", w),
       summary: c.str(ko, "summary", w),
-      level: c.str(ko, "level", w),
+      level,
+      kind,
+      access: tier ?? { id: "", name: "", short: "", note: "", delivered: false },
       unlistedInReview: c.num(ko, "unlistedInReview", w, { min: 0, int: true }),
     };
-    if (col.level && !levelIds.has(col.level)) c.add(w, `level ${col.level} is not in levels`);
-    return col;
   });
   const byCollection = new Map(collections.map((k) => [k.id, k]));
 
@@ -391,6 +446,10 @@ export function loadCatalog(dir: string = resolveCatalogDir(), env: { production
       if (!isIsoDate(learnerReadOn)) c.add(w, `${id} is released, so learnerReadOn must be the YYYY-MM-DD date of its learner read`);
       if (eo.download === undefined || eo.download === null) c.add(w, `${id} is released, so it needs a download`);
       else download = checkDownload(c, eo.download, `${w} download`, ".labpack");
+      // A public file would hand out a gated lab: release only what the site can deliver in its tier.
+      if (collection && !collection.access.delivered) {
+        c.add(w, `${id} needs "${collection.access.name || "an unknown tier"}", which the site cannot deliver yet, so it cannot be released`);
+      }
     } else if (eo.download !== undefined && eo.download !== null) {
       c.add(w, `${id} is in review, so it must not have a download yet`);
     }
@@ -444,7 +503,7 @@ export function loadCatalog(dir: string = resolveCatalogDir(), env: { production
 
   if (c.problems.length) throw new CatalogError(c.problems);
   labs.sort((a, b) => a.collection.id.localeCompare(b.collection.id) || a.id.localeCompare(b.id, "en", { numeric: true }));
-  return { kind, dir, client, levels, collections, topicGroups, labs };
+  return { kind, dir, client, levels, collections, access, accessRule, topicGroups, labs };
 }
 
 /* --- helpers for pages -------------------------------------------------- */

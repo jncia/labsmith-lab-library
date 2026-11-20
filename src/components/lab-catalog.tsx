@@ -14,6 +14,7 @@ export type CatalogCard = {
   topicGroups: string[];
   stages: number;
   minutes: number;
+  access: string;
   status: "in-review" | "released";
   searchText: string;
 };
@@ -184,7 +185,8 @@ export function LabCatalog({
                 <h3 className="m-0 text-[1.05rem] font-bold leading-snug group-hover:underline">{l.title}</h3>
                 <p className="m-0 line-clamp-3 text-sm text-quiet">{l.summary}</p>
                 <p className="m-0 mt-auto pt-1 text-xs text-quiet">
-                  {l.levelName} · {l.stages} {l.stages === 1 ? "stage" : "stages"} · about {l.minutes} min
+                  {l.levelName} · {l.stages} {l.stages === 1 ? "stage" : "stages"} · about {l.minutes} min ·{" "}
+                  <span className="font-semibold text-ink">{l.access}</span>
                 </p>
               </Link>
             </li>
