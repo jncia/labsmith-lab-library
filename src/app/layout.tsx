@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { IS_PRODUCTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import { INDEXABLE, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description:
     "Free hands-on Junos labs for JNCIA-Junos. Each lab runs a real Juniper vJunos router on your own computer in LabPack and checks your work stage by stage.",
   openGraph: { siteName: SITE_NAME, type: "website" },
-  robots: IS_PRODUCTION ? undefined : { index: false, follow: false },
+  robots: INDEXABLE ? undefined : { index: false, follow: false },
 };
 
 export const viewport: Viewport = {

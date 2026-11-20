@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
-import { IS_PRODUCTION, SITE_URL } from "@/lib/site";
+import { INDEXABLE, SITE_URL } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
-  // Previews and local builds are never indexed.
-  if (!IS_PRODUCTION) return { rules: { userAgent: "*", disallow: "/" } };
+  // Previews, local builds, and production until indexing is opened (src/lib/indexing.ts).
+  if (!INDEXABLE) return { rules: { userAgent: "*", disallow: "/" } };
   return { rules: { userAgent: "*", allow: "/" }, sitemap: `${SITE_URL}/sitemap.xml` };
 }

@@ -1,10 +1,15 @@
 import type { NextConfig } from "next";
 import { loadCatalog } from "./src/lib/catalog.ts";
+import { INDEXABLE } from "./src/lib/indexing.ts";
 
 // Downloads are reached by stable site addresses (/download/client and
 // /download/labs/<id>) and sent on to wherever the file is hosted, so the
 // host can change without changing a link. Only hosted files get a route.
 const nextConfig: NextConfig = {
+  // While the site is not to be indexed, every response says so, files included.
+  async headers() {
+    return INDEXABLE ? [] : [{ source: "/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }];
+  },
   async redirects() {
     const catalog = loadCatalog();
     const routes = [];
