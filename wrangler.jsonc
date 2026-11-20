@@ -1,0 +1,21 @@
+// Cloudflare Worker that serves the static export (`out`) with no Worker code:
+// requests never run a script, so they cost nothing on the Workers Free plan.
+// Deploy with `npm run deploy`; see docs/publishing.md.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fullmeshlabs-site",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./out",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  // No public *.workers.dev address or per-version preview URLs: the site is
+  // reached only at its own domain, and previews stay local (`npm run preview`).
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    { "pattern": "fullmeshlabs.com", "custom_domain": true },
+    { "pattern": "www.fullmeshlabs.com", "custom_domain": true }
+  ]
+}

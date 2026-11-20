@@ -20,7 +20,7 @@ import { CatalogError, loadCatalog, resolveCatalogDir } from "../src/lib/catalog
 import { scanText, type LeakFinding } from "../src/lib/leak-markers.ts";
 
 // What the site is built from, relative to the repo root.
-export const SCANNED = ["content/catalog", "content/dev-catalog", "src", "public", "scripts", "docs", ".github", "README.md", "next.config.ts", "package.json", ".vercelignore"];
+export const SCANNED = ["content/catalog", "content/dev-catalog", "src", "public", "scripts", "docs", ".github", "README.md", "next.config.ts", "package.json", "wrangler.jsonc"];
 export const LEGACY = ["content/labs", "content/labpacks"];
 // The two files that must spell the patterns out.
 export const SCAN_EXEMPT = ["src/lib/leak-markers.ts", "scripts/validate-catalog.test.mts"];

@@ -1,8 +1,8 @@
 # LabPack labs
 
 The public site where learners browse LabPack practice labs, download them,
-and get the LabPack client. Next.js App Router, built statically, deployed on
-Vercel.
+and get the LabPack client. Next.js App Router, built as a static export and
+served by Cloudflare at https://fullmeshlabs.com (see docs/publishing.md).
 
 **This repository is public.** Read [docs/publishing.md](docs/publishing.md)
 before adding anything.

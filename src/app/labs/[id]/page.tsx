@@ -5,12 +5,14 @@ import { CopyButton } from "@/components/copy-button";
 import { StatusPill } from "@/components/lab-catalog";
 import { TopologyDrawing } from "@/components/topology-drawing";
 import { formatBytes, formatDate } from "@/lib/catalog";
+import { NO_LABS_PLACEHOLDER } from "@/lib/hosting";
 import { downloadPath, getCatalog } from "@/lib/site";
 
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getCatalog().labs.map((lab) => ({ id: lab.id }));
+  const ids = getCatalog().labs.map((lab) => ({ id: lab.id }));
+  return ids.length > 0 ? ids : [{ id: NO_LABS_PLACEHOLDER }];
 }
 
 function findLab(id: string) {

@@ -1,28 +1,22 @@
 import type { NextConfig } from "next";
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
 import { loadCatalog } from "./src/lib/catalog.ts";
+import { downloadRedirects, headerRules } from "./src/lib/hosting.ts";
 import { INDEXABLE } from "./src/lib/indexing.ts";
 
-// Downloads are reached by stable site addresses (/download/client and
-// /download/labs/<id>) and sent on to wherever the file is hosted, so the
-// host can change without changing a link. Only hosted files get a route.
-const nextConfig: NextConfig = {
-  // While the site is not to be indexed, every response says so, files included.
-  async headers() {
-    return INDEXABLE ? [] : [{ source: "/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }];
-  },
-  async redirects() {
-    const catalog = loadCatalog();
-    const routes = [];
-    if (catalog.client.url) {
-      routes.push({ source: "/download/client", destination: catalog.client.url, permanent: false });
-    }
-    for (const lab of catalog.labs) {
-      if (lab.release.status === "released" && lab.release.download) {
-        routes.push({ source: `/download/labs/${lab.id}`, destination: lab.release.download.url, permanent: false });
-      }
-    }
-    return routes;
-  },
-};
-
-export default nextConfig;
+// A build is a static export (the `out` folder) that Cloudflare serves; see
+// wrangler.jsonc. A static export cannot carry redirects or headers, so the
+// build writes them into `out/_redirects` and `out/_headers`
+// (scripts/write-hosting-files.mts). The dev server gets the same rules here,
+// from the same list in src/lib/hosting.ts.
+export default function config(phase: string): NextConfig {
+  if (phase !== PHASE_DEVELOPMENT_SERVER) return { output: "export" };
+  return {
+    async headers() {
+      return headerRules(INDEXABLE);
+    },
+    async redirects() {
+      return downloadRedirects(loadCatalog()).map((r) => ({ ...r, permanent: false }));
+    },
+  };
+}
