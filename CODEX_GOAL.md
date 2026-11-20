@@ -1,3 +1,8 @@
+> **Superseded on 2026-11-20.** The site now lists LabPack practice labs from
+> `content/catalog/`, with the publish gate in `scripts/validate-catalog.mts`
+> and the workflow in `docs/publishing.md`. This goal is kept for its history;
+> do not work from it.
+
 # Lab Library Goal: Workbook Packages, Publish Gate, and First Verified Wave
 
 This is the ONLY active goal in this repo. Read `README.md`, `AGENTS.md`, and this whole file before editing.

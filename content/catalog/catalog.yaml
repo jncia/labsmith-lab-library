@@ -1,0 +1,80 @@
+# The release manifest: what the public site lists. The site reads this file
+# at build time and `npm run validate` checks it (see content/catalog/README.md).
+#
+# A lab appears only once it is listed under `labs:` with its metadata in
+# labs/<id>.json. It becomes downloadable only when its entry says
+# `status: released`, with the date of its learner read and a hosted file.
+schema: labpack-site.catalog.v1
+kind: release
+
+client:
+  name: LabPack
+  channel: beta
+  build: 6dda438
+  fileName: LabPack-signed-6dda438.zip
+  bytes: 48974464
+  sha256: 1d68ad3c92ce10b2e86cb5b2521dc56201136c130769c8588a4b6d0f1e953ede
+  # null until the download host is chosen; then an https:// address.
+  url: null
+  publisher: Benjamin Jacobson
+  platform: Windows 11
+  requirements:
+    - Windows 11
+    - 12 GB of memory or more
+    - About 12 GB of free disk space, most of it for the router image
+    - An Intel processor. AMD is not tested yet; LabPack lets you try.
+
+levels:
+  - id: jncia-junos
+    name: JNCIA-Junos
+    track: Junos
+    status: in-review
+    note: The first labs are in their final review before release.
+  - id: jncis-sp
+    name: JNCIS-SP
+    track: Service provider
+    status: planned
+    note: Labs for the JNCIS-SP course are being planned.
+  - id: jncip-sp
+    name: JNCIP-SP
+    track: Service provider
+    status: later
+    note: Later. No date yet.
+  - id: jncie-sp
+    name: JNCIE-SP
+    track: Service provider
+    status: later
+    note: Later. No date yet.
+
+collections:
+  - id: jncia-course
+    title: JNCIA-Junos course labs
+    short: Course labs
+    summary: Six labs written to go with the JNCIA-Junos video course. Each practises what a part of the course teaches.
+    level: jncia-junos
+    # Labs in review that are not listed below yet. Shown as a count only.
+    unlistedInReview: 6
+  - id: practice-library-v1
+    title: JNCIA practice library
+    short: Practice library
+    summary: Standalone labs at JNCIA level, each built around one task. They assume no course.
+    level: jncia-junos
+    unlistedInReview: 16
+
+topicGroups:
+  - id: config
+    name: Configuration
+  - id: addressing
+    name: Interfaces and addressing
+  - id: static
+    name: Static routing
+  - id: ospf
+    name: OSPF
+  - id: policy
+    name: Routing policy
+  - id: filters
+    name: Firewall filters
+  - id: troubleshooting
+    name: Troubleshooting
+
+labs: []

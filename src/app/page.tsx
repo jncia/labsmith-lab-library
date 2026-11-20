@@ -1,108 +1,142 @@
-import { Activity, Boxes, GitBranch, Network, ShieldCheck } from "lucide-react";
-import { LabCatalog } from "@/components/lab-catalog";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { labs } from "@/lib/labs";
+import Link from "next/link";
+import { LabCatalog, type CatalogCard } from "@/components/lab-catalog";
+import { getCatalog } from "@/lib/site";
 
 export default function Home() {
-  const verifiedCount = labs.filter((lab) => lab.status === "Verified").length;
-  const nodeTotal = labs.reduce((total, lab) => total + lab.nodeCount, 0);
-  const technologyTotal = new Set(labs.flatMap((lab) => lab.technologies)).size;
+  const catalog = getCatalog();
+  const levelName = new Map(catalog.levels.map((l) => [l.id, l.name]));
+  const cards: CatalogCard[] = catalog.labs.map((l) => ({
+    id: l.id,
+    title: l.title,
+    summary: l.summary,
+    level: l.collection.level,
+    levelName: levelName.get(l.collection.level) ?? l.collection.level,
+    collection: l.collection.id,
+    collectionShort: l.collection.short,
+    topicGroups: l.topicGroups,
+    stages: l.stages.length,
+    minutes: l.estimatedMinutes,
+    status: l.release.status,
+    searchText: [l.title, l.summary, ...l.topics, ...l.stages.map((s) => s.title), l.collection.title]
+      .join(" ")
+      .toLowerCase(),
+  }));
+  const released = catalog.labs.filter((l) => l.release.status === "released").length;
+  const unlisted = catalog.collections.reduce((n, c) => n + c.unlistedInReview, 0);
+  const coming = catalog.levels.filter((l) => l.status === "planned" || l.status === "later");
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <section className="border-b bg-card/30">
-        <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-3xl space-y-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="outline" className="border-emerald-400/40 text-emerald-300">
-                  Verified on real Junos
-                </Badge>
-                <Badge variant="secondary">Free & runnable</Badge>
-                <Badge variant="secondary">Containerlab first</Badge>
-              </div>
-              <div className="space-y-3">
-                <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">
-                  LabSmith Lab Library
-                </h1>
-                <p className="max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-                  Runnable networking labs with topology files, per-device
-                  configurations, and workbook tasks with answers — every
-                  verified lab was deployed and checked on live virtual Junos
-                  devices before publishing.
-                </p>
-              </div>
-            </div>
-            <div className="grid grid-cols-3 gap-3 lg:min-w-[420px]">
-              <Metric icon={ShieldCheck} label="Verified" value={verifiedCount.toString()} />
-              <Metric icon={Network} label="Nodes" value={nodeTotal.toString()} />
-              <Metric icon={Boxes} label="Topics" value={technologyTotal.toString()} />
-            </div>
+    <>
+      <section className="border-b border-line bg-card">
+        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-12 sm:px-6 sm:py-16">
+          <p className="m-0 text-sm font-semibold text-quiet">Free practice labs for JNCIA-Junos</p>
+          <h1 className="m-0 max-w-3xl text-[2rem] leading-tight font-bold sm:text-[2.6rem]">
+            Practice Junos on a real router, on your own computer.
+          </h1>
+          <p className="m-0 max-w-2xl text-lg text-quiet">
+            Each lab starts a real Juniper vJunos router inside LabPack, gives you a workbook to follow, and checks your
+            work stage by stage.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/start"
+              className="inline-flex min-h-11 items-center rounded border border-accent bg-accent px-5 font-semibold text-on-accent no-underline"
+            >
+              Get started
+            </Link>
+            <Link
+              href="#labs"
+              className="inline-flex min-h-11 items-center rounded border border-line bg-card px-5 font-semibold text-ink no-underline hover:bg-selected"
+            >
+              Browse the labs
+            </Link>
           </div>
-          <Separator />
-          <div className="grid gap-3 md:grid-cols-3">
-            <Card className="bg-card/70">
-              <CardContent className="flex items-center gap-3 p-4">
-                <Activity className="h-5 w-5 text-emerald-300" />
-                <div>
-                  <p className="text-sm font-medium">Machine-verified, not hand-written</p>
-                  <p className="text-xs text-muted-foreground">
-                    Configs applied, state asserted, outputs captured live.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-card/70">
-              <CardContent className="flex items-center gap-3 p-4">
-                <GitBranch className="h-5 w-5 text-sky-300" />
-                <div>
-                  <p className="text-sm font-medium">Git-native delivery</p>
-                  <p className="text-xs text-muted-foreground">
-                    Every lab lives as readable files in the repo.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-card/70">
-              <CardContent className="flex items-center gap-3 p-4">
-                <Network className="h-5 w-5 text-amber-300" />
-                <div>
-                  <p className="text-sm font-medium">Home-lab friendly</p>
-                  <p className="text-xs text-muted-foreground">
-                    Six-node ceiling, Containerlab topology first.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <ul className="m-0 grid list-none gap-4 p-0 pt-2 sm:grid-cols-3">
+            <li className="grid gap-1 border-t border-line pt-3">
+              <strong>A real router</strong>
+              <span className="text-sm text-quiet">
+                Juniper&apos;s own vJunos-router runs every lab. The commands and the output are real Junos.
+              </span>
+            </li>
+            <li className="grid gap-1 border-t border-line pt-3">
+              <strong>Checked as you go</strong>
+              <span className="text-sm text-quiet">
+                Each stage has a Check that looks at the router and ticks what you got right.
+              </span>
+            </li>
+            <li className="grid gap-1 border-t border-line pt-3">
+              <strong>Free, no account</strong>
+              <span className="text-sm text-quiet">
+                Download LabPack and the JNCIA labs without signing up. LabPack runs on Windows 11.
+              </span>
+            </li>
+          </ul>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <LabCatalog labs={labs} />
+      <section id="labs" className="mx-auto grid max-w-6xl scroll-mt-4 gap-5 px-4 pt-10 sm:px-6">
+        <div className="grid gap-2">
+          <h2 className="m-0 text-2xl font-bold">Labs</h2>
+          {released === 0 ? (
+            <p className="m-0 max-w-3xl rounded-lg border border-line bg-surface px-4 py-3 text-sm">
+              <strong>LabPack is in beta.</strong>{" "}
+              {catalog.labs.length
+                ? "The labs below are in their final review. Each one opens for download when it is released."
+                : `${unlisted} JNCIA-Junos labs are in their final review. They appear here as each one is released.`}
+            </p>
+          ) : null}
+        </div>
+        {catalog.labs.length ? (
+          <LabCatalog
+            labs={cards}
+            levels={catalog.levels.map((l) => ({
+              id: l.id,
+              name: l.name,
+              disabled: !catalog.labs.some((x) => x.collection.level === l.id),
+              note: l.note,
+            }))}
+            collections={catalog.collections
+              .filter((c) => catalog.labs.some((x) => x.collection.id === c.id))
+              .map((c) => ({ id: c.id, name: c.short, note: c.summary }))}
+            topics={catalog.topicGroups}
+          />
+        ) : (
+          <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-2">
+            {catalog.collections.map((c) => (
+              <li key={c.id} className="grid gap-1.5 rounded-lg border border-line bg-card p-4">
+                <strong>{c.title}</strong>
+                <span className="text-sm text-quiet">{c.summary}</span>
+                <span className="text-xs text-quiet">{c.unlistedInReview} labs in review</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {catalog.collections.length ? (
+          <ul className="m-0 grid list-none gap-3 p-0 text-sm text-quiet md:grid-cols-2">
+            {catalog.collections
+              .filter((c) => catalog.labs.some((x) => x.collection.id === c.id))
+              .map((c) => (
+                <li key={c.id}>
+                  <strong className="text-ink">{c.short}:</strong> {c.summary}
+                </li>
+              ))}
+          </ul>
+        ) : null}
       </section>
-    </main>
-  );
-}
 
-function Metric({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof ShieldCheck;
-  label: string;
-  value: string;
-}) {
-  return (
-    <Card className="bg-background/70">
-      <CardContent className="p-4">
-        <Icon className="mb-3 h-4 w-4 text-muted-foreground" />
-        <p className="text-2xl font-semibold">{value}</p>
-        <p className="text-xs text-muted-foreground">{label}</p>
-      </CardContent>
-    </Card>
+      {coming.length ? (
+        <section className="mx-auto grid max-w-6xl gap-4 px-4 pt-12 sm:px-6">
+          <h2 className="m-0 text-xl font-bold">Coming later</h2>
+          <ul className="m-0 grid list-none gap-3 p-0 sm:grid-cols-3">
+            {coming.map((l) => (
+              <li key={l.id} className="grid gap-1 rounded-lg border border-dashed border-line p-4">
+                <strong>{l.name}</strong>
+                <span className="text-sm text-quiet">{l.note}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+    </>
   );
 }

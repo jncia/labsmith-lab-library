@@ -1,20 +1,11 @@
 import type { MetadataRoute } from "next";
-import { labs } from "@/lib/labs";
-
-const BASE_URL = "https://labsmith-lab-library.vercel.app";
+import { getCatalog, SITE_URL } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    {
-      url: BASE_URL,
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    ...labs.map((lab) => ({
-      url: `${BASE_URL}/labs/${lab.slug}`,
-      lastModified: lab.verification.lastRun !== "unverified" ? lab.verification.lastRun : undefined,
-      changeFrequency: "monthly" as const,
-      priority: 0.8,
-    })),
-  ];
+  const pages = ["", "/client", "/start"].map((p) => ({ url: `${SITE_URL}${p || "/"}`, changeFrequency: "weekly" as const }));
+  const labs = getCatalog().labs.map((lab) => ({
+    url: `${SITE_URL}/labs/${lab.id}`,
+    changeFrequency: "monthly" as const,
+  }));
+  return [...pages, ...labs];
 }
