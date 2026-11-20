@@ -6,8 +6,7 @@ export const SITE_URL = (process.env.SITE_URL || "https://labsmith-lab-library.v
 
 export const SITE_NAME = "LabPack";
 
-/** True only for a production deployment, so previews are never indexed. */
-export const IS_PRODUCTION = process.env.VERCEL_ENV === "production";
+export { INDEXABLE, IS_PRODUCTION } from "@/lib/indexing";
 
 /** The catalog, loaded once per build. A malformed catalog throws and fails the build. */
 export const getCatalog = cache(() => loadCatalog());
