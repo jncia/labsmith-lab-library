@@ -22,13 +22,11 @@ type Option = { id: string; name: string; disabled?: boolean; note?: string };
 
 function Chip({
   pressed,
-  disabled,
   onClick,
   children,
   title,
 }: {
   pressed: boolean;
-  disabled?: boolean;
   onClick: () => void;
   children: React.ReactNode;
   title?: string;
@@ -37,10 +35,9 @@ function Chip({
     <button
       type="button"
       aria-pressed={pressed}
-      disabled={disabled}
       onClick={onClick}
       title={title}
-      className={`min-h-9 rounded border px-3 py-1 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${
+      className={`min-h-9 rounded border px-3 py-1 text-sm font-semibold transition-colors ${
         pressed ? "border-accent bg-accent text-on-accent" : "border-line bg-card text-ink hover:bg-selected"
       }`}
     >
@@ -110,19 +107,19 @@ export function LabCatalog({
             <Chip pressed={level === "all"} onClick={() => setLevel("all")}>
               All levels
             </Chip>
-            {levels.map((l) => (
-              <Chip
-                key={l.id}
-                pressed={level === l.id}
-                disabled={l.disabled}
-                title={l.note}
-                onClick={() => setLevel(l.id)}
-              >
-                {l.name}
-                {l.disabled ? <span className="ml-1.5 font-normal">(coming)</span> : null}
-              </Chip>
-            ))}
+            {levels
+              .filter((l) => !l.disabled)
+              .map((l) => (
+                <Chip key={l.id} pressed={level === l.id} title={l.note} onClick={() => setLevel(l.id)}>
+                  {l.name}
+                </Chip>
+              ))}
           </div>
+          {levels.some((l) => l.disabled) ? (
+            <p className="m-0 text-sm text-quiet">
+              Coming later: {levels.filter((l) => l.disabled).map((l) => l.name).join(", ")}.
+            </p>
+          ) : null}
         </fieldset>
         <fieldset className="grid gap-2">
           <legend className="mb-1.5 text-sm font-semibold">Set</legend>

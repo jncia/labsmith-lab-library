@@ -140,7 +140,7 @@ export default async function LabPage({ params }: PageProps<"/labs/[id]">) {
               Tried on a real router
             </h2>
             <p className="m-0 max-w-3xl text-[0.95rem] text-quiet">
-              On {formatDate(lab.qualification.date)} this lab was run end to end on a real vJunos router: every
+              On {formatDate(lab.qualification.date)}{" "}this lab was run end to end on a real vJunos router: every
               stage&apos;s checks fail on the starting network and pass with the worked answer applied.
             </p>
           </section>

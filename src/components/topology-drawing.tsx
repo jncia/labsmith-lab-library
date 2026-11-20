@@ -305,6 +305,7 @@ export function TopologyDrawing({ lab }: { lab: LabMeta }) {
           })}
         </svg>
       </div>
+      <p className="m-0 text-sm text-quiet sm:hidden">Scroll the drawing sideways to see all of it.</p>
       <figcaption className="text-sm text-quiet">
         The strong outline marks the router you configure. Everything else is there for it to talk to.
       </figcaption>

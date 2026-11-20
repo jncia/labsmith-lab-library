@@ -60,7 +60,7 @@ export default function StartPage() {
         <h2 id="good-to-know" className="m-0 text-xl font-bold">
           Good to know
         </h2>
-        <ul className="m-0 grid gap-2 pl-5 text-quiet">
+        <ul className="m-0 grid list-disc gap-2 pl-5 text-quiet">
           <li>
             It is a real router. What you type is real Junos and what comes back is real output, so the labs prepare
             you for real equipment as well as for the exam.

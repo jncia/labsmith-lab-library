@@ -55,7 +55,7 @@ export default function ClientPage() {
                 <div className="grid w-full min-w-0 gap-3">
                   <h3 className="m-0 text-base font-bold">Follow LabPack&apos;s guide</h3>
                   <GuideStrip />
-                  <ol className="m-0 grid gap-2 pl-5 text-quiet">
+                  <ol className="m-0 grid list-none gap-2 p-0 text-quiet">
                     {GUIDE_STEPS.map((s) => (
                       <li key={s.name}>
                         <strong className="text-ink">{s.name}.</strong> {s.text}
@@ -83,7 +83,7 @@ export default function ClientPage() {
             <h2 id="expect" className="m-0 text-xl font-bold">
               What to expect
             </h2>
-            <ul className="m-0 grid gap-2 pl-5 text-quiet">
+            <ul className="m-0 grid list-disc gap-2 pl-5 text-quiet">
               <li>Keep a laptop plugged in, and close games and screen recorders while the router starts. They can make the start stall.</li>
               <li>If a start stalls, LabPack starts it again by itself.</li>
               <li>
@@ -102,7 +102,7 @@ export default function ClientPage() {
               If something goes wrong
             </h2>
             <p className="m-0 max-w-2xl text-quiet">
-              Use the <strong className="text-ink">Feedback</strong> button at the top of LabPack&apos;s window, write
+              Use the <strong className="text-ink">Feedback</strong>{" "}button at the top of LabPack&apos;s window, write
               what happened and choose <strong className="text-ink">Save report &amp; email…</strong>. Nothing is sent
               unless you send it.
             </p>
@@ -152,7 +152,7 @@ export default function ClientPage() {
 
           <div className="grid gap-3 rounded-lg border border-line bg-card p-4">
             <h2 className="m-0 text-lg font-bold">You need</h2>
-            <ul className="m-0 grid gap-1.5 pl-5 text-sm text-quiet">
+            <ul className="m-0 grid list-disc gap-1.5 pl-5 text-sm text-quiet">
               {client.requirements.map((r) => (
                 <li key={r}>{r}</li>
               ))}

@@ -138,3 +138,12 @@
   color: var(--on-accent);
   border-color: var(--accent);
 }
+@media (max-width: 520px) {
+  /* On a phone the steps wrap; joining lines would start rows with a dash. */
+  .guide-steps {
+    gap: 0.5rem 0.25rem;
+  }
+  .guide-steps li + li::before {
+    display: none;
+  }
+}
