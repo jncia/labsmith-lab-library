@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
 
 export function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
@@ -12,7 +11,7 @@ export function CopyButton({ text, label = "Copy" }: { text: string; label?: str
       setCopied(true);
       setTimeout(() => setCopied(false), 1600);
     } catch {
-      // Clipboard unavailable (permissions/insecure context) — stay quiet.
+      // No clipboard (permissions or an insecure context): the text is still there to select.
     }
   }
 
@@ -20,10 +19,8 @@ export function CopyButton({ text, label = "Copy" }: { text: string; label?: str
     <button
       type="button"
       onClick={copy}
-      aria-label={copied ? "Copied" : label}
-      className="absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-md border bg-background/80 px-2 py-1 text-[11px] text-muted-foreground backdrop-blur transition-colors hover:bg-background hover:text-foreground"
+      className="absolute top-1.5 right-1.5 min-h-7 rounded border border-line bg-card px-2 font-sans text-xs font-semibold text-ink hover:bg-selected"
     >
-      {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
       {copied ? "Copied" : label}
     </button>
   );

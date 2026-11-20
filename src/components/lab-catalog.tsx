@@ -2,180 +2,201 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { ArrowUpRight, Download, Filter, Search, ShieldCheck } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import type { Lab } from "@/lib/labs";
 
-export function LabCatalog({ labs }: { labs: Lab[] }) {
+export type CatalogCard = {
+  id: string;
+  title: string;
+  summary: string;
+  level: string;
+  levelName: string;
+  collection: string;
+  collectionShort: string;
+  topicGroups: string[];
+  stages: number;
+  minutes: number;
+  access: string;
+  status: "in-review" | "released";
+  searchText: string;
+};
+
+type Option = { id: string; name: string; disabled?: boolean; note?: string };
+
+function Chip({
+  pressed,
+  onClick,
+  children,
+  title,
+}: {
+  pressed: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  title?: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={pressed}
+      onClick={onClick}
+      title={title}
+      className={`min-h-9 rounded border px-3 py-1 text-sm font-semibold transition-colors ${
+        pressed ? "border-accent bg-accent text-on-accent" : "border-line bg-card text-ink hover:bg-selected"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+export function StatusPill({ status }: { status: "in-review" | "released" }) {
+  return status === "released" ? (
+    <span className="inline-block rounded-full border border-met bg-met-soft px-2 py-px text-xs font-semibold text-met">
+      Ready to download
+    </span>
+  ) : (
+    <span className="inline-block rounded-full border border-line bg-surface px-2 py-px text-xs font-semibold text-quiet">
+      In review
+    </span>
+  );
+}
+
+export function LabCatalog({
+  labs,
+  levels,
+  collections,
+  topics,
+}: {
+  labs: CatalogCard[];
+  levels: Option[];
+  collections: Option[];
+  topics: Option[];
+}) {
   const [query, setQuery] = useState("");
-  const [technology, setTechnology] = useState("all");
-  const [topology, setTopology] = useState("all");
+  const [level, setLevel] = useState<string>("all");
+  const [collection, setCollection] = useState<string>("all");
+  const [topic, setTopic] = useState<string>("all");
 
-  const technologies = useMemo(
-    () => Array.from(new Set(labs.flatMap((lab) => lab.technologies))).sort(),
-    [labs],
-  );
-  const topologies = useMemo(
-    () => Array.from(new Set(labs.map((lab) => lab.topologyFamily))).sort(),
-    [labs],
-  );
+  const shown = useMemo(() => {
+    const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+    return labs.filter(
+      (l) =>
+        (level === "all" || l.level === level) &&
+        (collection === "all" || l.collection === collection) &&
+        (topic === "all" || l.topicGroups.includes(topic)) &&
+        words.every((w) => l.searchText.includes(w)),
+    );
+  }, [labs, query, level, collection, topic]);
 
-  const filteredLabs = labs.filter((lab) => {
-    const haystack = [
-      lab.title,
-      lab.summary,
-      lab.topologyFamily,
-      lab.vendor,
-      lab.difficulty,
-      ...lab.technologies,
-      ...lab.scenarios,
-    ]
-      .join(" ")
-      .toLowerCase();
-    const matchesQuery = haystack.includes(query.toLowerCase());
-    const matchesTechnology =
-      technology === "all" || lab.technologies.includes(technology);
-    const matchesTopology =
-      topology === "all" || lab.topologyFamily === topology;
-    return matchesQuery && matchesTechnology && matchesTopology;
-  });
+  const usedTopics = topics.filter((t) => labs.some((l) => l.topicGroups.includes(t.id)));
+  const filtered = query || level !== "all" || collection !== "all" || topic !== "all";
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-      <aside className="space-y-4">
-        <Card className="sticky top-4">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Filter className="h-4 w-4" />
-              Find a scenario
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                className="pl-9"
-                placeholder="EVPN, Option B, RR..."
-              />
-            </div>
-            <Select value={technology} onValueChange={setTechnology}>
-              <SelectTrigger>
-                <SelectValue placeholder="Technology" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All technologies</SelectItem>
-                {technologies.map((item) => (
-                  <SelectItem key={item} value={item}>
-                    {item}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={topology} onValueChange={setTopology}>
-              <SelectTrigger>
-                <SelectValue placeholder="Topology" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All topologies</SelectItem>
-                {topologies.map((item) => (
-                  <SelectItem key={item} value={item}>
-                    {item}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Separator />
-            <div className="space-y-2 text-xs text-muted-foreground">
-              <p>{filteredLabs.length} matching labs</p>
-              <p>Primary format: Containerlab with startup configs.</p>
-            </div>
-          </CardContent>
-        </Card>
-      </aside>
-
-      <div className="space-y-4">
-        {filteredLabs.map((lab) => (
-          <Card key={lab.slug} className="overflow-hidden">
-            <CardContent className="grid gap-4 p-0 md:grid-cols-[1fr_240px]">
-              <div className="space-y-4 p-5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge
-                    variant={lab.status === "Verified" ? "default" : "secondary"}
-                    className={
-                      lab.status === "Verified"
-                        ? "bg-emerald-500 text-emerald-950 hover:bg-emerald-500"
-                        : undefined
-                    }
-                  >
-                    {lab.status}
-                  </Badge>
-                  <Badge variant="outline">{lab.nodeCount} nodes</Badge>
-                  <Badge variant="outline">{lab.difficulty}</Badge>
-                  <Badge variant="outline">{lab.vendor}</Badge>
-                </div>
-                <div className="space-y-2">
-                  <h2 className="text-xl font-semibold tracking-tight">{lab.title}</h2>
-                  <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
-                    {lab.summary}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {lab.technologies.map((item) => (
-                    <Badge key={item} variant="secondary">
-                      {item}
-                    </Badge>
-                  ))}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <Button asChild size="sm">
-                    <Link href={`/labs/${lab.slug}`}>
-                      Inspect lab <ArrowUpRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button asChild size="sm" variant="outline">
-                    <a href={lab.repositoryPath} target="_blank" rel="noreferrer">
-                      Lab files <Download className="h-4 w-4" />
-                    </a>
-                  </Button>
-                </div>
-              </div>
-              <div className="border-t bg-muted/30 p-5 md:border-l md:border-t-0">
-                <div className="mb-4 flex items-center gap-2 text-sm font-medium">
-                  <ShieldCheck className="h-4 w-4 text-emerald-300" />
-                  Verification
-                </div>
-                <dl className="space-y-3 text-sm">
-                  <div>
-                    <dt className="text-muted-foreground">Last run</dt>
-                    <dd className="font-mono text-xs">{lab.verification.lastRun}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">Assertions</dt>
-                    <dd>{lab.verification.assertions}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">Topology family</dt>
-                    <dd>{lab.topologyFamily}</dd>
-                  </div>
-                </dl>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+    <div className="grid gap-5">
+      <div className="grid gap-4 rounded-lg border border-line bg-card p-4 sm:p-5">
+        <label className="grid gap-1.5">
+          <span className="text-sm font-semibold">Search the labs</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="For example: OSPF, static route, load merge"
+            className="min-h-10 w-full rounded border border-line bg-card px-3 text-base text-ink placeholder:text-quiet"
+          />
+        </label>
+        <fieldset className="grid gap-2">
+          <legend className="mb-1.5 text-sm font-semibold">Level</legend>
+          <div className="flex flex-wrap gap-2">
+            <Chip pressed={level === "all"} onClick={() => setLevel("all")}>
+              All levels
+            </Chip>
+            {levels
+              .filter((l) => !l.disabled)
+              .map((l) => (
+                <Chip key={l.id} pressed={level === l.id} title={l.note} onClick={() => setLevel(l.id)}>
+                  {l.name}
+                </Chip>
+              ))}
+          </div>
+          {levels.some((l) => l.disabled) ? (
+            <p className="m-0 text-sm text-quiet">
+              Coming later: {levels.filter((l) => l.disabled).map((l) => l.name).join(", ")}.
+            </p>
+          ) : null}
+        </fieldset>
+        <fieldset className="grid gap-2">
+          <legend className="mb-1.5 text-sm font-semibold">Set</legend>
+          <div className="flex flex-wrap gap-2">
+            <Chip pressed={collection === "all"} onClick={() => setCollection("all")}>
+              All
+            </Chip>
+            {collections.map((c) => (
+              <Chip key={c.id} pressed={collection === c.id} onClick={() => setCollection(c.id)} title={c.note}>
+                {c.name}
+              </Chip>
+            ))}
+          </div>
+        </fieldset>
+        <fieldset className="grid gap-2">
+          <legend className="mb-1.5 text-sm font-semibold">Topic</legend>
+          <div className="flex flex-wrap gap-2">
+            <Chip pressed={topic === "all"} onClick={() => setTopic("all")}>
+              All topics
+            </Chip>
+            {usedTopics.map((t) => (
+              <Chip key={t.id} pressed={topic === t.id} onClick={() => setTopic(t.id)}>
+                {t.name}
+              </Chip>
+            ))}
+          </div>
+        </fieldset>
       </div>
+
+      <div className="flex flex-wrap items-center gap-3 text-sm text-quiet" aria-live="polite">
+        <span>
+          {shown.length === labs.length ? `${labs.length} labs` : `${shown.length} of ${labs.length} labs`}
+        </span>
+        {filtered ? (
+          <button
+            type="button"
+            className="rounded px-2 py-1 font-semibold text-ink underline-offset-2 hover:underline"
+            onClick={() => {
+              setQuery("");
+              setLevel("all");
+              setCollection("all");
+              setTopic("all");
+            }}
+          >
+            Clear
+          </button>
+        ) : null}
+      </div>
+
+      {shown.length ? (
+        <ul className="grid list-none gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
+          {shown.map((l) => (
+            <li key={l.id}>
+              <Link
+                href={`/labs/${l.id}`}
+                className="group grid h-full content-start gap-2.5 rounded-lg border border-line bg-card p-4 text-ink no-underline transition-colors hover:border-focus"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <StatusPill status={l.status} />
+                  <span className="text-xs font-semibold text-quiet">{l.collectionShort}</span>
+                </div>
+                <h3 className="m-0 text-[1.05rem] font-bold leading-snug group-hover:underline">{l.title}</h3>
+                <p className="m-0 line-clamp-3 text-sm text-quiet">{l.summary}</p>
+                <p className="m-0 mt-auto pt-1 text-xs text-quiet">
+                  {l.levelName} · {l.stages} {l.stages === 1 ? "stage" : "stages"} · about {l.minutes} min ·{" "}
+                  <span className="font-semibold text-ink">{l.access}</span>
+                </p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="rounded-lg border border-line bg-card p-6 text-quiet">
+          No lab matches that. Try fewer words, or clear the filters.
+        </p>
+      )}
     </div>
   );
 }
