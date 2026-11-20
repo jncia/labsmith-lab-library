@@ -97,13 +97,23 @@ production:
 CATALOG_DIR=content/dev-catalog npm run dev
 ```
 
-A preview deployment from a local checkout uses the same variable:
+## Deploys
 
-```bash
-vercel deploy --build-env CATALOG_DIR=content/dev-catalog
-```
+The Vercel project is connected to this repository:
 
-Previews are marked `noindex` and `robots.txt` disallows them.
+- **A merge to `main` deploys production.** Merging is the release step for site changes.
+- **Every pushed branch and pull request gets a preview.** Git previews build from the committed catalog,
+  so they show only what is listed in `content/catalog/` (the development catalog never leaves the
+  machine that generated it). Opening a preview needs a Vercel sign-in.
+- **A preview with the development catalog** (all qualified labs shown in review) comes only from a local
+  checkout, never `--prod`:
+
+  ```bash
+  vercel deploy --build-env CATALOG_DIR=content/dev-catalog
+  ```
+
+Previews are marked `noindex` and `robots.txt` disallows them. Every deploy runs `npm run build`, so the
+validator and the leak scan gate production as well.
 
 ## The leak scan
 
