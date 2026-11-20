@@ -1,0 +1,159 @@
+{
+  "briefHash": "sha256:8ca665bb02b072250fa5127d7585469da92e72c182e6b2484a1291ec8d68f714",
+  "briefId": "interior-routing-core-3n",
+  "cost": {
+    "byModel": {
+      "claude-sonnet-5": {
+        "cacheCreationInputTokens": 52565,
+        "cacheReadInputTokens": 491433,
+        "inputTokens": 50,
+        "outputTokens": 21094,
+        "usd": 0.519586
+      }
+    },
+    "byStage": {
+      "engineer": 0.424365,
+      "writer": 0.095221
+    },
+    "costKnown": true,
+    "totalUsd": 0.519586
+  },
+  "deferReason": null,
+  "finishedAt": "2026-09-19T17:36:05+00:00",
+  "labs": [
+    {
+      "baseDrift": false,
+      "cleanup": {
+        "clean": true
+      },
+      "deploySeconds": 215.7,
+      "labRunId": "a0919uk0e"
+    }
+  ],
+  "occupancyProbeFailed": false,
+  "outcome": "qualified",
+  "parkReason": null,
+  "qualification": {
+    "contentHash": "a0a89a1c3f5c18b6b17dbd0738ee5cd77d947e00c8386ceab8147146bad1caad",
+    "receiptId": "interior-routing-core-3n-2026-09-19-a0a89a1c3f5c",
+    "runs": [
+      {
+        "elapsedSeconds": 294.5,
+        "name": "start-state",
+        "status": "passed"
+      },
+      {
+        "elapsedSeconds": 96.4,
+        "name": "reference-solution",
+        "status": "passed"
+      },
+      {
+        "elapsedSeconds": 57.3,
+        "name": "reset",
+        "status": "passed"
+      },
+      {
+        "elapsedSeconds": 246.4,
+        "name": "learner-start",
+        "status": "passed"
+      }
+    ],
+    "seconds": 709.9,
+    "status": "passed"
+  },
+  "queueId": "proof1-routing-202609",
+  "rehearsals": [
+    {
+      "afterSession": 1,
+      "deadlineSeconds": 150,
+      "issues": [],
+      "repolled": false,
+      "seconds": 231.7,
+      "status": "passed"
+    }
+  ],
+  "runId": "a0919uk0",
+  "schemaVersion": 0,
+  "sessions": [
+    {
+      "call": {
+        "costUsd": 0.4243652,
+        "durationMs": 319638,
+        "effort": "medium",
+        "exit": "ok",
+        "isError": false,
+        "model": "sonnet",
+        "modelUsage": {
+          "claude-sonnet-5": {
+            "cacheCreationInputTokens": 39307,
+            "cacheReadInputTokens": 489306,
+            "canonicalModel": "claude-sonnet-5",
+            "contextWindow": 1000000,
+            "costBasis": "list",
+            "costUSD": 0.4243652,
+            "inputTokens": 48,
+            "maxOutputTokens": 64000,
+            "outputTokens": 16918,
+            "provider": "firstParty",
+            "thinkingTokens": 2072,
+            "webSearchRequests": 0
+          }
+        },
+        "numTurns": 29,
+        "promptName": "engineer",
+        "promptSha256": "036355a759d8ea1a418ff5b67bc1a2bc58cf3aa2c53499f1b847db14aa021bb9",
+        "resultFile": "engineer-1.result.json"
+      },
+      "ended": "submitted",
+      "freeRejections": 6,
+      "kind": "engineer",
+      "labRunId": "a0919uk0e",
+      "n": 1,
+      "outputChars": 37094,
+      "submissions": 1,
+      "toolCalls": 28
+    }
+  ],
+  "startedAt": "2026-09-19T17:10:20+00:00",
+  "validatorWarnings": [],
+  "versions": {
+    "claudeCode": "2.1.276 (Claude Code)",
+    "containerlab": "unknown",
+    "labsmith": "f2915438654ba9404f1f9c15602dbcc689b3bbf9",
+    "limits": "8c6615a452fff658d270e53bab0a95210e8727f547f9199df8edeb331d59cd34",
+    "prompts": {
+      "engineer": "036355a759d8ea1a418ff5b67bc1a2bc58cf3aa2c53499f1b847db14aa021bb9",
+      "writer": "69bfbd19ecbdda5f2931adebe66e980c82f7ca39e79cd2d8aacdbec664a5a81e"
+    }
+  },
+  "wallClockSeconds": 1544.697,
+  "writer": {
+    "attempts": 1,
+    "call": {
+      "costUsd": 0.0952214,
+      "effort": "medium",
+      "exit": "ok",
+      "isError": false,
+      "model": "sonnet",
+      "modelUsage": {
+        "claude-sonnet-5": {
+          "cacheCreationInputTokens": 13258,
+          "cacheReadInputTokens": 2127,
+          "canonicalModel": "claude-sonnet-5",
+          "contextWindow": 1000000,
+          "costBasis": "list",
+          "costUSD": 0.0952214,
+          "inputTokens": 2,
+          "maxOutputTokens": 64000,
+          "outputTokens": 4176,
+          "provider": "firstParty",
+          "thinkingTokens": 708,
+          "webSearchRequests": 0
+        }
+      },
+      "promptName": "writer",
+      "promptSha256": "69bfbd19ecbdda5f2931adebe66e980c82f7ca39e79cd2d8aacdbec664a5a81e"
+    },
+    "status": "accepted"
+  }
+}
