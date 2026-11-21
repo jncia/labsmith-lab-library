@@ -1,4 +1,4 @@
-# Publishing labs on the LabPack site
+# Publishing labs on the Full Mesh Labs site
 
 The site lists what `content/catalog/` says, and nothing else. This page is
 the whole workflow, from a qualified packet to a download on the site.
@@ -22,7 +22,7 @@ content/catalog/
 | --- | --- |
 | `schema` | `labpack-site.catalog.v1` |
 | `kind` | `release` (this folder) or `development` (a local catalog; refused for production) |
-| `client` | the LabPack download: build, file name, bytes, SHA-256, `url` (`null` until hosted), publisher, platform, requirements |
+| `client` | the Full Mesh Labs app download: build, file name, bytes, SHA-256, `url` (`null` until hosted), publisher, platform, requirements |
 | `levels[]` | certification levels with `stage` and `status`: `available` (has a released lab), `in-review`, `planned`, `later` |
 | `access[]` | access tiers (`open`, `free-account`, `course`, `subscription`) with `delivered`: whether the site can hand out a download in that tier today |
 | `accessRule` | which tier each collection `kind` (`course`, `library`) gets at each level `stage` (`associate`, `specialist`, `professional`, `expert`) |
@@ -44,9 +44,9 @@ The rule (owner direction, 2026-11-20):
 | | JNCIA and JNCIS | JNCIP and JNCIE |
 | --- | --- | --- |
 | Course labs | free, no account | with the course purchase |
-| Practice library | free account | LabPack subscription |
+| Practice library | free account | Full Mesh Labs subscription |
 
-LabPack itself needs no account. Only the `open` tier is delivered today: sign-in, course entitlement and
+The app itself needs no account. Only the `open` tier is delivered today: sign-in, course entitlement and
 subscriptions are not built, so a lab in any other tier can be listed as in review but the validator refuses
 to release it. When a tier's delivery exists, set its `delivered: true` in the same change.
 
@@ -102,7 +102,7 @@ CATALOG_DIR=content/dev-catalog npm run dev
 The site is a static export (`out/`) served by a Cloudflare Worker with no Worker code (`wrangler.jsonc`),
 on the Workers Free plan, at `fullmeshlabs.com`; `www.fullmeshlabs.com` redirects there (a zone Redirect
 Rule). A static export cannot carry redirects or headers, so `npm run build` writes them into
-`out/_redirects` (the download addresses) and `out/_headers` (`noindex` until indexing opens) from
+`out/_redirects` (the download addresses) and `out/_headers` (`noindex` on anything but a production build) from
 `src/lib/hosting.ts`; `next dev` applies the same rules.
 
 - **Production is deployed from `main`, by hand, after a merge:**
@@ -123,7 +123,8 @@ Rule). A static export cannot carry redirects or headers, so `npm run build` wri
   CATALOG_DIR=content/dev-catalog npm run build && npm run preview   # all qualified labs, in review
   ```
 
-Local builds and previews are marked `noindex` and `robots.txt` disallows them. Every deploy runs
+Only a production build is open to search engines (`src/lib/indexing.ts`). Local builds and previews
+are marked `noindex` and `robots.txt` disallows them. Every deploy runs
 `npm run build`, so the validator and the leak scan gate production as well.
 
 ## The leak scan

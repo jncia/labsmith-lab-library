@@ -1,7 +1,7 @@
-# LabPack labs
+# Full Mesh Labs site
 
-The public site where learners browse LabPack practice labs, download them,
-and get the LabPack client. Next.js App Router, built as a static export and
+The public site where learners browse Full Mesh Labs practice labs, download
+them, and get the Full Mesh Labs app. Next.js App Router, built as a static export and
 served by Cloudflare at https://fullmeshlabs.com (see docs/publishing.md).
 
 **This repository is public.** Read [docs/publishing.md](docs/publishing.md)
@@ -11,7 +11,7 @@ before adding anything.
 
 - `/` the catalog, with search and filters by level, set and topic
 - `/labs/<id>` a lab: summary, the network drawing, stages, what you need, download
-- `/client` the LabPack download, requirements and setup steps
+- `/client` the app download, requirements and setup steps
 - `/start` getting started
 
 ## Content

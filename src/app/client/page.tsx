@@ -6,8 +6,8 @@ import { formatBytes } from "@/lib/catalog";
 import { downloadPath, getCatalog } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Get LabPack",
-  description: "Download LabPack for Windows 11: it runs a real Juniper router on your computer and guides you through each lab.",
+  title: "Get the app",
+  description: "Download the Full Mesh Labs app for Windows 11: it runs a real Juniper router on your computer and guides you through each lab.",
 };
 
 export default function ClientPage() {
@@ -20,9 +20,9 @@ export default function ClientPage() {
         <p className="m-0 text-sm font-semibold text-quiet">
           {client.name} {client.channel} for {client.platform}
         </p>
-        <h1 className="m-0 text-[1.9rem] leading-tight font-bold sm:text-[2.3rem]">Get LabPack</h1>
+        <h1 className="m-0 text-[1.9rem] leading-tight font-bold sm:text-[2.3rem]">Get the Full Mesh Labs app</h1>
         <p className="m-0 max-w-2xl text-lg text-quiet">
-          LabPack runs a real Juniper router on your own computer. It walks you through setting up, opens the
+          The app runs a real Juniper router on your own computer. It walks you through setting up, opens the
           lab&apos;s workbook beside the router&apos;s terminals, and checks each stage when you ask.
         </p>
       </header>
@@ -39,10 +39,10 @@ export default function ClientPage() {
                   1
                 </span>
                 <div className="grid gap-1">
-                  <h3 className="m-0 text-base font-bold">Unzip it and open LabPack</h3>
+                  <h3 className="m-0 text-base font-bold">Unzip it and open the app</h3>
                   <p className="m-0 text-quiet">
                     Right-click the zip and choose <strong className="text-ink">Extract All</strong>. Open the{" "}
-                    <code>LabPack</code> folder inside and run <code>LabPack.exe</code>. If Windows asks, the publisher
+                    <code>FullMeshLabs</code> folder inside and run <code>FullMeshLabs.exe</code>. If Windows asks, the publisher
                     is <strong className="text-ink">{client.publisher}</strong>: choose{" "}
                     <strong className="text-ink">Run</strong>.
                   </p>
@@ -53,7 +53,7 @@ export default function ClientPage() {
                   2
                 </span>
                 <div className="grid w-full min-w-0 gap-3">
-                  <h3 className="m-0 text-base font-bold">Follow LabPack&apos;s guide</h3>
+                  <h3 className="m-0 text-base font-bold">Follow the app&apos;s guide</h3>
                   <GuideStrip />
                   <ol className="m-0 grid list-none gap-2 p-0 text-quiet">
                     {GUIDE_STEPS.map((s) => (
@@ -85,7 +85,7 @@ export default function ClientPage() {
             </h2>
             <ul className="m-0 grid list-disc gap-2 pl-5 text-quiet">
               <li>Keep a laptop plugged in, and close games and screen recorders while the router starts. They can make the start stall.</li>
-              <li>If a start stalls, LabPack starts it again by itself.</li>
+              <li>If a start stalls, the app starts it again by itself.</li>
               <li>
                 In the lab, the workbook sits beside the router&apos;s terminals. Each stage has a{" "}
                 <strong className="text-ink">Check</strong> button that ticks what you got right.
@@ -102,12 +102,12 @@ export default function ClientPage() {
               If something goes wrong
             </h2>
             <p className="m-0 max-w-2xl text-quiet">
-              Use the <strong className="text-ink">Feedback</strong>{" "}button at the top of LabPack&apos;s window, write
+              Use the <strong className="text-ink">Feedback</strong>{" "}button at the top of the app&apos;s window, write
               what happened and choose <strong className="text-ink">Save report &amp; email…</strong>. Nothing is sent
               unless you send it.
             </p>
             <p className="m-0 max-w-2xl text-quiet">
-              To remove LabPack, delete the <code>LabPack</code> folder and the folder <code>.config\labpack</code> in
+              To remove the app, delete the <code>FullMeshLabs</code> folder and the folder <code>.config\labpack</code> in
               your user folder.
             </p>
           </section>
@@ -121,7 +121,7 @@ export default function ClientPage() {
                 href={downloadPath("client")}
                 className="inline-flex min-h-11 items-center justify-center rounded border border-accent bg-accent px-4 font-semibold text-on-accent no-underline"
               >
-                Download LabPack
+                Download the app
               </a>
             ) : (
               <>
@@ -157,7 +157,7 @@ export default function ClientPage() {
                 <li key={r}>{r}</li>
               ))}
             </ul>
-            <p className="m-0 text-sm text-quiet">LabPack is for Windows 11 for now.</p>
+            <p className="m-0 text-sm text-quiet">The app is for Windows 11 for now.</p>
           </div>
 
           <p className="m-0 text-sm">

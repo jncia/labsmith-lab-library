@@ -40,7 +40,7 @@ export default function Home() {
             Practice Junos on a real router, on your own computer.
           </h1>
           <p className="m-0 max-w-2xl text-lg text-quiet">
-            Each lab starts a real Juniper vJunos router inside LabPack, gives you a workbook to follow, and checks your
+            Each lab starts a real Juniper vJunos router inside the Full Mesh Labs app, gives you a workbook to follow, and checks your
             work stage by stage.
           </p>
           <div className="flex flex-wrap gap-3">
@@ -73,8 +73,8 @@ export default function Home() {
             <li className="grid gap-1 border-t border-line pt-3">
               <strong>Free to start</strong>
               <span className="text-sm text-quiet">
-                LabPack and the JNCIA course labs need no account. The practice library is free with an account.
-                LabPack runs on Windows 11.
+                The app and the JNCIA course labs need no account. The practice library is free with an account.
+                The app runs on Windows 11.
               </span>
             </li>
           </ul>
@@ -86,7 +86,7 @@ export default function Home() {
           <h2 className="m-0 text-2xl font-bold">Labs</h2>
           {released === 0 ? (
             <p className="m-0 max-w-3xl rounded-lg border border-line bg-surface px-4 py-3 text-sm">
-              <strong>LabPack is in beta.</strong>{" "}
+              <strong>Full Mesh Labs is in beta.</strong>{" "}
               {catalog.labs.length
                 ? "The labs below are in their final review. Each one opens for download when it is released."
                 : `${unlisted} JNCIA-Junos labs are in their final review. They appear here as each one is released.`}

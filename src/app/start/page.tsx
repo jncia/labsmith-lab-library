@@ -5,14 +5,14 @@ import { getCatalog } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Getting started",
-  description: "Four steps from nothing to your first Junos lab in LabPack.",
+  description: "Four steps from nothing to your first Junos lab with the Full Mesh Labs app.",
 };
 
 const STEPS = [
   {
-    title: "Get LabPack",
-    body: "LabPack is a free app for Windows 11. It needs 12 GB of memory or more and about 12 GB of free disk space.",
-    link: { href: "/client", label: "Get LabPack" },
+    title: "Get the app",
+    body: "The Full Mesh Labs app is free, for Windows 11. It needs 12 GB of memory or more and about 12 GB of free disk space.",
+    link: { href: "/client", label: "Get the app" },
   },
   {
     title: "Choose a lab",
@@ -20,8 +20,8 @@ const STEPS = [
     link: { href: "/#labs", label: "Browse the labs" },
   },
   {
-    title: "Open it in LabPack",
-    body: "LabPack's guide checks your computer for that lab and helps you get Juniper's free router image, about 4 GB. You fetch the image once; every lab uses it.",
+    title: "Open it in the app",
+    body: "The app's guide checks your computer for that lab and helps you get Juniper's free router image, about 4 GB. You fetch the image once; every lab uses it.",
   },
   {
     title: "Start the lab and work through it",
@@ -106,7 +106,7 @@ export default function StartPage() {
             </tbody>
           </table>
         </div>
-        <p className="m-0 text-sm text-quiet">LabPack itself is free and needs no account.</p>
+        <p className="m-0 text-sm text-quiet">The app itself is free and needs no account.</p>
       </section>
 
       <section aria-labelledby="good-to-know" className="grid gap-3">
