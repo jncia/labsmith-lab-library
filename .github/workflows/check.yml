@@ -21,3 +21,47 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+
+  # A merge to main deploys production, but only after the check above passes
+  # on that same commit. Pull requests never reach this job, so a fork's code
+  # never sees the token.
+  deploy:
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://fullmeshlabs.com
+    # One deploy at a time, in merge order; a running deploy is never cut off.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    env:
+      # Repository secret: a Cloudflare API token from the "Edit Cloudflare
+      # Workers" template, limited to the account and the fullmeshlabs.com zone.
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      # Repository variable: the Cloudflare account that owns the Worker.
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      # Until the token is saved, the job says so and stops without failing.
+      - id: ready
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::notice::Not deployed: the CLOUDFLARE_API_TOKEN secret or the CLOUDFLARE_ACCOUNT_ID variable is not set. See docs/publishing.md."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.ready.outputs.ok == 'true'
+        uses: actions/checkout@v4
+      - if: steps.ready.outputs.ok == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - if: steps.ready.outputs.ok == 'true'
+        run: npm ci
+      # Builds with SITE_ENV=production from the committed catalog (the
+      # validator and the leak scan run first), then runs wrangler deploy.
+      - if: steps.ready.outputs.ok == 'true'
+        run: npm run deploy

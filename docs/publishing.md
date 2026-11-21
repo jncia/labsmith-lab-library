@@ -105,15 +105,20 @@ Rule). A static export cannot carry redirects or headers, so `npm run build` wri
 `out/_redirects` (the download addresses) and `out/_headers` (`noindex` on anything but a production build) from
 `src/lib/hosting.ts`; `next dev` applies the same rules.
 
-- **Production is deployed from `main`, by hand, after a merge:**
+- **A merge to `main` deploys production.** The `deploy` job in `.github/workflows/check.yml` runs
+  after the check passes on the merged commit, one deploy at a time. It runs `npm run deploy`, which
+  builds with `SITE_ENV=production` from the committed catalog (a development catalog is refused) and
+  runs `wrangler deploy`. Merging is the release step. Pull requests never run this job.
 
-  ```bash
-  npm run deploy
-  ```
+  It needs two repository settings (Settings → Secrets and variables → Actions):
 
-  It builds with `SITE_ENV=production` from the committed catalog (a development catalog is refused) and
-  runs `wrangler deploy`, which needs a Wrangler sign-in to the account that owns the zone. Merging is
-  still the release step: deploy only what is on `main`.
+  - secret `CLOUDFLARE_API_TOKEN`: a Cloudflare API token made from the "Edit Cloudflare Workers"
+    template, limited to the account and the `fullmeshlabs.com` zone;
+  - variable `CLOUDFLARE_ACCOUNT_ID`: the account that owns the Worker.
+
+  Without them the job ends with a notice and deploys nothing. To deploy by hand instead (the same
+  build and deploy), run `npm run deploy` from a checkout of `main` with Wrangler signed in to that
+  account.
 - **Previews are local.** The Worker has no `*.workers.dev` address and no preview URLs, so nothing but
   production is public. Build, then serve the output on Cloudflare's runtime (redirects and headers
   included) at http://127.0.0.1:8787:
