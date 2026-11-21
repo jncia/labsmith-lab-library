@@ -99,21 +99,32 @@ CATALOG_DIR=content/dev-catalog npm run dev
 
 ## Deploys
 
-The Vercel project is connected to this repository:
+The site is a static export (`out/`) served by a Cloudflare Worker with no Worker code (`wrangler.jsonc`),
+on the Workers Free plan, at `fullmeshlabs.com`; `www.fullmeshlabs.com` redirects there (a zone Redirect
+Rule). A static export cannot carry redirects or headers, so `npm run build` writes them into
+`out/_redirects` (the download addresses) and `out/_headers` (`noindex` until indexing opens) from
+`src/lib/hosting.ts`; `next dev` applies the same rules.
 
-- **A merge to `main` deploys production.** Merging is the release step for site changes.
-- **Every pushed branch and pull request gets a preview.** Git previews build from the committed catalog,
-  so they show only what is listed in `content/catalog/` (the development catalog never leaves the
-  machine that generated it). Opening a preview needs a Vercel sign-in.
-- **A preview with the development catalog** (all qualified labs shown in review) comes only from a local
-  checkout, never `--prod`:
+- **Production is deployed from `main`, by hand, after a merge:**
 
   ```bash
-  vercel deploy --build-env CATALOG_DIR=content/dev-catalog
+  npm run deploy
   ```
 
-Previews are marked `noindex` and `robots.txt` disallows them. Every deploy runs `npm run build`, so the
-validator and the leak scan gate production as well.
+  It builds with `SITE_ENV=production` from the committed catalog (a development catalog is refused) and
+  runs `wrangler deploy`, which needs a Wrangler sign-in to the account that owns the zone. Merging is
+  still the release step: deploy only what is on `main`.
+- **Previews are local.** The Worker has no `*.workers.dev` address and no preview URLs, so nothing but
+  production is public. Build, then serve the output on Cloudflare's runtime (redirects and headers
+  included) at http://127.0.0.1:8787:
+
+  ```bash
+  npm run build && npm run preview
+  CATALOG_DIR=content/dev-catalog npm run build && npm run preview   # all qualified labs, in review
+  ```
+
+Local builds and previews are marked `noindex` and `robots.txt` disallows them. Every deploy runs
+`npm run build`, so the validator and the leak scan gate production as well.
 
 ## The leak scan
 
@@ -122,7 +133,7 @@ SSH keys, tokens, credentials, image digests, home-network and management
 addresses, private host names, personal email addresses, authoring internals
 and raw device output, in every file the site is built from (`content/catalog`,
 `content/dev-catalog`, `src`, `public`, `scripts`, `docs`, `README.md`,
-`next.config.ts`, `package.json`). Lab addresses from the documentation ranges
+`next.config.ts`, `package.json`, `wrangler.jsonc`). Lab addresses from the documentation ranges
 are fine.
 
 `npm run validate -- --include-legacy` also reports what the scan finds in the

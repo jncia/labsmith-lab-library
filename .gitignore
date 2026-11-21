@@ -42,3 +42,6 @@ next-env.d.ts
 
 # development catalog built from private packets: never commit
 /content/dev-catalog/
+
+# cloudflare (wrangler local state)
+.wrangler/

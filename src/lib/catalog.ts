@@ -333,7 +333,7 @@ export function loadCatalog(dir: string = resolveCatalogDir(), env: { production
   const m = c.obj(raw, "catalog.yaml");
   if (m.schema !== CATALOG_SCHEMA) c.add("catalog.yaml", `schema must be ${CATALOG_SCHEMA} (found ${String(m.schema)})`);
   const kind = c.oneOf(m, "kind", ["release", "development"] as const, "catalog.yaml");
-  const production = env.production ?? process.env.VERCEL_ENV === "production";
+  const production = env.production ?? process.env.SITE_ENV === "production";
   if (production && kind === "development") {
     c.add("catalog.yaml", "a development catalog can never be built for production");
   }

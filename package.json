@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run validate && next build",
-    "start": "next start",
+    "build": "npm run validate && next build && node scripts/write-hosting-files.mts",
+    "preview": "wrangler dev",
+    "deploy": "SITE_ENV=production npm run build && wrangler deploy",
     "lint": "eslint",
     "validate": "node scripts/validate-catalog.mts",
     "test": "node --test scripts/*.test.mts",
@@ -25,7 +26,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "4.165.0"
   },
   "type": "module",
   "engines": {
