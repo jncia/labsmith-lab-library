@@ -8,12 +8,12 @@ schema: labpack-site.catalog.v1
 kind: release
 
 client:
-  name: LabPack
+  name: Full Mesh Labs
   channel: beta
-  build: 6dda438
-  fileName: LabPack-signed-6dda438.zip
-  bytes: 48974464
-  sha256: 1d68ad3c92ce10b2e86cb5b2521dc56201136c130769c8588a4b6d0f1e953ede
+  build: 2fe6047
+  fileName: FullMeshLabs-signed-2fe6047.zip
+  bytes: 49013932
+  sha256: ecdf595f8c8f65d092773a0c3d33596f1fd1460fd3cdd1f743099aeaddd35fc8
   # null until the download host is chosen; then an https:// address.
   url: null
   publisher: Benjamin Jacobson
@@ -22,7 +22,7 @@ client:
     - Windows 11
     - 12 GB of memory or more
     - About 12 GB of free disk space, most of it for the router image
-    - An Intel processor. AMD is not tested yet; LabPack lets you try.
+    - An Intel processor. AMD is not tested yet; the app lets you try.
 
 levels:
   - id: jncia-junos
@@ -62,7 +62,7 @@ access:
   - id: free-account
     name: Free account
     short: Free account
-    note: Free with a LabPack account.
+    note: Free with a Full Mesh Labs account.
     delivered: false
   - id: course
     name: With the course
@@ -70,15 +70,15 @@ access:
     note: Comes with the course purchase.
     delivered: false
   - id: subscription
-    name: LabPack subscription
+    name: Full Mesh Labs subscription
     short: Subscription
-    note: Part of the LabPack subscription.
+    note: Part of the Full Mesh Labs subscription.
     delivered: false
 
 # The access rule (owner direction, 2026-11-20): course labs at associate and
 # specialist level need no account; library labs there need a free account.
 # At professional and expert level, course labs come with the course purchase
-# and library labs need a LabPack subscription. A collection's access follows
+# and library labs need a Full Mesh Labs subscription. A collection's access follows
 # from its kind and its level's stage; it is never set by hand.
 accessRule:
   course:

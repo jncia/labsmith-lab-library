@@ -3,10 +3,11 @@
  * src/lib/hosting.ts too, so this file imports nothing.
  *
  * Owner direction, 2026-11-20: keep the live site out of search until the
- * brand and domain are settled. Set SEARCH_INDEXING_OPEN to true in the same
- * change that moves the site to its new name and address.
+ * brand and domain are settled. Both were settled that day (Full Mesh Labs at
+ * fullmeshlabs.com), so indexing opened with the rename. Set this to false to
+ * take the whole site out of search again.
  */
-export const SEARCH_INDEXING_OPEN = false;
+export const SEARCH_INDEXING_OPEN = true;
 
 /**
  * True only for a production build. `npm run deploy` sets SITE_ENV=production;

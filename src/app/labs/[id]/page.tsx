@@ -90,7 +90,7 @@ export default async function LabPage({ params }: PageProps<"/labs/[id]">) {
         {others.length ? (
           <p className="m-0 max-w-3xl text-sm text-quiet">
             One virtual router runs this whole lab: the {listNames(others)} run inside it as logical systems, so the
-            lab fits on a laptop. LabPack opens a terminal on each of them
+            lab fits on a laptop. The app opens a terminal on each of them
             {main ? ` as well as on the ${main.label}` : ""}.
           </p>
         ) : null}
@@ -119,7 +119,7 @@ export default async function LabPage({ params }: PageProps<"/labs/[id]">) {
               ))}
             </ol>
             <p className="m-0 text-sm text-quiet">
-              Each stage ends with a Check in LabPack that looks at the router and ticks each thing you got right.
+              Each stage ends with a Check in the app that looks at the router and ticks each thing you got right.
               The answers stay hidden until you ask for them.
             </p>
           </section>
@@ -164,7 +164,7 @@ export default async function LabPage({ params }: PageProps<"/labs/[id]">) {
                 </a>
                 <p className="m-0 text-sm text-quiet">
                   <code>{lab.release.download.fileName}</code>, {formatBytes(lab.release.download.bytes)}. Leave the
-                  file as it is: LabPack opens it.
+                  file as it is: the app opens it.
                 </p>
                 <details className="text-sm">
                   <summary className="cursor-pointer text-quiet">SHA-256</summary>
@@ -189,7 +189,8 @@ export default async function LabPage({ params }: PageProps<"/labs/[id]">) {
               </>
             )}
             <p className="m-0 text-sm">
-              You also need LabPack. <Link href="/client" className="font-semibold text-ink underline underline-offset-2">Get LabPack</Link>
+              You also need the free Full Mesh Labs app.{" "}
+              <Link href="/client" className="font-semibold text-ink underline underline-offset-2">Get the app</Link>
             </p>
           </div>
 
@@ -203,21 +204,21 @@ export default async function LabPage({ params }: PageProps<"/labs/[id]">) {
                 </div>
               ) : null}
               <div>
-                <dt className="font-semibold">LabPack</dt>
-                <dd className="m-0 text-quiet">The free LabPack app, for {catalog.client.platform}.</dd>
+                <dt className="font-semibold">The app</dt>
+                <dd className="m-0 text-quiet">The free Full Mesh Labs app, for {catalog.client.platform}.</dd>
               </div>
               <div>
                 <dt className="font-semibold">The router image</dt>
                 <dd className="m-0 text-quiet">
                   {lab.requirements.image.vendor}&apos;s free {lab.requirements.image.product}{" "}
-                  {lab.requirements.image.version} image, about 4 GB. LabPack shows you where to get it, once.
+                  {lab.requirements.image.version} image, about 4 GB. The app shows you where to get it, once.
                 </dd>
               </div>
               <div>
                 <dt className="font-semibold">Your computer</dt>
                 <dd className="m-0 text-quiet">
                   12 GB of memory or more, with about {lab.requirements.minimumFreeMemoryGb} GB free while the lab
-                  runs, and {lab.requirements.minimumCores} processor cores. LabPack checks this for you.
+                  runs, and {lab.requirements.minimumCores} processor cores. The app checks this for you.
                 </dd>
               </div>
               <div>

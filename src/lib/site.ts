@@ -4,7 +4,7 @@ import { loadCatalog } from "@/lib/catalog";
 /** The address the site is served from, for metadata and the sitemap. */
 export const SITE_URL = (process.env.SITE_URL || "https://fullmeshlabs.com").replace(/\/$/, "");
 
-export const SITE_NAME = "LabPack";
+export const SITE_NAME = "Full Mesh Labs";
 
 export { INDEXABLE, IS_PRODUCTION } from "@/lib/indexing";
 

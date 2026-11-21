@@ -7,11 +7,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "LabPack: Junos practice labs on a real router",
+    default: "Full Mesh Labs: Junos practice labs on a real router",
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Free hands-on Junos labs for JNCIA-Junos. Each lab runs a real Juniper vJunos router on your own computer in LabPack and checks your work stage by stage.",
+    "Free hands-on Junos labs for JNCIA-Junos. Each lab runs a real Juniper vJunos router on your own computer in the Full Mesh Labs app and checks your work stage by stage.",
   openGraph: { siteName: SITE_NAME, type: "website" },
   robots: INDEXABLE ? undefined : { index: false, follow: false },
 };
