@@ -24,6 +24,7 @@ export default function Home() {
       .toLowerCase(),
   }));
   const released = catalog.labs.filter((l) => l.release.status === "released").length;
+  const inReview = catalog.labs.length - released;
   const unlisted = catalog.collections.reduce((n, c) => n + c.unlistedInReview, 0);
   const coming = catalog.levels.filter((l) => l.status === "planned" || l.status === "later");
   const tier = new Map(catalog.access.map((a) => [a.id, a]));
@@ -93,6 +94,12 @@ export default function Home() {
                     unlisted ? ` ${labCount(unlisted, "more JNCIA-Junos")} ${unlisted === 1 ? "is" : "are"} in review and will appear here.` : ""
                   }`
                 : `${labCount(unlisted, "JNCIA-Junos")} ${unlisted === 1 ? "is in its" : "are in their"} final review. They appear here as each one is released.`}
+            </p>
+          ) : inReview + unlisted > 0 ? (
+            <p className="m-0 max-w-3xl rounded-lg border border-line bg-surface px-4 py-3 text-sm">
+              <strong>{labCount(released)} {released === 1 ? "is" : "are"} ready to download.</strong>{" "}
+              {labCount(inReview + unlisted, "more")} {inReview + unlisted === 1 ? "is in its" : "are in their"} final
+              review and {inReview + unlisted === 1 ? "opens" : "open"} as each one is released. The app is a beta.
             </p>
           ) : null}
         </div>

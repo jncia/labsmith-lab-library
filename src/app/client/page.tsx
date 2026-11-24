@@ -7,7 +7,7 @@ import { downloadPath, getCatalog } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Get the app",
-  description: "Download the Full Mesh Labs app for Windows 11: it runs a real Juniper router on your computer and guides you through each lab.",
+  description: "Download the Full Mesh Labs app (beta) for Windows 11: it runs a real Juniper router on your computer and guides you through each lab.",
 };
 
 export default function ClientPage() {
@@ -87,6 +87,10 @@ export default function ClientPage() {
               <li>Keep a laptop plugged in, and close games and screen recorders while the router starts. They can make the start stall.</li>
               <li>If a start stalls, the app starts it again by itself.</li>
               <li>
+                The app looks for a newer version when it opens. When there is one, it asks when to install it: now,
+                when you close, or the next time you open. You can turn the check off in Settings.
+              </li>
+              <li>
                 In the lab, the workbook sits beside the router&apos;s terminals. Each stage has a{" "}
                 <strong className="text-ink">Check</strong> button that ticks what you got right.
               </li>
@@ -103,8 +107,8 @@ export default function ClientPage() {
             </h2>
             <p className="m-0 max-w-2xl text-quiet">
               Use the <strong className="text-ink">Feedback</strong>{" "}button at the top of the app&apos;s window, write
-              what happened and choose <strong className="text-ink">Save report &amp; email…</strong>. Nothing is sent
-              unless you send it.
+              what happened and choose <strong className="text-ink">Send report</strong>. It comes straight to us, and
+              nothing is sent until you press it.
             </p>
             <p className="m-0 max-w-2xl text-quiet">
               To remove the app, delete the <code>FullMeshLabs</code> folder and the folder <code>.config\labpack</code> in
@@ -117,12 +121,18 @@ export default function ClientPage() {
           <div className="grid gap-3 rounded-lg border border-line bg-card p-4">
             <h2 className="m-0 text-lg font-bold">Download</h2>
             {hosted ? (
-              <a
-                href={downloadPath("client")}
-                className="inline-flex min-h-11 items-center justify-center rounded border border-accent bg-accent px-4 font-semibold text-on-accent no-underline"
-              >
-                Download the app
-              </a>
+              <>
+                <a
+                  href={downloadPath("client")}
+                  className="inline-flex min-h-11 items-center justify-center rounded border border-accent bg-accent px-4 font-semibold text-on-accent no-underline"
+                >
+                  Download the app
+                </a>
+                <p className="m-0 rounded border border-not-yet bg-not-yet-soft px-3 py-2 text-sm">
+                  <strong>This is a beta.</strong> The app is an early version and not a finished product yet. It
+                  works, but expect rough edges and changes. When a newer version is out, the app asks to install it.
+                </p>
+              </>
             ) : (
               <>
                 <p className="m-0 text-[0.95rem]">
@@ -138,8 +148,8 @@ export default function ClientPage() {
               </>
             )}
             <p className="m-0 text-sm text-quiet">
-              <code className="break-all">{client.fileName}</code>, {formatBytes(client.bytes)}. Signed by{" "}
-              {client.publisher}.
+              Version {client.version} ({client.channel}). <code className="break-all">{client.fileName}</code>,{" "}
+              {formatBytes(client.bytes)}. Signed by {client.publisher}.
             </p>
             <details className="text-sm">
               <summary className="cursor-pointer text-quiet">SHA-256</summary>

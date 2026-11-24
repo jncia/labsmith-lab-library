@@ -22,7 +22,7 @@ content/catalog/
 | --- | --- |
 | `schema` | `labpack-site.catalog.v1` |
 | `kind` | `release` (this folder) or `development` (a local catalog; refused for production) |
-| `client` | the Full Mesh Labs app download: build, file name, bytes, SHA-256, `url` (`null` until hosted), publisher, platform, requirements |
+| `client` | the Full Mesh Labs app download: version (the app's own, such as `0.1.0b2`), build, file name, bytes, SHA-256, `url` (`null` until hosted), publisher, platform, requirements |
 | `levels[]` | certification levels with `stage` and `status`: `available` (has a released lab), `in-review`, `planned`, `later` |
 | `access[]` | access tiers (`open`, `free-account`, `course`, `subscription`) with `delivered`: whether the site can hand out a download in that tier today |
 | `accessRule` | which tier each collection `kind` (`course`, `library`) gets at each level `stage` (`associate`, `specialist`, `professional`, `expert`) |
@@ -77,13 +77,38 @@ level that lists labs fails.
    ```
 
    This writes `labs/<id>.json` and lists the lab as `in-review`.
-2. Build the `.labpack` file (the packet without its authoring records) and
-   upload it to the download host.
+2. Seal the `.labpack` file (the app opens sealed lessons only) and upload it
+   to the download host (see "Where the files live" below).
 3. Edit its entry in `catalog.yaml`: `status: released`, `learnerReadOn`,
    `download`. Lower the collection's `unlistedInReview` by one.
 4. Set its level to `available` once it has a released lab.
 5. `npm run validate`, `npm test`, `npm run lint`, `npm run build`, then a
    branch and a pull request.
+
+## Where the files live
+
+Downloads are release files of the public repository
+`jncia/full-mesh-labs-releases` (owner's choice, 24 November 2026: free, no
+transfer bill). It holds release files only. This repository never holds a
+lesson file or the app.
+
+- **The app**: one release per version, tagged `v<version>` (for example
+  `v0.1.0b2`), holding the signed zip. The app's own update check downloads
+  from the same address, so a release's file is never replaced: a new build is
+  a new version and a new release.
+- **Lessons**: one release per set and sealing date (for example
+  `jncia-course-2026-11-24`), holding that set's `.labpack` files. A lesson
+  that is rebuilt goes into a new release, and its catalog entry is pointed at
+  the new address.
+
+```bash
+gh release create <tag> --repo jncia/full-mesh-labs-releases --title "<title>" --notes "<one plain line>" <file>...
+```
+
+The site links only to `/download/client` and `/download/labs/<id>`, which
+send the visitor on to the address in the catalog, so a file can move without
+any link on the site changing. After uploading, copy each file's address,
+size and SHA-256 into `catalog.yaml`.
 
 ## Local development and previews
 

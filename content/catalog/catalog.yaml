@@ -10,6 +10,7 @@ kind: release
 client:
   name: Full Mesh Labs
   channel: beta
+  version: 0.1.0b1
   build: 2fe6047
   fileName: FullMeshLabs-signed-2fe6047.zip
   bytes: 49013932

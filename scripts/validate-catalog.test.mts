@@ -57,6 +57,7 @@ function catalog(overrides: Record<string, unknown> = {}) {
     client: {
       name: "LabPack",
       channel: "beta",
+      version: "0.1.0b2",
       build: "abc1234",
       fileName: "LabPack.zip",
       bytes: 1000,
@@ -120,6 +121,14 @@ const RELEASED = {
 test("a clean catalog passes", () => {
   assert.deepEqual(problems(catalog()), []);
   assert.deepEqual(problems(catalog({ labs: [RELEASED], levels: [{ id: "jncia-junos", name: "JNCIA-Junos", track: "Junos", stage: "associate", status: "available", note: "Ready." }] })), []);
+});
+
+test("the app's entry says its version, in the app's own form", () => {
+  const base = catalog();
+  const client = base.client as Record<string, unknown>;
+  expectProblem(problems({ ...base, client: { ...client, version: undefined } }), "version is required");
+  expectProblem(problems({ ...base, client: { ...client, version: "beta 2" } }), "version must be the app's own version");
+  assert.deepEqual(problems({ ...base, client: { ...client, version: "1.0rc1" } }), []);
 });
 
 test("schema: a missing field fails", () => {
