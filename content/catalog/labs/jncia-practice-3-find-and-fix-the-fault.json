@@ -1,0 +1,134 @@
+{
+  "schema": "labpack-site.lab.v1",
+  "id": "jncia-practice-3-find-and-fix-the-fault",
+  "title": "Find and fix the fault",
+  "summary": "Locate two faults on the Lab router from their symptoms, repair them, and prove each repair with show commands, ping and traceroute.",
+  "prerequisites": null,
+  "labType": "build",
+  "level": "associate",
+  "certifications": [
+    "JNCIA-Junos"
+  ],
+  "topics": [
+    "Troubleshooting method",
+    "Interface status",
+    "Routing table",
+    "Ping",
+    "Traceroute",
+    "OSPF adjacency"
+  ],
+  "topicGroups": [
+    "ospf",
+    "troubleshooting"
+  ],
+  "estimatedMinutes": 30,
+  "stages": [
+    {
+      "id": "stage-1",
+      "title": "The LAN host can't reach its gateway",
+      "goal": "Users cannot reach the Lab router. Find why the LAN host gets no answer from its gateway and restore the LAN as designed. Lessons 13.2, 15.3, 16.1, 16.2."
+    },
+    {
+      "id": "stage-2",
+      "title": "Nothing beyond the Lab router answers",
+      "goal": "The LAN host still cannot reach the Remote network. Find why the Provider side is silent and restore routing to 198.51.100.0/24. Lessons 15.5, 16.5, 16.7, 18.2."
+    }
+  ],
+  "devices": [
+    {
+      "id": "lab-router-main",
+      "label": "Lab router",
+      "context": "main"
+    },
+    {
+      "id": "lan-host",
+      "label": "LAN host",
+      "context": "logical-system"
+    },
+    {
+      "id": "provider",
+      "label": "Provider",
+      "context": "logical-system"
+    }
+  ],
+  "topology": {
+    "nodes": [
+      {
+        "id": "lan-host",
+        "label": "LAN host",
+        "shape": "host",
+        "tier": 0,
+        "order": 0,
+        "locals": [
+          {
+            "interface": "ge-0/0/2",
+            "address": "192.0.2.10/26"
+          }
+        ]
+      },
+      {
+        "id": "lab-router-main",
+        "label": "Lab router",
+        "shape": "router",
+        "tier": 0,
+        "order": 1,
+        "locals": []
+      },
+      {
+        "id": "provider",
+        "label": "Provider",
+        "shape": "router",
+        "tier": 0,
+        "order": 2,
+        "locals": [
+          {
+            "interface": "lo0.1",
+            "address": "198.51.100.1/24"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "a": {
+          "node": "lan-host",
+          "interface": "ge-0/0/2",
+          "address": "192.0.2.10/26"
+        },
+        "b": {
+          "node": "lab-router-main",
+          "interface": "ge-0/0/0",
+          "address": "192.0.2.1/26"
+        },
+        "subnet": "192.0.2.0/26"
+      },
+      {
+        "a": {
+          "node": "lab-router-main",
+          "interface": "ge-0/0/1",
+          "address": "192.0.2.253/30"
+        },
+        "b": {
+          "node": "provider",
+          "interface": "ge-0/0/3",
+          "address": "192.0.2.254/30"
+        },
+        "subnet": "192.0.2.252/30"
+      }
+    ]
+  },
+  "requirements": {
+    "routers": 1,
+    "image": {
+      "vendor": "Juniper",
+      "product": "vJunos-router",
+      "version": "26.2R1.7"
+    },
+    "minimumFreeMemoryGb": 6,
+    "minimumCores": 4
+  },
+  "qualification": {
+    "status": "passed",
+    "date": "2026-11-18"
+  }
+}
