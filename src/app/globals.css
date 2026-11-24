@@ -42,6 +42,7 @@
   --accent: #3f4854;
   --on-accent: #ffffff;
   --selected: #eef0f3;
+  --mark-ring: #27344a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -62,6 +63,7 @@
     --accent: #b4bbc6;
     --on-accent: #17191c;
     --selected: #2c2f35;
+    --mark-ring: #31405a;
   }
 }
 
