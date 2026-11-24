@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LabCatalog, type CatalogCard } from "@/components/lab-catalog";
 import { getCatalog } from "@/lib/site";
+import { labCount } from "@/lib/words";
 
 export default function Home() {
   const catalog = getCatalog();
@@ -88,8 +89,10 @@ export default function Home() {
             <p className="m-0 max-w-3xl rounded-lg border border-line bg-surface px-4 py-3 text-sm">
               <strong>Full Mesh Labs is in beta.</strong>{" "}
               {catalog.labs.length
-                ? "The labs below are in their final review. Each one opens for download when it is released."
-                : `${unlisted} JNCIA-Junos labs are in their final review. They appear here as each one is released.`}
+                ? `The labs below are in their final review. Each one opens for download when it is released.${
+                    unlisted ? ` ${labCount(unlisted, "more JNCIA-Junos")} ${unlisted === 1 ? "is" : "are"} in review and will appear here.` : ""
+                  }`
+                : `${labCount(unlisted, "JNCIA-Junos")} ${unlisted === 1 ? "is in its" : "are in their"} final review. They appear here as each one is released.`}
             </p>
           ) : null}
         </div>
@@ -114,7 +117,7 @@ export default function Home() {
                 <strong>{c.title}</strong>
                 <span className="text-sm text-quiet">{c.summary}</span>
                 <span className="text-xs text-quiet">
-                  {c.unlistedInReview} labs in review · {c.access.name}
+                  {labCount(c.unlistedInReview)} in review · {c.access.name}
                 </span>
               </li>
             ))}
@@ -123,10 +126,11 @@ export default function Home() {
         {catalog.collections.length ? (
           <ul className="m-0 grid list-none gap-3 p-0 text-sm text-quiet md:grid-cols-2">
             {catalog.collections
-              .filter((c) => catalog.labs.some((x) => x.collection.id === c.id))
+              .filter((c) => c.unlistedInReview > 0 || catalog.labs.some((x) => x.collection.id === c.id))
               .map((c) => (
                 <li key={c.id}>
                   <strong className="text-ink">{c.short}:</strong> {c.summary} {c.access.note}
+                  {c.unlistedInReview ? ` ${labCount(c.unlistedInReview, "more")} in review.` : ""}
                 </li>
               ))}
           </ul>

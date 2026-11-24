@@ -1,0 +1,129 @@
+{
+  "schema": "labpack-site.lab.v1",
+  "id": "jncia-practice-2-address-the-lab-router",
+  "title": "Address the Lab router",
+  "summary": "Work out and configure IPv4 and IPv6 interface addresses, confirm them with routes, ping and ARP, see OSPF come up, and use a configuration group while a directly set value still wins. The logical systems lan-host and provider stand in for the LAN host and the Provider; do not change them.",
+  "prerequisites": null,
+  "labType": "build",
+  "level": "associate",
+  "certifications": [
+    "JNCIA-Junos"
+  ],
+  "topics": [
+    "IPv4 addressing and subnets",
+    "IPv6 addressing",
+    "Interface configuration",
+    "ARP",
+    "Configuration groups",
+    "Ping"
+  ],
+  "topicGroups": [
+    "config",
+    "addressing"
+  ],
+  "estimatedMinutes": 40,
+  "stages": [
+    {
+      "id": "stage-1",
+      "title": "Address the LAN",
+      "goal": "Give the LAN port the first usable address of 192.0.2.0/26 and the IPv6 address 2001:db8:1::1/64 so the LAN host can be reached on both families. (Lessons 2.2, 2.3, 3.2, 3.4, 4.2, 4.3, 13.1, 13.2.)"
+    },
+    {
+      "id": "stage-2",
+      "title": "Address the provider link and the loopback",
+      "goal": "Address the provider link with the lower usable address of 192.0.2.252/30 and the loopback with 203.0.113.1/32, so OSPF to the Provider comes up and the Remote network answers. (Lessons 3.1, 13.2, 16.5.)"
+    },
+    {
+      "id": "stage-3",
+      "title": "Describe the interfaces with a group",
+      "goal": "Use a configuration group named LAN-DESC so ge-0/0/0 is described LAN side, while ge-0/0/1 keeps its own directly set description Provider link even though the group also applies to it. (Lessons 13.4, 13.5, 13.6.)"
+    }
+  ],
+  "devices": [
+    {
+      "id": "lab-router-main",
+      "label": "Lab router",
+      "context": "main"
+    },
+    {
+      "id": "lan-host",
+      "label": "LAN host",
+      "context": "logical-system"
+    },
+    {
+      "id": "provider",
+      "label": "Provider",
+      "context": "logical-system"
+    }
+  ],
+  "topology": {
+    "nodes": [
+      {
+        "id": "lan-host",
+        "label": "LAN host",
+        "shape": "host",
+        "tier": 0,
+        "order": 0,
+        "locals": []
+      },
+      {
+        "id": "lab-router-main",
+        "label": "Lab router",
+        "shape": "router",
+        "tier": 1,
+        "order": 0,
+        "locals": []
+      },
+      {
+        "id": "provider",
+        "label": "Provider",
+        "shape": "router",
+        "tier": 2,
+        "order": 0,
+        "locals": []
+      }
+    ],
+    "links": [
+      {
+        "a": {
+          "node": "lan-host",
+          "interface": "ge-0/0/2",
+          "address": "192.0.2.10/26"
+        },
+        "b": {
+          "node": "lab-router-main",
+          "interface": "ge-0/0/0",
+          "address": ""
+        },
+        "subnet": "192.0.2.0/26"
+      },
+      {
+        "a": {
+          "node": "lab-router-main",
+          "interface": "ge-0/0/1",
+          "address": ""
+        },
+        "b": {
+          "node": "provider",
+          "interface": "ge-0/0/3",
+          "address": "192.0.2.254/30"
+        },
+        "subnet": "192.0.2.252/30"
+      }
+    ]
+  },
+  "requirements": {
+    "routers": 1,
+    "image": {
+      "vendor": "Juniper",
+      "product": "vJunos-router",
+      "version": "26.2R1.7"
+    },
+    "minimumFreeMemoryGb": 6,
+    "minimumCores": 4
+  },
+  "qualification": {
+    "status": "passed",
+    "date": "2026-11-18"
+  }
+}

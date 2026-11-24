@@ -100,7 +100,7 @@ collections:
     level: jncia-junos
     kind: course
     # Labs in review that are not listed below yet. Shown as a count only.
-    unlistedInReview: 6
+    unlistedInReview: 5
   - id: practice-library-v1
     title: JNCIA practice library
     short: Practice library
@@ -125,4 +125,4 @@ topicGroups:
   - id: troubleshooting
     name: Troubleshooting
 
-labs: []
+labs: [ { id: jncia-practice-2-address-the-lab-router, collection: jncia-course, status: in-review } ]

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { labCount } from "@/lib/words";
 
 export type CatalogCard = {
   id: string;
@@ -152,7 +153,7 @@ export function LabCatalog({
 
       <div className="flex flex-wrap items-center gap-3 text-sm text-quiet" aria-live="polite">
         <span>
-          {shown.length === labs.length ? `${labs.length} labs` : `${shown.length} of ${labs.length} labs`}
+          {shown.length === labs.length ? labCount(labs.length) : `${shown.length} of ${labCount(labs.length)}`}
         </span>
         {filtered ? (
           <button
