@@ -1,0 +1,128 @@
+{
+  "schema": "labpack-site.lab.v1",
+  "id": "jncia-practice-6-filter-and-protect",
+  "title": "Filter and protect the Lab router",
+  "summary": "Add a transit filter and a loopback filter to the Lab router, keeping OSPF up, then practise strict unicast RPF.",
+  "prerequisites": null,
+  "labType": "build",
+  "level": "associate",
+  "certifications": [
+    "JNCIA-Junos"
+  ],
+  "topics": [
+    "Firewall filters",
+    "Filter terms and actions",
+    "Transit filtering",
+    "Loopback filter",
+    "Protecting the Routing Engine",
+    "Unicast RPF"
+  ],
+  "topicGroups": [
+    "filters"
+  ],
+  "estimatedMinutes": 45,
+  "stages": [
+    {
+      "id": "stage-1",
+      "title": "Filter transit traffic",
+      "goal": "Stop the LAN from reaching one slice of the Remote network while everything else still passes (lessons 22.1 to 22.5, 23.1)."
+    },
+    {
+      "id": "stage-2",
+      "title": "Protect the router",
+      "goal": "Stop the LAN pinging the Lab router's loopback while OSPF stays up (lessons 7.2, 7.3, 23.1, 23.2)."
+    }
+  ],
+  "devices": [
+    {
+      "id": "lab-router-main",
+      "label": "Lab router",
+      "context": "main"
+    },
+    {
+      "id": "lan-host",
+      "label": "LAN host",
+      "context": "logical-system"
+    },
+    {
+      "id": "provider",
+      "label": "Provider",
+      "context": "logical-system"
+    }
+  ],
+  "topology": {
+    "nodes": [
+      {
+        "id": "lan-host",
+        "label": "LAN host",
+        "shape": "host",
+        "tier": 1,
+        "order": 1,
+        "locals": []
+      },
+      {
+        "id": "lab-router-main",
+        "label": "Lab router",
+        "shape": "router",
+        "tier": 2,
+        "order": 1,
+        "locals": [
+          {
+            "interface": "lo0.0",
+            "address": "203.0.113.1/32"
+          }
+        ]
+      },
+      {
+        "id": "provider",
+        "label": "Provider",
+        "shape": "router",
+        "tier": 3,
+        "order": 1,
+        "locals": []
+      }
+    ],
+    "links": [
+      {
+        "a": {
+          "node": "lan-host",
+          "interface": "ge-0/0/2",
+          "address": "192.0.2.10/26"
+        },
+        "b": {
+          "node": "lab-router-main",
+          "interface": "ge-0/0/0",
+          "address": "192.0.2.1/26"
+        },
+        "subnet": "192.0.2.0/26"
+      },
+      {
+        "a": {
+          "node": "lab-router-main",
+          "interface": "ge-0/0/1",
+          "address": "192.0.2.253/30"
+        },
+        "b": {
+          "node": "provider",
+          "interface": "ge-0/0/3",
+          "address": "192.0.2.254/30"
+        },
+        "subnet": "192.0.2.252/30"
+      }
+    ]
+  },
+  "requirements": {
+    "routers": 1,
+    "image": {
+      "vendor": "Juniper",
+      "product": "vJunos-router",
+      "version": "26.2R1.7"
+    },
+    "minimumFreeMemoryGb": 6,
+    "minimumCores": 4
+  },
+  "qualification": {
+    "status": "passed",
+    "date": "2026-11-18"
+  }
+}

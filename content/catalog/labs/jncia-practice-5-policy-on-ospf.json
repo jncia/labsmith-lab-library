@@ -1,0 +1,139 @@
+{
+  "schema": "labpack-site.lab.v1",
+  "id": "jncia-practice-5-policy-on-ospf",
+  "title": "Policy on OSPF: choose what to advertise and accept",
+  "summary": "Write OSPF export and import policies on the Lab router, predict their effect and confirm it in both routers' tables and the OSPF database.",
+  "prerequisites": null,
+  "labType": "build",
+  "level": "associate",
+  "certifications": [
+    "JNCIA-Junos"
+  ],
+  "topics": [
+    "Routing policy",
+    "Policy terms and order",
+    "Route filters",
+    "OSPF export policy",
+    "OSPF import policy",
+    "Policy verification"
+  ],
+  "topicGroups": [
+    "ospf",
+    "policy"
+  ],
+  "estimatedMinutes": 50,
+  "stages": [
+    {
+      "id": "stage-1",
+      "title": "Advertise one static",
+      "goal": "Make the Provider learn 10.10.1.0/24 from OSPF but not 10.10.2.0/24, using an OSPF export policy named export-statics on the Lab router. The Lab router must keep both statics. (Lessons 20.1, 20.2, 20.3, 21.1, 21.2, 21.3.)"
+    },
+    {
+      "id": "stage-2",
+      "title": "Advertise by range",
+      "goal": "Change export-statics so the Provider learns every Lab static inside 10.10.0.0/16 of /24 or shorter, except 10.10.2.0/24. Order of the terms matters. (Lessons 20.4, 20.5, 20.6, 20.7.)"
+    },
+    {
+      "id": "stage-3",
+      "title": "Choose what to accept",
+      "goal": "Write an OSPF import policy named ospf-import so the Lab router installs 198.51.100.0/24, 198.18.1.0/24 and 198.18.2.0/24 from OSPF and leaves out 198.18.3.0/24 and 198.18.4.0/24. The OSPF database must still list all five externals. (Lessons 21.4, 21.5, 21.6.)"
+    }
+  ],
+  "devices": [
+    {
+      "id": "lab-router-main",
+      "label": "Lab router",
+      "context": "main"
+    },
+    {
+      "id": "lan-host",
+      "label": "LAN host",
+      "context": "logical-system"
+    },
+    {
+      "id": "provider",
+      "label": "Provider",
+      "context": "logical-system"
+    }
+  ],
+  "topology": {
+    "nodes": [
+      {
+        "id": "lan-host",
+        "label": "LAN host",
+        "shape": "host",
+        "tier": 1,
+        "order": 1,
+        "locals": []
+      },
+      {
+        "id": "lab-router-main",
+        "label": "Lab router",
+        "shape": "router",
+        "tier": 2,
+        "order": 1,
+        "locals": [
+          {
+            "interface": "lo0.0",
+            "address": "203.0.113.1/32"
+          }
+        ]
+      },
+      {
+        "id": "provider",
+        "label": "Provider",
+        "shape": "router",
+        "tier": 3,
+        "order": 1,
+        "locals": [
+          {
+            "interface": "lo0.1",
+            "address": "198.51.100.1/24"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "a": {
+          "node": "lan-host",
+          "interface": "ge-0/0/2",
+          "address": "192.0.2.10/26"
+        },
+        "b": {
+          "node": "lab-router-main",
+          "interface": "ge-0/0/0",
+          "address": "192.0.2.1/26"
+        },
+        "subnet": "192.0.2.0/26"
+      },
+      {
+        "a": {
+          "node": "lab-router-main",
+          "interface": "ge-0/0/1",
+          "address": "192.0.2.253/30"
+        },
+        "b": {
+          "node": "provider",
+          "interface": "ge-0/0/3",
+          "address": "192.0.2.254/30"
+        },
+        "subnet": "192.0.2.252/30"
+      }
+    ]
+  },
+  "requirements": {
+    "routers": 1,
+    "image": {
+      "vendor": "Juniper",
+      "product": "vJunos-router",
+      "version": "26.2R1.7"
+    },
+    "minimumFreeMemoryGb": 6,
+    "minimumCores": 4
+  },
+  "qualification": {
+    "status": "passed",
+    "date": "2026-11-18"
+  }
+}

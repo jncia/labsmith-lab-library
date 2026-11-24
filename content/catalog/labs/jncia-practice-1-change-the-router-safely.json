@@ -1,0 +1,138 @@
+{
+  "schema": "labpack-site.lab.v1",
+  "id": "jncia-practice-1-change-the-router-safely",
+  "title": "Change the router safely",
+  "summary": "Practise the Junos candidate/active workflow: edit, compare, check, commit, merge a prepared change, and roll back.",
+  "prerequisites": null,
+  "labType": "build",
+  "level": "associate",
+  "certifications": [
+    "JNCIA-Junos"
+  ],
+  "topics": [
+    "Configuration mode",
+    "Candidate and active configuration",
+    "Comparing changes",
+    "Commit check and commit",
+    "Load merge",
+    "Rollback"
+  ],
+  "topicGroups": [
+    "config"
+  ],
+  "estimatedMinutes": 30,
+  "stages": [
+    {
+      "id": "stage-1",
+      "title": "Describe the ports",
+      "goal": "Label the LAN and provider-facing ports so an operator reading interface output knows what each is for."
+    },
+    {
+      "id": "stage-2",
+      "title": "Merge a prepared change",
+      "goal": "Predict the result of the workbook's prepared change, then merge it from the terminal, compare, check and commit it. Afterwards, optional rollback practice (lessons 9.3, 9.4) has no check."
+    }
+  ],
+  "devices": [
+    {
+      "id": "lab-router-main",
+      "label": "Lab router",
+      "context": "main"
+    },
+    {
+      "id": "lan-host",
+      "label": "LAN host",
+      "context": "logical-system"
+    },
+    {
+      "id": "provider",
+      "label": "Provider",
+      "context": "logical-system"
+    }
+  ],
+  "topology": {
+    "nodes": [
+      {
+        "id": "lan-host",
+        "label": "LAN host",
+        "shape": "host",
+        "tier": 1,
+        "order": 1,
+        "locals": [
+          {
+            "interface": "ge-0/0/2",
+            "address": "192.0.2.10/26"
+          }
+        ]
+      },
+      {
+        "id": "lab-router-main",
+        "label": "Lab router",
+        "shape": "router",
+        "tier": 2,
+        "order": 1,
+        "locals": [
+          {
+            "interface": "lo0.0",
+            "address": "203.0.113.1/32"
+          }
+        ]
+      },
+      {
+        "id": "provider",
+        "label": "Provider",
+        "shape": "router",
+        "tier": 3,
+        "order": 1,
+        "locals": [
+          {
+            "interface": "ge-0/0/3",
+            "address": "192.0.2.254/30"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "a": {
+          "node": "lan-host",
+          "interface": "ge-0/0/2",
+          "address": "192.0.2.10/26"
+        },
+        "b": {
+          "node": "lab-router-main",
+          "interface": "ge-0/0/0",
+          "address": "192.0.2.1/26"
+        },
+        "subnet": "192.0.2.0/26"
+      },
+      {
+        "a": {
+          "node": "lab-router-main",
+          "interface": "ge-0/0/1",
+          "address": "192.0.2.253/30"
+        },
+        "b": {
+          "node": "provider",
+          "interface": "ge-0/0/3",
+          "address": "192.0.2.254/30"
+        },
+        "subnet": "192.0.2.252/30"
+      }
+    ]
+  },
+  "requirements": {
+    "routers": 1,
+    "image": {
+      "vendor": "Juniper",
+      "product": "vJunos-router",
+      "version": "26.2R1.7"
+    },
+    "minimumFreeMemoryGb": 6,
+    "minimumCores": 4
+  },
+  "qualification": {
+    "status": "passed",
+    "date": "2026-11-18"
+  }
+}

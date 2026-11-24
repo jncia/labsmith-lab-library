@@ -57,7 +57,7 @@ access:
   - id: open
     name: Free, no account
     short: No account
-    note: Download it straight away. No sign-up.
+    note: No sign-up and no email address.
     delivered: true
   - id: free-account
     name: Free account
@@ -100,7 +100,7 @@ collections:
     level: jncia-junos
     kind: course
     # Labs in review that are not listed below yet. Shown as a count only.
-    unlistedInReview: 5
+    unlistedInReview: 0
   - id: practice-library-v1
     title: JNCIA practice library
     short: Practice library
@@ -125,4 +125,10 @@ topicGroups:
   - id: troubleshooting
     name: Troubleshooting
 
-labs: [ { id: jncia-practice-2-address-the-lab-router, collection: jncia-course, status: in-review } ]
+labs:
+  - { id: jncia-practice-1-change-the-router-safely, collection: jncia-course, status: in-review }
+  - { id: jncia-practice-2-address-the-lab-router, collection: jncia-course, status: in-review }
+  - { id: jncia-practice-3-find-and-fix-the-fault, collection: jncia-course, status: in-review }
+  - { id: jncia-practice-4-routes-by-hand, collection: jncia-course, status: in-review }
+  - { id: jncia-practice-5-policy-on-ospf, collection: jncia-course, status: in-review }
+  - { id: jncia-practice-6-filter-and-protect, collection: jncia-course, status: in-review }

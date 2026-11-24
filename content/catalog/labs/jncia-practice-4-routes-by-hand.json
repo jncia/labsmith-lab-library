@@ -1,0 +1,148 @@
+{
+  "schema": "labpack-site.lab.v1",
+  "id": "jncia-practice-4-routes-by-hand",
+  "title": "Routes by hand: static, default, discard and a virtual router",
+  "summary": "Steer traffic on the Lab router with static, default and discard routes, check the result by preference and longest match, and keep a second routing table in a virtual router.",
+  "prerequisites": null,
+  "labType": "build",
+  "level": "associate",
+  "certifications": [
+    "JNCIA-Junos"
+  ],
+  "topics": [
+    "Static routes",
+    "Route preference",
+    "Default route",
+    "Longest-prefix match",
+    "Discard routes",
+    "Routing instances"
+  ],
+  "topicGroups": [
+    "static"
+  ],
+  "estimatedMinutes": 45,
+  "stages": [
+    {
+      "id": "stage-1",
+      "title": "Prefer a static route",
+      "goal": "Make the Lab router reach the Remote network 198.51.100.0/24 by a route you set by hand toward the Provider, so that it wins over the route OSPF already provides. The OSPF route must stay in the table as a backup. Lessons 18.2, 18.3, 18.4, 19.1."
+    },
+    {
+      "id": "stage-2",
+      "title": "Add a default route",
+      "goal": "Give the Lab router a default route toward the Provider, so that it and the LAN host reach 10.200.0.1, an address the Provider holds but does not advertise. Lessons 18.1, 19.2."
+    },
+    {
+      "id": "stage-3",
+      "title": "Drop one part of the Remote network",
+      "goal": "Silently discard traffic for 198.51.100.64/26 on the Lab router with a more specific route, while the rest of 198.51.100.0/24 still reaches the Provider. Lessons 3.1, 4.4, 4.5, 18.5."
+    },
+    {
+      "id": "stage-4",
+      "title": "Keep a second table",
+      "goal": "Create a virtual router named vr1 that holds 10.255.0.1/32 on lo0.1 in a routing table of its own. That table must know nothing of the Remote network, and the main table inet.0 must not hold 10.255.0.1/32. Lesson 19.5."
+    }
+  ],
+  "devices": [
+    {
+      "id": "lab-router-main",
+      "label": "Lab router",
+      "context": "main"
+    },
+    {
+      "id": "lan-host",
+      "label": "LAN host",
+      "context": "logical-system"
+    },
+    {
+      "id": "provider",
+      "label": "Provider",
+      "context": "logical-system"
+    }
+  ],
+  "topology": {
+    "nodes": [
+      {
+        "id": "lan-host",
+        "label": "LAN host",
+        "shape": "host",
+        "tier": 0,
+        "order": 0,
+        "locals": [
+          {
+            "interface": "ge-0/0/2.0",
+            "address": "192.0.2.10/26"
+          }
+        ]
+      },
+      {
+        "id": "lab-router-main",
+        "label": "Lab router",
+        "shape": "router",
+        "tier": 1,
+        "order": 0,
+        "locals": [
+          {
+            "interface": "lo0.0",
+            "address": "203.0.113.1/32"
+          }
+        ]
+      },
+      {
+        "id": "provider",
+        "label": "Provider",
+        "shape": "router",
+        "tier": 2,
+        "order": 0,
+        "locals": [
+          {
+            "interface": "lo0.2",
+            "address": "198.51.100.1/24"
+          }
+        ]
+      }
+    ],
+    "links": [
+      {
+        "a": {
+          "node": "lan-host",
+          "interface": "ge-0/0/2.0",
+          "address": "192.0.2.10/26"
+        },
+        "b": {
+          "node": "lab-router-main",
+          "interface": "ge-0/0/0.0",
+          "address": "192.0.2.1/26"
+        },
+        "subnet": "192.0.2.0/26"
+      },
+      {
+        "a": {
+          "node": "lab-router-main",
+          "interface": "ge-0/0/1.0",
+          "address": "192.0.2.253/30"
+        },
+        "b": {
+          "node": "provider",
+          "interface": "ge-0/0/3.0",
+          "address": "192.0.2.254/30"
+        },
+        "subnet": "192.0.2.252/30"
+      }
+    ]
+  },
+  "requirements": {
+    "routers": 1,
+    "image": {
+      "vendor": "Juniper",
+      "product": "vJunos-router",
+      "version": "26.2R1.7"
+    },
+    "minimumFreeMemoryGb": 6,
+    "minimumCores": 4
+  },
+  "qualification": {
+    "status": "passed",
+    "date": "2026-11-18"
+  }
+}
