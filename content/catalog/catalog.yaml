@@ -10,13 +10,13 @@ kind: release
 client:
   name: Full Mesh Labs
   channel: beta
-  version: 0.1.0b1
-  build: 2fe6047
-  fileName: FullMeshLabs-signed-2fe6047.zip
-  bytes: 49013932
-  sha256: ecdf595f8c8f65d092773a0c3d33596f1fd1460fd3cdd1f743099aeaddd35fc8
-  # null until the download host is chosen; then an https:// address.
-  url: null
+  version: 0.1.0b2
+  build: c13612c
+  fileName: FullMeshLabs-signed-c13612c.zip
+  bytes: 49065260
+  sha256: 975d664fa7b1e059ee17f8d98dc885907f4afa214541bf764164be6dbe980593
+  # The release file the Download button sends a visitor on to (docs/publishing.md).
+  url: https://github.com/jncia/full-mesh-labs-releases/releases/download/v0.1.0b2/FullMeshLabs-signed-c13612c.zip
   publisher: Benjamin Jacobson
   platform: Windows 11
   requirements:

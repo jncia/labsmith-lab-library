@@ -46,6 +46,12 @@ export default function ClientPage() {
                     is <strong className="text-ink">{client.publisher}</strong>: choose{" "}
                     <strong className="text-ink">Run</strong>.
                   </p>
+                  <p className="m-0 text-sm text-quiet">
+                    Want a desktop shortcut? Before you extract, right-click the zip, choose{" "}
+                    <strong className="text-ink">Properties</strong> and tick{" "}
+                    <strong className="text-ink">Unblock</strong>. Otherwise Windows can refuse a shortcut to a
+                    program it still marks as downloaded.
+                  </p>
                 </div>
               </li>
               <li className="flex gap-3">
