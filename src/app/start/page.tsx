@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const STEPS = [
   {
     title: "Get the app",
-    body: "The Full Mesh Labs app is free, for Windows 11. It needs 12 GB of memory or more and about 12 GB of free disk space.",
+    body: "The Full Mesh Labs app is free, for Windows 11. It is a beta: an early version that is still changing. It needs 12 GB of memory or more and about 12 GB of free disk space.",
     link: { href: "/client", label: "Get the app" },
   },
   {

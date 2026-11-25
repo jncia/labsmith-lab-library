@@ -31,6 +31,8 @@ export type Download = {
 export type ClientRelease = {
   name: string;
   channel: "beta";
+  /** The version the app says for itself (Settings, Updates), such as 0.1.0b2. */
+  version: string;
   build: string;
   fileName: string;
   bytes: number;
@@ -208,6 +210,8 @@ class Checker {
 
 const ID = /^[a-z0-9][a-z0-9-]{1,80}$/;
 const SHA256 = /^[0-9a-f]{64}$/;
+// The app's own version grammar: 0.1, 0.1.0, 0.1.0b2, 1.0rc1.
+const APP_VERSION = /^\d+\.\d+(\.\d+)?((a|b|rc)\d+)?$/;
 
 export function isIsoDate(value: unknown): value is string {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
@@ -345,9 +349,12 @@ export function loadCatalog(dir: string = resolveCatalogDir(), env: { production
   }
   const clientSha = c.str(co, "sha256", "client");
   if (clientSha && !SHA256.test(clientSha)) c.add("client", "sha256 must be 64 lower-case hex digits");
+  const clientVersion = c.str(co, "version", "client");
+  if (clientVersion && !APP_VERSION.test(clientVersion)) c.add("client", "version must be the app's own version, such as 0.1.0b2");
   const client: ClientRelease = {
     name: c.str(co, "name", "client"),
     channel: c.oneOf(co, "channel", ["beta"] as const, "client"),
+    version: clientVersion,
     build: c.str(co, "build", "client"),
     fileName: c.str(co, "fileName", "client"),
     bytes: c.num(co, "bytes", "client", { min: 1, int: true }),
