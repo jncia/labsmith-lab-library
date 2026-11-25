@@ -21,7 +21,7 @@ const STEPS = [
   },
   {
     title: "Open it in the app",
-    body: "The app's guide checks your computer for that lab and helps you get Juniper's free router image, about 4 GB. You fetch the image once; every lab uses it.",
+    body: "Double-click the lab file, or open it from the app. The app's guide checks your computer for that lab and helps you get Juniper's free router image, about 4 GB. You fetch the image once; every lab uses it.",
   },
   {
     title: "Start the lab and work through it",

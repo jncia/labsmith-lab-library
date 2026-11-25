@@ -95,7 +95,10 @@ lesson file or the app.
 - **The app**: one release per version, tagged `v<version>` (for example
   `v0.1.0b2`), holding the signed zip. The app's own update check downloads
   from the same address, so a release's file is never replaced: a new build is
-  a new version and a new release.
+  a new version and a new release. From `0.1.0b4` a release also holds the
+  installer (`FullMeshLabs-Setup-<version>.exe`), and the catalog's `client`
+  entry names the installer: that is what a learner downloads. The zip stays
+  in the release for copies that update themselves.
 - **Lessons**: one release per set (for example `jncia-course-v1`), holding
   that set's `.labpack` files as each is released. A file in a release is
   never replaced: a lesson that is rebuilt goes into the set's next release
