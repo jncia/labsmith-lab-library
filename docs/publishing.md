@@ -28,7 +28,7 @@ content/catalog/
 | `accessRule` | which tier each collection `kind` (`course`, `library`) gets at each level `stage` (`associate`, `specialist`, `professional`, `expert`) |
 | `collections[]` | sets of labs with `kind`, `level` and `unlistedInReview`, a count shown while none of a set is listed; access follows from the rule and is never set by hand |
 | `topicGroups[]` | the catalog's topic filter |
-| `labs[]` | `id`, `collection`, `status` (`in-review` or `released`), and for a released lab `learnerReadOn` and `download` |
+| `labs[]` | `id`, `collection`, `status` (`in-review` or `released`), and for a released lab `learnerReadOn` and `download`. Optional `needsApp`: the earliest version of the app that can start the lab, shown on its page; a released lab cannot need a newer app than `client.version` |
 
 `labs/<id>.json` is written by the extractor, never by hand. It holds only an
 allow-list of fields from the packet's `lab.yaml`: title, summary,
