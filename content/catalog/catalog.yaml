@@ -156,4 +156,12 @@ labs:
       fileName: jncia-practice-5-policy-on-ospf.labpack
       bytes: 16607
       sha256: 3e12a551e3a8fad8ccfcb465dfe033ed7678fc4546b64622683cc5032c8cb7ff
-  - { id: jncia-practice-6-filter-and-protect, collection: jncia-course, status: in-review }
+  - id: jncia-practice-6-filter-and-protect
+    collection: jncia-course
+    status: released
+    learnerReadOn: 2026-11-24
+    download:
+      url: https://github.com/jncia/full-mesh-labs-releases/releases/download/jncia-course-v1/jncia-practice-6-filter-and-protect.labpack
+      fileName: jncia-practice-6-filter-and-protect.labpack
+      bytes: 13711
+      sha256: f240d87a2c5f1927803453273639f4bb7e80145a930ff3a040f200244b9bb697
