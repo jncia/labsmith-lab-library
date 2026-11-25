@@ -10,13 +10,14 @@ kind: release
 client:
   name: Full Mesh Labs
   channel: beta
-  version: 0.1.0b3
-  build: ef27311
-  fileName: FullMeshLabs-signed-ef27311.zip
-  bytes: 49066734
-  sha256: ba110aeabd122e7e28bc144258725decf3e9b2a3d625456fa39c52286528d747
+  version: 0.1.0b4
+  build: de34990
+  # The installer. The zip of the same version stays in the release for copies that update themselves.
+  fileName: FullMeshLabs-Setup-0.1.0b4.exe
+  bytes: 37840872
+  sha256: f7f8cd78522c9fa477b384138b9e2e3eb1355a15759ce8686aeb5caf433d35d9
   # The release file the Download button sends a visitor on to (docs/publishing.md).
-  url: https://github.com/jncia/full-mesh-labs-releases/releases/download/v0.1.0b3/FullMeshLabs-signed-ef27311.zip
+  url: https://github.com/jncia/full-mesh-labs-releases/releases/download/v0.1.0b4/FullMeshLabs-Setup-0.1.0b4.exe
   publisher: Benjamin Jacobson
   platform: Windows 11
   requirements:
