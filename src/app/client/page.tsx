@@ -115,7 +115,8 @@ export default function ClientPage() {
             </p>
             <p className="m-0 max-w-2xl text-quiet">
               To remove the app, open Windows Settings, then Apps, Installed apps, and choose Uninstall beside Full
-              Mesh Labs. It asks whether to remove your settings and the router image too.
+              Mesh Labs. It asks whether to remove your settings too. The router image you downloaded stays where you
+              saved it.
             </p>
           </section>
         </div>
