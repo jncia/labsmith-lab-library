@@ -31,7 +31,7 @@ levels:
     track: Junos
     stage: associate
     status: available
-    note: The first lab is out. The others are in their final review.
+    note: The first labs are out. The others are in their final review.
   - id: jncis-sp
     name: JNCIS-SP
     track: Service provider
@@ -127,7 +127,15 @@ topicGroups:
     name: Troubleshooting
 
 labs:
-  - { id: jncia-practice-1-change-the-router-safely, collection: jncia-course, status: in-review }
+  - id: jncia-practice-1-change-the-router-safely
+    collection: jncia-course
+    status: released
+    learnerReadOn: 2026-11-24
+    download:
+      url: https://github.com/jncia/full-mesh-labs-releases/releases/download/jncia-course-v1/jncia-practice-1-change-the-router-safely.labpack
+      fileName: jncia-practice-1-change-the-router-safely.labpack
+      bytes: 13952
+      sha256: 2ce0021d861dc1cc847df3b05d357a7752f799628f02a14d3bb1e33097c4788e
   - id: jncia-practice-2-address-the-lab-router
     collection: jncia-course
     status: released
