@@ -39,18 +39,15 @@ export default function ClientPage() {
                   1
                 </span>
                 <div className="grid gap-1">
-                  <h3 className="m-0 text-base font-bold">Unzip it and open the app</h3>
+                  <h3 className="m-0 text-base font-bold">Run the installer</h3>
                   <p className="m-0 text-quiet">
-                    Right-click the zip and choose <strong className="text-ink">Extract All</strong>. Open the{" "}
-                    <code>FullMeshLabs</code> folder inside and run <code>FullMeshLabs.exe</code>. If Windows asks, the publisher
-                    is <strong className="text-ink">{client.publisher}</strong>: choose{" "}
-                    <strong className="text-ink">Run</strong>.
+                    Open the file you downloaded. If Windows asks, the publisher is{" "}
+                    <strong className="text-ink">{client.publisher}</strong>. Choose{" "}
+                    <strong className="text-ink">Install</strong>, then <strong className="text-ink">Finish</strong>.
+                    It needs no administrator password.
                   </p>
                   <p className="m-0 text-sm text-quiet">
-                    Want a desktop shortcut? Before you extract, right-click the zip, choose{" "}
-                    <strong className="text-ink">Properties</strong> and tick{" "}
-                    <strong className="text-ink">Unblock</strong>. Otherwise Windows can refuse a shortcut to a
-                    program it still marks as downloaded.
+                    The app opens when the installer finishes. Afterwards it is in the Start menu and on the desktop.
                   </p>
                 </div>
               </li>
@@ -117,8 +114,9 @@ export default function ClientPage() {
               nothing is sent until you press it.
             </p>
             <p className="m-0 max-w-2xl text-quiet">
-              To remove the app, delete the <code>FullMeshLabs</code> folder and the folder <code>.config\labpack</code> in
-              your user folder.
+              To remove the app, open Windows Settings, then Apps, Installed apps, and choose Uninstall beside Full
+              Mesh Labs. It asks whether to remove your settings too. The router image you downloaded stays where you
+              saved it.
             </p>
           </section>
         </div>

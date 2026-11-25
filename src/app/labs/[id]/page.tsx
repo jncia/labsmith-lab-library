@@ -163,8 +163,8 @@ export default async function LabPage({ params }: PageProps<"/labs/[id]">) {
                   Download the lab
                 </a>
                 <p className="m-0 text-sm text-quiet">
-                  <code>{lab.release.download.fileName}</code>, {formatBytes(lab.release.download.bytes)}. Leave the
-                  file as it is: the app opens it.
+                  <code>{lab.release.download.fileName}</code>, {formatBytes(lab.release.download.bytes)}. Double-click
+                  it to open it in the app. Leave the file as it is.
                 </p>
                 {lab.release.needsApp ? (
                   <p className="m-0 text-sm text-quiet">
