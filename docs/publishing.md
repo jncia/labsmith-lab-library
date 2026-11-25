@@ -96,10 +96,10 @@ lesson file or the app.
   `v0.1.0b2`), holding the signed zip. The app's own update check downloads
   from the same address, so a release's file is never replaced: a new build is
   a new version and a new release.
-- **Lessons**: one release per set and sealing date (for example
-  `jncia-course-2026-11-24`), holding that set's `.labpack` files. A lesson
-  that is rebuilt goes into a new release, and its catalog entry is pointed at
-  the new address.
+- **Lessons**: one release per set (for example `jncia-course-v1`), holding
+  that set's `.labpack` files as each is released. A file in a release is
+  never replaced: a lesson that is rebuilt goes into the set's next release
+  (`jncia-course-v2`), and its catalog entry is pointed at the new address.
 
 ```bash
 gh release create <tag> --repo jncia/full-mesh-labs-releases --title "<title>" --notes "<one plain line>" <file>...

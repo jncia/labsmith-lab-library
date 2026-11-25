@@ -30,8 +30,8 @@ levels:
     name: JNCIA-Junos
     track: Junos
     stage: associate
-    status: in-review
-    note: The first labs are in their final review before release.
+    status: available
+    note: The first lab is out. The others are in their final review.
   - id: jncis-sp
     name: JNCIS-SP
     track: Service provider
@@ -128,7 +128,15 @@ topicGroups:
 
 labs:
   - { id: jncia-practice-1-change-the-router-safely, collection: jncia-course, status: in-review }
-  - { id: jncia-practice-2-address-the-lab-router, collection: jncia-course, status: in-review }
+  - id: jncia-practice-2-address-the-lab-router
+    collection: jncia-course
+    status: released
+    learnerReadOn: 2026-11-24
+    download:
+      url: https://github.com/jncia/full-mesh-labs-releases/releases/download/jncia-course-v1/jncia-practice-2-address-the-lab-router.labpack
+      fileName: jncia-practice-2-address-the-lab-router.labpack
+      bytes: 16525
+      sha256: 22b2e68ccee9c81f179b5a8db05f1f5cce4ed69f0bff91bb2a869e77eb79f315
   - { id: jncia-practice-3-find-and-fix-the-fault, collection: jncia-course, status: in-review }
   - { id: jncia-practice-4-routes-by-hand, collection: jncia-course, status: in-review }
   - { id: jncia-practice-5-policy-on-ospf, collection: jncia-course, status: in-review }
