@@ -1,0 +1,42 @@
+schemaVersion: 0
+checks:
+- id: s1-r1-link23
+  description: r1 has the r2-r3 link subnet learned by OSPF
+  device: r1
+  type: route-exists
+  prefix: 10.0.23.0/30
+  protocol: OSPF
+- id: s1-r3-link12
+  description: r3 has the r1-r2 link subnet learned by OSPF
+  device: r3
+  type: route-exists
+  prefix: 10.0.12.0/30
+  protocol: OSPF
+- id: s1-r1-user-subnet
+  description: r1 learns the far user subnet by OSPF
+  device: r1
+  type: route-exists
+  prefix: 10.10.3.0/24
+  protocol: OSPF
+- id: s1-r3-user-subnet
+  description: r3 learns the near user subnet by OSPF
+  device: r3
+  type: route-exists
+  prefix: 10.10.1.0/24
+  protocol: OSPF
+- id: s1-h1-reaches-h2
+  description: h1 reaches h2
+  device: h1
+  type: host-ping
+  target: 10.10.3.11
+  source_interface: eth1
+  count: 3
+  min_success_rate: 1
+- id: s1-h2-reaches-h1
+  description: h2 reaches h1
+  device: h2
+  type: host-ping
+  target: 10.10.1.11
+  source_interface: eth1
+  count: 3
+  min_success_rate: 1
