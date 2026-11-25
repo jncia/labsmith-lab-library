@@ -10,13 +10,13 @@ kind: release
 client:
   name: Full Mesh Labs
   channel: beta
-  version: 0.1.0b2
-  build: c13612c
-  fileName: FullMeshLabs-signed-c13612c.zip
-  bytes: 49065260
-  sha256: 975d664fa7b1e059ee17f8d98dc885907f4afa214541bf764164be6dbe980593
+  version: 0.1.0b3
+  build: ef27311
+  fileName: FullMeshLabs-signed-ef27311.zip
+  bytes: 49066734
+  sha256: ba110aeabd122e7e28bc144258725decf3e9b2a3d625456fa39c52286528d747
   # The release file the Download button sends a visitor on to (docs/publishing.md).
-  url: https://github.com/jncia/full-mesh-labs-releases/releases/download/v0.1.0b2/FullMeshLabs-signed-c13612c.zip
+  url: https://github.com/jncia/full-mesh-labs-releases/releases/download/v0.1.0b3/FullMeshLabs-signed-ef27311.zip
   publisher: Benjamin Jacobson
   platform: Windows 11
   requirements:
@@ -145,7 +145,17 @@ labs:
       fileName: jncia-practice-2-address-the-lab-router.labpack
       bytes: 16525
       sha256: 22b2e68ccee9c81f179b5a8db05f1f5cce4ed69f0bff91bb2a869e77eb79f315
-  - { id: jncia-practice-3-find-and-fix-the-fault, collection: jncia-course, status: in-review }
+  - id: jncia-practice-3-find-and-fix-the-fault
+    collection: jncia-course
+    status: released
+    learnerReadOn: 2026-11-24
+    # It begins with a port switched off, which a start in 0.1.0b2 waited for.
+    needsApp: 0.1.0b3
+    download:
+      url: https://github.com/jncia/full-mesh-labs-releases/releases/download/jncia-course-v1/jncia-practice-3-find-and-fix-the-fault.labpack
+      fileName: jncia-practice-3-find-and-fix-the-fault.labpack
+      bytes: 13446
+      sha256: 46cfe3efaa8623e11a35431521d7b66ea7b2b83656152344fabc579c2d18766f
   - id: jncia-practice-4-routes-by-hand
     collection: jncia-course
     status: released

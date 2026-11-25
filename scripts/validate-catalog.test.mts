@@ -145,6 +145,16 @@ test("honesty: a released lab needs its learner read and a real download", () =>
   expectProblem(problems(catalog({ labs: [{ ...RELEASED, download: { ...RELEASED.download, fileName: "x.zip" } }] })), "fileName must end with .labpack");
 });
 
+test("honesty: a released lab cannot need a newer app than the site offers", () => {
+  // The fixture's app is 0.1.0b2.
+  assert.deepEqual(problems(catalog({ labs: [{ ...RELEASED, needsApp: "0.1.0b2" }] })), []);
+  assert.deepEqual(problems(catalog({ labs: [{ ...RELEASED, needsApp: "0.1.0a9" }] })), []);
+  expectProblem(problems(catalog({ labs: [{ ...RELEASED, needsApp: "0.1.0b3" }] })), "needs version 0.1.0b3 of the app, and the site offers 0.1.0b2");
+  expectProblem(problems(catalog({ labs: [{ ...RELEASED, needsApp: "0.1.0b10" }] })), "needs version 0.1.0b10");
+  expectProblem(problems(catalog({ labs: [{ ...RELEASED, needsApp: "0.1.0" }] })), "needs version 0.1.0 of the app");
+  expectProblem(problems(catalog({ labs: [{ ...RELEASED, needsApp: "the next one" }] })), "needsApp must be a version of the app");
+});
+
 test("honesty: an in-review lab has no download", () => {
   expectProblem(problems(catalog({ labs: [{ ...RELEASED, status: "in-review" }] })), "must not have a download yet");
 });

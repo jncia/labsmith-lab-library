@@ -120,7 +120,13 @@ export type LabMeta = {
 
 export type CatalogLab = LabMeta & {
   collection: Collection;
-  release: { status: ReleaseStatus; learnerReadOn: string | null; download: Download | null };
+  release: {
+    status: ReleaseStatus;
+    learnerReadOn: string | null;
+    download: Download | null;
+    /** The earliest version of the app that can start this lab, when not every version can. */
+    needsApp: string | null;
+  };
 };
 
 export type Catalog = {
@@ -212,6 +218,21 @@ const ID = /^[a-z0-9][a-z0-9-]{1,80}$/;
 const SHA256 = /^[0-9a-f]{64}$/;
 // The app's own version grammar: 0.1, 0.1.0, 0.1.0b2, 1.0rc1.
 const APP_VERSION = /^\d+\.\d+(\.\d+)?((a|b|rc)\d+)?$/;
+
+/** Whether app version `a` comes before `b`, in the app's own order: 0.1.0b2 < 0.1.0b10 < 0.1.0rc1 < 0.1.0 < 0.1.1. */
+export function appVersionBefore(a: string, b: string): boolean {
+  const parts = (v: string) => {
+    const m = /^(\d+)\.(\d+)(?:\.(\d+))?(?:(a|b|rc)(\d+))?$/.exec(v);
+    if (!m) return null;
+    const stage = m[4] === undefined ? 3 : ["a", "b", "rc"].indexOf(m[4]);
+    return [Number(m[1]), Number(m[2]), Number(m[3] ?? 0), stage, Number(m[5] ?? 0)];
+  };
+  const x = parts(a);
+  const y = parts(b);
+  if (!x || !y) return false;
+  for (let i = 0; i < x.length; i += 1) if (x[i] !== y[i]) return x[i] < y[i];
+  return false;
+}
 
 export function isIsoDate(value: unknown): value is string {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
@@ -461,6 +482,19 @@ export function loadCatalog(dir: string = resolveCatalogDir(), env: { production
       c.add(w, `${id} is in review, so it must not have a download yet`);
     }
     if (learnerReadOn !== null && !isIsoDate(learnerReadOn)) c.add(w, "learnerReadOn must be a YYYY-MM-DD date");
+    // A lab some versions of the app cannot start says the earliest one that can.
+    let needsApp: string | null = null;
+    if (eo.needsApp !== undefined && eo.needsApp !== null) {
+      if (typeof eo.needsApp !== "string" || !APP_VERSION.test(eo.needsApp)) {
+        c.add(w, "needsApp must be a version of the app, such as 0.1.0b3");
+      } else {
+        needsApp = eo.needsApp;
+        // Honesty: the site must offer an app that can start what it hands out.
+        if (status === "released" && appVersionBefore(clientVersion, needsApp)) {
+          c.add(w, `${id} needs version ${needsApp} of the app, and the site offers ${clientVersion}`);
+        }
+      }
+    }
 
     const metaPath = path.join(dir, "labs", `${id}.json`);
     if (!fs.existsSync(metaPath)) {
@@ -481,7 +515,7 @@ export function loadCatalog(dir: string = resolveCatalogDir(), env: { production
       c.add(`labs/${id}.json`, `level ${meta.level} is unknown`);
     }
     if (collection) {
-      labs.push({ ...meta, collection, release: { status, learnerReadOn: typeof learnerReadOn === "string" ? learnerReadOn : null, download } });
+      labs.push({ ...meta, collection, release: { status, learnerReadOn: typeof learnerReadOn === "string" ? learnerReadOn : null, download, needsApp } });
     }
   });
 

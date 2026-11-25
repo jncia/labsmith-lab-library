@@ -166,6 +166,12 @@ export default async function LabPage({ params }: PageProps<"/labs/[id]">) {
                   <code>{lab.release.download.fileName}</code>, {formatBytes(lab.release.download.bytes)}. Leave the
                   file as it is: the app opens it.
                 </p>
+                {lab.release.needsApp ? (
+                  <p className="m-0 text-sm text-quiet">
+                    <strong className="text-ink">Needs version {lab.release.needsApp} of the app or later.</strong> An
+                    earlier copy offers the update when it opens.
+                  </p>
+                ) : null}
                 <details className="text-sm">
                   <summary className="cursor-pointer text-quiet">SHA-256</summary>
                   <div className="relative mt-2 rounded border border-line bg-surface p-2 pr-20 font-mono text-xs break-all">
